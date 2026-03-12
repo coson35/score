@@ -1,92 +1,151 @@
-# 스코어보드 설정 가이드 (10분이면 끝)
+# 신월중학교 야구 스코어보드 - 설정 매뉴얼
 
-## 1단계: Firebase 프로젝트 만들기
+## 📌 시스템 구성
 
-1. https://console.firebase.google.com 접속 (구글 로그인)
-2. "프로젝트 추가" 클릭
-3. 프로젝트 이름: `baseball-scoreboard` (아무거나 OK)
-4. Google 애널리틱스 → 사용 안함 → "프로젝트 만들기"
-
-## 2단계: Realtime Database 만들기
-
-1. 왼쪽 메뉴 → "빌드" → "Realtime Database"
-2. "데이터베이스 만들기" 클릭
-3. 위치: United States (us-central1) 선택
-4. 보안 규칙: "테스트 모드에서 시작" 선택 → "사용 설정"
-
-## 3단계: 웹앱 등록 + 설정값 복사
-
-1. 왼쪽 상단 ⚙️ → "프로젝트 설정"
-2. 아래로 스크롤 → "내 앱" → 웹 아이콘(</>) 클릭
-3. 앱 닉네임: `scoreboard` → "앱 등록"
-4. Firebase SDK 설정값이 나옴 → 아래 값들을 복사:
-   - apiKey
-   - authDomain
-   - databaseURL
-   - projectId
-   - storageBucket
-   - messagingSenderId
-   - appId
-
-5. `firebase-config.js` 파일을 열어서 YOUR_XXX 부분을 복사한 값으로 교체
-
-## 4단계: GitHub Pages로 무료 호스팅
-
-1. https://github.com 접속 (계정 없으면 가입)
-2. 새 저장소(Repository) 만들기
-   - 이름: `baseball-scoreboard`
-   - Public 선택
-   - "Create repository"
-3. 파일 업로드:
-   - "uploading an existing file" 클릭
-   - `scoreboard.html`, `lineup.html`, `controller.html`, `firebase-config.js` 4개 파일 드래그
-   - "Commit changes"
-4. Settings → Pages → Source: "main" 브랜치 → Save
-5. 1~2분 후 URL 생성됨:
-   - `https://[내아이디].github.io/baseball-scoreboard/scoreboard.html`
-   - `https://[내아이디].github.io/baseball-scoreboard/lineup.html`
-   - `https://[내아이디].github.io/baseball-scoreboard/controller.html`
-
-## 5단계: 카메라파이 앱에 URL 넣기
-
-- URL 1: `https://[내아이디].github.io/baseball-scoreboard/scoreboard.html`
-- URL 2: `https://[내아이디].github.io/baseball-scoreboard/lineup.html`
-
-## 6단계: 컨트롤러 접속
-
-- 다른 스마트폰 브라우저에서:
-  `https://[내아이디].github.io/baseball-scoreboard/controller.html`
-- 첫 접속 시 비밀번호 설정 (이후 같은 비밀번호로 로그인)
-
-## 끝! 🎉
+| 구분 | URL | 용도 |
+|------|-----|------|
+| 스코어보드 | `https://coson35.github.io/score/scoreboard.html` | CameraFi 오버레이 (하단 점수판) |
+| 라인업 | `https://coson35.github.io/score/lineup.html` | CameraFi 오버레이 (라인업 표시) |
+| 컨트롤러 | `https://coson35.github.io/score/controller.html` | 별도 스마트폰에서 조작 |
 
 ---
 
-## 나중에 보안 규칙 변경 (선택)
+## 1. CameraFi Live 설정
 
-테스트 모드는 30일 후 만료됩니다. 그 전에 Firebase 콘솔 → Realtime Database → 규칙 탭에서:
+1. CameraFi Live 앱 실행
+2. 방송 설정 → 오버레이 → URL 추가
+3. URL 1에 스코어보드 주소 입력:
+   ```
+   https://coson35.github.io/score/scoreboard.html
+   ```
+4. URL 2에 라인업 주소 입력:
+   ```
+   https://coson35.github.io/score/lineup.html
+   ```
+5. 오버레이가 화면에 표시되는지 확인
+
+---
+
+## 2. 컨트롤러 접속 (조작용 스마트폰)
+
+1. 별도 스마트폰 브라우저에서 접속:
+   ```
+   https://coson35.github.io/score/controller.html
+   ```
+2. 비밀번호 입력 후 입장
+
+---
+
+## 3. 로그인 안내
+
+### 관리자 모드
+- 우측 상단 "관리자" 버튼 터치 → 관리자 비밀번호 입력
+- 기본 비밀번호: `admin1234` (첫 로그인 후 반드시 변경)
+- 관리자만 접근 가능: 관리 탭, 비밀번호 변경
+
+### 사용자 모드
+- 관리자가 먼저 "관리" 탭에서 사용자 비밀번호를 설정해야 함
+- 설정된 비밀번호로 로그인
+
+---
+
+## 4. 탭별 사용법
+
+### ⚾ 경기 탭 (메인)
+- 스코어 ON/OFF: 스코어보드 오버레이 표시/숨김
+- 라인업 ON/OFF: 라인업 오버레이 표시/숨김
+- 점수: +1/-1 버튼으로 조작
+- 선후공 변경: 홈/원정 위치 교체
+- 이닝: ◀▶ 버튼으로 이동, 초↔말 전환
+- 카운트: B/S/O 동그라미 터치로 토글
+- 베이스: 다이아몬드 터치로 주자 표시
+
+### ⚙️ 경기설정 탭
+- 경기명, 원정팀, 홈팀 이름 입력
+- 팀 로고: 파일 업로드 (500KB 이하)
+  - 한번 등록한 팀은 이름 입력 시 자동완성으로 로고 불러오기 가능
+- "경기 저장": 프리셋으로 저장 (경기 전 미리 등록 가능)
+- "바로 적용": 현재 경기에 즉시 반영 (점수 0으로 초기화)
+- 저장된 경기 목록에서 적용/수정/삭제 가능
+
+### 👥 라인업 탭
+
+#### 표시 모드
+- 수비 위치: 야구장 그림에 포지션별 선수 표시
+- 타순: 1~9번 타순 리스트로 표시
+
+#### 라인업 입력
+1. 팀명 입력
+2. 수비 포지션별 선수 선택 (선수 탭에서 등록한 명단에서 선택)
+3. 타순 1~9번 선수 선택 및 포지션 지정
+4. "라인업 저장 및 표시" 버튼 → 저장 + 오버레이 표시 동시 처리
+
+#### 라인업 프리셋 (핵심 기능)
+- 3학년/2학년 등 여러 라인업을 미리 저장해두고 경기 때 불러오기 가능
+- 사용법:
+  1. 라인업 입력 후 "라인업 프리셋 저장" 클릭
+  2. 이름 입력 (예: "3학년 라인업", "2학년 라인업")
+  3. 저장된 라인업 목록에서 "불러오기" 클릭
+  4. "라인업 저장 및 표시" 클릭하면 오버레이에 반영
+- "입력 초기화" 버튼으로 필드 비우기 가능
+
+### 📋 선수 탭
+- 선수 등록: 이름, 등번호, 포지션 입력 후 추가
+- 포지션 옵션: 투수, 포수, 1루수~우익수, 내야수, 외야수, 야수
+- 등록된 선수는 라인업 탭에서 드롭다운으로 선택 가능
+- 선수 수정: "수정" 버튼으로 이름/번호/포지션 변경
+- 선수 삭제: "삭제" 버튼
+
+### 🔒 관리 탭 (관리자 전용)
+- 관리자 비밀번호 변경
+- 사용자 비밀번호 설정/변경/삭제
+
+---
+
+## 5. 경기 당일 운영 순서
+
+1. 컨트롤러 접속 → 로그인
+2. 경기설정 탭 → 저장된 경기 "적용" (또는 새로 입력 후 "바로 적용")
+3. 라인업 탭 → 저장된 라인업 "불러오기" → "라인업 저장 및 표시"
+4. 경기 탭으로 이동
+5. "스코어 ON" 클릭 → 스코어보드 오버레이 표시
+6. 경기 진행하며 점수/이닝/카운트/베이스 조작
+7. 라인업 보여줄 때: "라인업 ON" / 숨길 때: "라인업 OFF"
+
+### 경기 중간에 학년 교체 시
+1. 라인업 탭 이동
+2. 저장된 라인업에서 해당 학년 "불러오기"
+3. "라인업 저장 및 표시" 클릭
+4. 경기 탭으로 돌아가서 계속 진행
+
+---
+
+## 6. Firebase 보안 규칙 설정
+
+테스트 모드는 30일 후 만료됩니다. Firebase 콘솔 → Realtime Database → 규칙 탭에서 아래로 변경:
 
 ```json
 {
   "rules": {
-    "game": {
-      ".read": true,
-      ".write": true
-    },
-    "lineup": {
-      ".read": true,
-      ".write": true
-    },
-    "savedGames": {
-      ".read": true,
-      ".write": true
-    },
-    "config": {
-      ".read": true,
-      ".write": true
-    }
+    "game": { ".read": true, ".write": true },
+    "lineup": { ".read": true, ".write": true },
+    "savedGames": { ".read": true, ".write": true },
+    "savedLineups": { ".read": true, ".write": true },
+    "config": { ".read": true, ".write": true },
+    "roster": { ".read": true, ".write": true },
+    "teams": { ".read": true, ".write": true }
   }
 }
 ```
 
-이렇게 바꾸면 만료 없이 계속 사용 가능합니다.
+---
+
+## 7. 문제 해결
+
+| 증상 | 해결 |
+|------|------|
+| 오버레이가 안 보임 | 컨트롤러에서 "스코어 ON" 또는 "라인업 ON" 확인 |
+| 로그인이 안 됨 | 관리자가 사용자 비밀번호를 설정했는지 확인 |
+| 새로고침하면 로그아웃 | 탭을 닫으면 로그아웃됨 (새로고침은 유지) |
+| 라인업이 비어 보임 | 라인업 탭에서 "라인업 저장 및 표시" 다시 클릭 |
+| 로고가 안 올라감 | 500KB 이하 이미지만 가능 |
