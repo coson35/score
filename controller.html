@@ -377,7 +377,7 @@ function initApp(){
     if(md)md.className='mode-btn'+(dm==='defense'?' active':'');if(mb)mb.className='mode-btn'+(dm==='batting'?' active':'');
     fillLineupFields();
   }});
-  rosterRef.on('value',s=>{rosterList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>rosterList.push({key:k,...v}));rosterList.sort((a,b)=>Number(a.number)-Number(b.number));renderRoster();updateLineupSelects()});
+  rosterRef.on('value',s=>{rosterList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>rosterList.push({key:k,...v}));rosterList.sort((a,b)=>Number(a.number)-Number(b.number));renderRoster();updateLineupSelects();fillLineupFields()});
   teamsRef.on('value',s=>{teamsList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>teamsList.push({key:k,...v}));teamsList.sort((a,b)=>(a.name||'').localeCompare(b.name||''))});
   loadGames();
   loadLinPresets();
