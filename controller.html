@@ -140,10 +140,13 @@ const ALLPOS=['P','C','1B','2B','3B','SS','LF','CF','RF','IF','OF','UT'];
 const APN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수',IF:'내야수',OF:'외야수',UT:'야수'};
 let scoreVisible=false,lineupVisible=false;
 
-(function checkSession(){
+// 세션 체크는 모든 스크립트 로드 후 실행
+let _sessionChecked=false;
+function checkSessionOnLoad(){
+  if(_sessionChecked)return;_sessionChecked=true;
   const s=localStorage.getItem('scoreSession');
-  if(s){try{const d=JSON.parse(s);selectedRole=d.role;isAdmin=d.role==='admin';enterApp();}catch(e){}}
-})();
+  if(s){try{const d=JSON.parse(s);selectedRole=d.role;isAdmin=d.role==='admin';enterApp();}catch(e){localStorage.removeItem('scoreSession')}}
+}
 
 function toggleAdminMode(){
   if(selectedRole==='user'){selectedRole='admin';document.getElementById('adminToggle').style.borderColor='#2c6fbb';document.getElementById('adminToggle').style.color='#2c6fbb';document.getElementById('pwInput').placeholder='관리자 비밀번호'}
@@ -524,6 +527,7 @@ function saveTeamLogo(name,logo){
   else{teamsRef.push({name,logo})}
 }
 
+checkSessionOnLoad();
 </script>
 </body>
 </html>
