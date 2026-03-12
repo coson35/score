@@ -6,537 +6,239 @@
 <title>스코어보드 컨트롤러</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#0f0f1a;color:#fff;min-height:100vh}
-button{font-family:inherit;cursor:pointer;border:none;border-radius:6px;font-weight:700;transition:all 0.15s}
-input,select{font-family:inherit;border-radius:6px;border:1px solid #333;background:#1a1a2e;color:#fff;padding:8px 10px;font-size:14px;width:100%}
-input:focus,select:focus{outline:none;border-color:#e94560}
-
-/* 비밀번호 화면 */
-#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px;padding:20px}
-#loginScreen h2{color:#e94560;font-size:20px}
-#loginScreen input{max-width:260px;text-align:center;font-size:18px}
-#loginScreen button{background:#e94560;color:#fff;padding:12px 40px;font-size:16px}
-#loginError{color:#ff6b6b;font-size:13px;display:none}
-
-/* 메인 */
-#mainApp{display:none;padding:12px;padding-bottom:80px}
-.section{background:#1a1a2e;border-radius:10px;padding:14px;margin-bottom:12px}
-.section-title{font-size:13px;color:#e94560;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
-
-/* 탭 네비게이션 */
-.tabs{display:flex;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;border-top:2px solid #e94560;z-index:100}
-.tab{flex:1;padding:12px 0;text-align:center;font-size:14px;font-weight:700;color:#666;background:transparent}
-.tab.active{color:#e94560;background:#16213e}
-
-/* 오버레이 컨트롤 */
-.overlay-btns{display:flex;gap:8px;flex-wrap:wrap}
-.overlay-btns button{flex:1;min-width:100px;padding:10px;font-size:13px}
-.btn-on{background:#4caf50;color:#fff}
-.btn-off{background:#333;color:#aaa}
-.btn-danger{background:#e94560;color:#fff}
-.btn-primary{background:#0f3460;color:#fff}
-.btn-warn{background:#ff9800;color:#fff}
-
-/* 스코어 조작 */
-.score-control{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0}
-.score-control .team-label{font-size:13px;min-width:60px;text-align:center;color:#a0c4ff}
-.score-control .score-val{font-size:32px;font-weight:900;color:#ffd700;min-width:50px;text-align:center}
-.score-control button{width:44px;height:44px;font-size:22px;border-radius:50%}
-.btn-plus{background:#4caf50;color:#fff}
-.btn-minus{background:#e94560;color:#fff}
-
-/* 이닝 */
-.inning-control{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0}
-.inning-control .val{font-size:22px;font-weight:700;color:#e94560;min-width:60px;text-align:center}
-.inning-control button{width:40px;height:40px;font-size:18px;border-radius:50%;background:#0f3460;color:#fff}
-
-/* BSO */
-.bso-control{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:8px 0}
-.bso-item{text-align:center}
-.bso-item .label{font-size:12px;color:#888;margin-bottom:4px}
-.bso-dots{display:flex;gap:4px;justify-content:center;margin-bottom:4px}
-.bso-dot{width:18px;height:18px;border-radius:50%;border:2px solid #555;cursor:pointer}
-.bso-dot.active.ball{background:#4caf50;border-color:#4caf50}
-.bso-dot.active.strike{background:#ffd700;border-color:#ffd700}
-.bso-dot.active.out{background:#e94560;border-color:#e94560}
-.bso-item button{font-size:11px;padding:4px 10px;background:#333;color:#fff;margin-top:2px}
-
-/* 베이스 */
-.bases-control{display:flex;justify-content:center;margin:8px 0}
-.bases-diamond{position:relative;width:100px;height:100px}
-.base-btn{position:absolute;width:28px;height:28px;transform:rotate(45deg);border:2px solid #555;background:transparent;cursor:pointer}
-.base-btn.active{background:#ffd700;border-color:#ffd700}
-.base-btn-1{right:4px;top:50%;margin-top:-14px}
-.base-btn-2{left:50%;top:4px;margin-left:-14px}
-.base-btn-3{left:4px;top:50%;margin-top:-14px}
-
-/* 경기 설정 */
-.form-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
-.form-row label{font-size:12px;color:#888;min-width:60px}
-.form-row input{flex:1}
-
-/* 경기 목록 */
-.game-list{max-height:200px;overflow-y:auto}
-.game-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#16213e;border-radius:6px;margin-bottom:6px}
-.game-item .info{font-size:13px}
-.game-item .info .title{color:#a0c4ff;font-size:11px}
-.game-item button{padding:6px 12px;font-size:12px}
-
-/* 라인업 입력 */
-.lineup-row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
-.lineup-row .pos-label{font-size:12px;font-weight:700;color:#e94560;min-width:28px;text-align:center}
-.lineup-row input{flex:1;padding:6px 8px;font-size:13px}
-.lineup-row input.num-input{max-width:50px}
-
-/* 선후공 */
-.swap-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;width:100%;font-size:14px;background:#ff9800;color:#fff;margin:8px 0}
+body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#f5f5f5;color:#222;min-height:100vh;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;cursor:pointer;border:1px solid #ddd;border-radius:10px;font-weight:700;transition:all 0.1s;background:#fff;color:#222}
+button:active{transform:scale(0.96);background:#eee}
+input{font-family:inherit;border-radius:10px;border:1px solid #ddd;background:#fff;color:#222;padding:12px 14px;font-size:16px;width:100%}
+input:focus{outline:none;border-color:#e94560}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px;padding:24px;background:#fff}
+#loginScreen h2{font-size:24px;color:#222}
+#loginScreen input{max-width:280px;text-align:center;font-size:20px}
+.role-btns{display:flex;gap:12px;width:100%;max-width:280px}
+.role-btn{flex:1;padding:14px;font-size:16px;border-radius:12px;border:2px solid #ddd;background:#fff;color:#888}
+.role-btn.active-admin{border-color:#e94560;background:#e94560;color:#fff}
+.role-btn.active-user{border-color:#0f3460;background:#0f3460;color:#fff}
+.login-btn{background:#222;color:#fff;padding:14px 50px;font-size:18px;border:none;border-radius:12px;width:100%;max-width:280px}
+#loginError{color:#e94560;font-size:14px;display:none}
+#mainApp{display:none;padding:16px;padding-bottom:90px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.top-bar .title{font-size:18px;font-weight:900}
+.logout-btn{background:#f0f0f0;color:#e94560;padding:10px 18px;font-size:14px;border:none}
+.overlay-section{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.overlay-section button{flex:1;min-width:70px;padding:12px;font-size:14px;border-radius:12px}
+.overlay-on{background:#4caf50;color:#fff;border:none}
+.overlay-off{background:#eee;color:#888;border:1px solid #ddd}
 </style>
 </head>
 <body>
-
-<!-- 비밀번호 화면 -->
 <div id="loginScreen">
-  <h2>⚾ 스코어보드 컨트롤러</h2>
-  <div style="display:flex;gap:10px;margin-bottom:12px">
-    <button id="roleAdmin" onclick="selectRole('admin')" style="flex:1;padding:12px;font-size:14px;background:#e94560;color:#fff;border:2px solid #e94560">🔒 관리자</button>
-    <button id="roleUser" onclick="selectRole('user')" style="flex:1;padding:12px;font-size:14px;background:#1a1a2e;color:#888;border:2px solid #333">👤 사용자</button>
+  <h2>⚾ 스코어보드</h2>
+  <div class="role-btns">
+    <button class="role-btn active-admin" id="roleAdmin" onclick="selectRole('admin')">🔒 관리자</button>
+    <button class="role-btn" id="roleUser" onclick="selectRole('user')">👤 사용자</button>
   </div>
-  <input type="password" id="pwInput" placeholder="비밀번호" autocomplete="off">
-  <button onclick="doLogin()">입장</button>
+  <input type="password" id="pwInput" placeholder="관리자 비밀번호" autocomplete="off">
+  <button class="login-btn" onclick="doLogin()">입장</button>
   <div id="loginError">비밀번호가 틀렸습니다</div>
 </div>
-
-<!-- 메인 앱 -->
 <div id="mainApp">
-
-  <!-- 상단 바 -->
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <span style="color:#e94560;font-size:15px;font-weight:700">⚾ 스코어보드</span>
-    <button onclick="doLogout()" style="background:#333;color:#ff6b6b;padding:8px 16px;font-size:13px;border-radius:6px">로그아웃</button>
+  <div class="top-bar">
+    <span class="title">⚾ 스코어보드</span>
+    <button class="logout-btn" onclick="doLogout()">로그아웃</button>
   </div>
-
-  <!-- 오버레이 표시 컨트롤 -->
-  <div class="section">
-    <div class="section-title">📺 오버레이 표시</div>
-    <div class="overlay-btns">
-      <button class="btn-on" id="btnScoreOn" onclick="toggleOverlay('scoreboard',true)">스코어보드 ON</button>
-      <button class="btn-off" id="btnScoreOff" onclick="toggleOverlay('scoreboard',false)">스코어보드 OFF</button>
-      <button class="btn-on" id="btnLineupOn" onclick="toggleOverlay('lineup',true)">라인업 ON</button>
-      <button class="btn-off" id="btnLineupOff" onclick="toggleOverlay('lineup',false)">라인업 OFF</button>
-    </div>
+  <div class="overlay-section">
+    <button class="overlay-on" onclick="toggleOverlay('scoreboard',true)">스코어 ON</button>
+    <button class="overlay-off" onclick="toggleOverlay('scoreboard',false)">스코어 OFF</button>
+    <button class="overlay-on" onclick="toggleOverlay('lineup',true)">라인업 ON</button>
+    <button class="overlay-off" onclick="toggleOverlay('lineup',false)">라인업 OFF</button>
   </div>
-
-  <!-- 탭 컨텐츠 -->
-  <div id="tabGame" class="tab-content">
-    <!-- 점수 -->
-    <div class="section">
-      <div class="section-title">⚾ 점수</div>
-      <div class="score-control">
-        <button class="btn-minus" onclick="changeScore('away',-1)">−</button>
-        <div><div class="team-label" id="ctrlAwayName">AWAY</div><div class="score-val" id="ctrlAwayScore">0</div></div>
-        <button class="btn-plus" onclick="changeScore('away',1)">+</button>
-        <span style="color:#e94560;font-size:20px;margin:0 4px">:</span>
-        <button class="btn-minus" onclick="changeScore('home',-1)">−</button>
-        <div><div class="team-label" id="ctrlHomeName">HOME</div><div class="score-val" id="ctrlHomeScore">0</div></div>
-        <button class="btn-plus" onclick="changeScore('home',1)">+</button>
-      </div>
-      <button class="swap-btn" onclick="swapHomeAway()">🔄 선후공 변경 (홈↔원정)</button>
-    </div>
-
-    <!-- 이닝 -->
-    <div class="section">
-      <div class="section-title">이닝</div>
-      <div class="inning-control">
-        <button onclick="changeInning(-1)">◀</button>
-        <div class="val"><span id="ctrlHalf">▲</span> <span id="ctrlInning">1</span>회</div>
-        <button onclick="changeInning(1)">▶</button>
-        <button style="background:#ff9800;color:#fff;padding:8px 14px;font-size:13px;margin-left:8px" onclick="toggleHalf()">초↔말</button>
-      </div>
-    </div>
-
-    <!-- BSO -->
-    <div class="section">
-      <div class="section-title">카운트</div>
-      <div class="bso-control">
-        <div class="bso-item">
-          <div class="label">BALL</div>
-          <div class="bso-dots" id="bDots"></div>
-          <button onclick="changeBSO('balls',1)">+</button>
-          <button onclick="resetBSO('balls')">R</button>
-        </div>
-        <div class="bso-item">
-          <div class="label">STRIKE</div>
-          <div class="bso-dots" id="sDots"></div>
-          <button onclick="changeBSO('strikes',1)">+</button>
-          <button onclick="resetBSO('strikes')">R</button>
-        </div>
-        <div class="bso-item">
-          <div class="label">OUT</div>
-          <div class="bso-dots" id="oDots"></div>
-          <button onclick="changeBSO('outs',1)">+</button>
-          <button onclick="resetBSO('outs')">R</button>
-        </div>
-      </div>
-      <div style="text-align:center;margin-top:8px">
-        <button class="btn-danger" style="padding:8px 20px;font-size:13px" onclick="resetCount()">카운트 초기화</button>
-      </div>
-    </div>
-
-    <!-- 베이스 -->
-    <div class="section">
-      <div class="section-title">베이스</div>
-      <div class="bases-control">
-        <div class="bases-diamond">
-          <div class="base-btn base-btn-2" id="ctrlBase2" onclick="toggleBase(2)"></div>
-          <div class="base-btn base-btn-3" id="ctrlBase3" onclick="toggleBase(3)"></div>
-          <div class="base-btn base-btn-1" id="ctrlBase1" onclick="toggleBase(1)"></div>
-        </div>
-      </div>
-      <div style="text-align:center">
-        <button class="btn-danger" style="padding:6px 16px;font-size:12px" onclick="clearBases()">베이스 클리어</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 경기 설정 탭 -->
-  <div id="tabSetup" class="tab-content" style="display:none">
-    <div class="section">
-      <div class="section-title">경기 정보 설정</div>
-      <div class="form-row"><label>경기명</label><input id="inputTitle" placeholder="예: 스토브리그 in 창녕"></div>
-      <div class="form-row"><label>원정팀</label><input id="inputAway" placeholder="원정팀명"></div>
-      <div class="form-row"><label>홈팀</label><input id="inputHome" placeholder="홈팀명"></div>
-      <div class="form-row"><label>원정로고</label><input id="inputAwayLogo" placeholder="로고 이미지 URL (선택)"></div>
-      <div class="form-row"><label>홈로고</label><input id="inputHomeLogo" placeholder="로고 이미지 URL (선택)"></div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn-primary" style="flex:1;padding:10px;font-size:14px" onclick="saveGame()">💾 경기 저장</button>
-        <button class="btn-on" style="flex:1;padding:10px;font-size:14px" onclick="applyGame()">✅ 바로 적용</button>
-      </div>
-    </div>
-    <div class="section">
-      <div class="section-title">저장된 경기 목록</div>
-      <div class="game-list" id="gameList"></div>
-    </div>
-  </div>
-
-  <!-- 라인업 탭 -->
-  <div id="tabLineup" class="tab-content" style="display:none">
-    <div class="section">
-      <div class="section-title">우리팀 선발 라인업</div>
-      <div class="form-row"><label>팀명</label><input id="lineupTeamInput" placeholder="우리팀 이름"></div>
-      <div style="margin-top:10px" id="lineupInputs"></div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn-primary" style="flex:1;padding:10px;font-size:14px" onclick="saveLineup()">💾 라인업 저장</button>
-        <button class="btn-on" style="flex:1;padding:10px;font-size:14px" onclick="applyLineup()">✅ 적용</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 탭 바 -->
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('tabGame',this)">⚾ 경기</div>
-    <div class="tab" onclick="switchTab('tabSetup',this)">⚙️ 설정</div>
-    <div class="tab" onclick="switchTab('tabLineup',this)">👥 라인업</div>
-    <div class="tab" id="tabAdminBtn" style="display:none" onclick="switchTab('tabAdmin',this)">🔒 관리</div>
+  <div id="tabGame" class="tab-content"></div>
+  <div id="tabSetup" class="tab-content" style="display:none"></div>
+  <div id="tabLineup" class="tab-content" style="display:none"></div>
+  <div id="tabAdmin" class="tab-content" style="display:none"></div>
+  <div class="tabs" style="display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;z-index:100">
+    <div class="tab active" onclick="switchTab('tabGame',this)" style="flex:1;padding:14px 0;text-align:center;font-size:15px;font-weight:700;color:#e94560;background:#fff;border:none;border-radius:0">⚾ 경기</div>
+    <div class="tab" onclick="switchTab('tabSetup',this)" style="flex:1;padding:14px 0;text-align:center;font-size:15px;font-weight:700;color:#aaa;background:#fff;border:none;border-radius:0">⚙️ 설정</div>
+    <div class="tab" onclick="switchTab('tabLineup',this)" style="flex:1;padding:14px 0;text-align:center;font-size:15px;font-weight:700;color:#aaa;background:#fff;border:none;border-radius:0">👥 라인업</div>
+    <div class="tab" id="tabAdminBtn" onclick="switchTab('tabAdmin',this)" style="flex:1;padding:14px 0;text-align:center;font-size:15px;font-weight:700;color:#aaa;background:#fff;border:none;border-radius:0;display:none">🔒 관리</div>
   </div>
 </div>
-
-<!-- admin 탭 (숨김) -->
-<div id="tabAdmin" class="tab-content" style="display:none">
-  <div class="section" style="margin-top:12px">
-    <div class="section-title">🔒 관리자 비밀번호 변경</div>
-    <div class="form-row"><label>새 비번</label><input id="newAdminPw" type="password" placeholder="새 관리자 비밀번호"></div>
-    <button class="btn-primary" style="width:100%;padding:10px;font-size:14px;margin-top:8px" onclick="changeAdminPassword()">관리자 비밀번호 변경</button>
-  </div>
-  <div class="section">
-    <div class="section-title">👤 사용자 비밀번호 관리</div>
-    <div class="form-row"><label>현재 비번</label><input id="currentUserPw" readonly style="color:#ffd700"></div>
-    <div class="form-row"><label>새 비번</label><input id="newUserPw" placeholder="새 사용자 비밀번호 입력"></div>
-    <button class="btn-warn" style="width:100%;padding:10px;font-size:14px;margin-top:8px" onclick="changeUserPassword()">사용자 비밀번호 변경</button>
-    <button class="btn-danger" style="width:100%;padding:10px;font-size:14px;margin-top:8px" onclick="resetUserPassword()">사용자 비밀번호 초기화 (삭제)</button>
-  </div>
-</div>
-
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
+</body>
+</html>
 <script>
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-const gameRef=db.ref('game');
-const lineupRef=db.ref('lineup');
-const savedGamesRef=db.ref('savedGames');
-const configRef=db.ref('config');
-
-let isAdmin=false;
-let selectedRole='admin';
-const DEFAULT_ADMIN_PW='admin1234'; // 최초 admin 비밀번호 (이후 관리탭에서 변경 가능)
-
+const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),configRef=db.ref('config');
+let isAdmin=false,selectedRole='admin';
+const DEFAULT_ADMIN_PW='admin1234';
 let gameData={visible:false,gameTitle:'',awayName:'AWAY',homeName:'HOME',awayScore:0,homeScore:0,awayLogo:'',homeLogo:'',inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false};
 let lineupData={visible:false,teamName:'',players:{}};
 const positions=['P','C','1B','2B','3B','SS','LF','CF','RF'];
 const posNames={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
 
-function selectRole(role){
-  selectedRole=role;
-  document.getElementById('roleAdmin').style.background=role==='admin'?'#e94560':'#1a1a2e';
-  document.getElementById('roleAdmin').style.color=role==='admin'?'#fff':'#888';
-  document.getElementById('roleAdmin').style.borderColor=role==='admin'?'#e94560':'#333';
-  document.getElementById('roleUser').style.background=role==='user'?'#0f3460':'#1a1a2e';
-  document.getElementById('roleUser').style.color=role==='user'?'#fff':'#888';
-  document.getElementById('roleUser').style.borderColor=role==='user'?'#0f3460':'#333';
-  document.getElementById('pwInput').placeholder=role==='admin'?'관리자 비밀번호':'사용자 비밀번호';
+function selectRole(r){
+  selectedRole=r;
+  document.getElementById('roleAdmin').className='role-btn'+(r==='admin'?' active-admin':'');
+  document.getElementById('roleUser').className='role-btn'+(r==='user'?' active-user':'');
+  document.getElementById('pwInput').placeholder=r==='admin'?'관리자 비밀번호':'사용자 비밀번호';
 }
-
-// 비밀번호
 function doLogin(){
   const pw=document.getElementById('pwInput').value;
   if(!pw){alert('비밀번호를 입력하세요');return}
   document.getElementById('loginError').style.display='none';
   if(selectedRole==='admin'){
-    // Firebase에서 admin 비밀번호 확인 (없으면 기본값 사용)
-    configRef.child('adminPassword').once('value',snap=>{
-      const saved=snap.val()||DEFAULT_ADMIN_PW;
-      if(pw===saved){isAdmin=true;enterApp()}
-      else{document.getElementById('loginError').style.display='block'}
+    configRef.child('adminPassword').once('value',s=>{
+      if(pw===(s.val()||DEFAULT_ADMIN_PW)){isAdmin=true;enterApp()}
+      else document.getElementById('loginError').style.display='block';
     });
   }else{
-    configRef.child('userPassword').once('value',snap=>{
-      const saved=snap.val();
-      if(!saved){alert('사용자 비밀번호가 아직 설정되지 않았습니다.\n관리자에게 문의하세요.');return}
-      if(pw===saved){isAdmin=false;enterApp()}
-      else{document.getElementById('loginError').style.display='block'}
+    configRef.child('userPassword').once('value',s=>{
+      if(!s.val()){alert('사용자 비밀번호가 설정되지 않았습니다.\n관리자에게 문의하세요.');return}
+      if(pw===s.val()){isAdmin=false;enterApp()}
+      else document.getElementById('loginError').style.display='block';
     });
   }
 }
-function resetPassword(){
-  // 사용하지 않음
-}
 document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
-
-function doLogout(){
-  location.reload();
-}
-
+function doLogout(){location.reload()}
 function enterApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('mainApp').style.display='block';
-  if(isAdmin){document.getElementById('tabAdminBtn').style.display='block'}
-  initApp();
+  if(isAdmin)document.getElementById('tabAdminBtn').style.display='block';
+  buildUI();initApp();
 }
 
-// admin 기능
-function changeAdminPassword(){
-  const newPw=document.getElementById('newAdminPw').value;
-  if(!newPw){alert('새 비밀번호를 입력하세요');return}
-  if(newPw.length<4){alert('비밀번호는 4자 이상이어야 합니다');return}
-  configRef.child('adminPassword').set(newPw);
-  alert('관리자 비밀번호가 변경되었습니다.\n다음 로그인부터 새 비밀번호를 사용하세요.');
-  document.getElementById('newAdminPw').value='';
-}
-function changeUserPassword(){
-  const newPw=document.getElementById('newUserPw').value;
-  if(!newPw){alert('새 비밀번호를 입력하세요');return}
-  configRef.child('userPassword').set(newPw);
-  alert('사용자 비밀번호가 설정되었습니다: '+newPw);
-  document.getElementById('currentUserPw').value=newPw;
-  document.getElementById('newUserPw').value='';
-}
-function resetUserPassword(){
-  if(confirm('사용자 비밀번호를 삭제하시겠습니까?\n삭제하면 사용자가 로그인할 수 없습니다.')){
-    configRef.child('userPassword').remove();
-    document.getElementById('currentUserPw').value='(없음)';
-    alert('사용자 비밀번호가 삭제되었습니다');
-  }
+function buildUI(){
+  // 경기 탭
+  document.getElementById('tabGame').innerHTML=`
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="display:flex;justify-content:space-between">
+        <div style="text-align:center;flex:1">
+          <div style="font-size:20px;font-weight:900;margin-bottom:8px" id="ctrlAwayName">AWAY</div>
+          <div style="font-size:48px;font-weight:900" id="ctrlAwayScore">0</div>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+            <button onclick="changeScore('away',1)" style="width:80px;height:50px;font-size:22px;background:#4caf50;color:#fff;border:none;border-radius:12px">+1</button>
+            <button onclick="changeScore('away',-1)" style="width:80px;height:50px;font-size:22px;background:#f0f0f0;border-radius:12px">-1</button>
+          </div>
+        </div>
+        <div style="font-size:24px;color:#ccc;align-self:center;padding:0 8px">vs</div>
+        <div style="text-align:center;flex:1">
+          <div style="font-size:20px;font-weight:900;margin-bottom:8px" id="ctrlHomeName">HOME</div>
+          <div style="font-size:48px;font-weight:900" id="ctrlHomeScore">0</div>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+            <button onclick="changeScore('home',1)" style="width:80px;height:50px;font-size:22px;background:#4caf50;color:#fff;border:none;border-radius:12px">+1</button>
+            <button onclick="changeScore('home',-1)" style="width:80px;height:50px;font-size:22px;background:#f0f0f0;border-radius:12px">-1</button>
+          </div>
+        </div>
+      </div>
+      <button onclick="swapHomeAway()" style="width:100%;padding:14px;font-size:16px;background:#ff9800;color:#fff;border:none;border-radius:12px;margin-top:16px">🔄 선후공 변경</button>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);text-align:center">
+      <div style="font-size:18px;font-weight:700;margin-bottom:12px">이닝</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px">
+        <button onclick="changeInning(-1)" style="width:56px;height:56px;font-size:24px;border-radius:50%;background:#f0f0f0">◀</button>
+        <div style="font-size:36px;font-weight:900;min-width:80px"><span id="ctrlHalf">▲</span> <span id="ctrlInning">1</span>회</div>
+        <button onclick="changeInning(1)" style="width:56px;height:56px;font-size:24px;border-radius:50%;background:#f0f0f0">▶</button>
+      </div>
+      <button onclick="toggleHalf()" style="padding:14px 30px;font-size:16px;background:#ff9800;color:#fff;border:none;border-radius:12px">초 ↔ 말</button>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="font-size:18px;font-weight:700;margin-bottom:16px;text-align:center">카운트</div>
+      <div style="display:flex;align-items:center;margin-bottom:16px"><span style="font-size:18px;font-weight:700;min-width:80px">볼</span><div style="display:flex;gap:12px;flex:1;justify-content:center"><div class="bso-d ball" id="bd0" onclick="toggleBSO('balls',1)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div><div class="bso-d ball" id="bd1" onclick="toggleBSO('balls',2)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div><div class="bso-d ball" id="bd2" onclick="toggleBSO('balls',3)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div></div></div>
+      <div style="display:flex;align-items:center;margin-bottom:16px"><span style="font-size:18px;font-weight:700;min-width:80px">스트라이크</span><div style="display:flex;gap:12px;flex:1;justify-content:center"><div class="bso-d strike" id="sd0" onclick="toggleBSO('strikes',1)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div><div class="bso-d strike" id="sd1" onclick="toggleBSO('strikes',2)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div></div></div>
+      <div style="display:flex;align-items:center;margin-bottom:16px"><span style="font-size:18px;font-weight:700;min-width:80px">아웃</span><div style="display:flex;gap:12px;flex:1;justify-content:center"><div class="bso-d out" id="od0" onclick="toggleBSO('outs',1)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div><div class="bso-d out" id="od1" onclick="toggleBSO('outs',2)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div></div></div>
+      <div style="text-align:center"><button onclick="resetCount()" style="padding:12px 30px;font-size:15px;background:#f0f0f0;border-radius:12px">카운트 초기화</button></div>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);text-align:center">
+      <div style="font-size:18px;font-weight:700;margin-bottom:16px">베이스</div>
+      <div style="position:relative;width:160px;height:160px;margin:0 auto 16px">
+        <div id="ctrlBase2" onclick="toggleBase(2)" style="position:absolute;width:50px;height:50px;transform:rotate(45deg);border:2px solid #ddd;background:#f8f8f8;cursor:pointer;border-radius:6px;left:55px;top:0"></div>
+        <div id="ctrlBase3" onclick="toggleBase(3)" style="position:absolute;width:50px;height:50px;transform:rotate(45deg);border:2px solid #ddd;background:#f8f8f8;cursor:pointer;border-radius:6px;left:0;top:55px"></div>
+        <div id="ctrlBase1" onclick="toggleBase(1)" style="position:absolute;width:50px;height:50px;transform:rotate(45deg);border:2px solid #ddd;background:#f8f8f8;cursor:pointer;border-radius:6px;right:0;top:55px"></div>
+      </div>
+      <button onclick="clearBases()" style="padding:12px 30px;font-size:15px;background:#f0f0f0;border-radius:12px">베이스 클리어</button>
+    </div>`;
+
+  // 설정 탭
+  document.getElementById('tabSetup').innerHTML=`
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px">경기 정보 설정</div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">경기명</label><input id="inputTitle" placeholder="예: 스토브리그 in 창녕"></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">원정팀</label><input id="inputAway" placeholder="원정팀명"></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">홈팀</label><input id="inputHome" placeholder="홈팀명"></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">원정로고</label><input id="inputAwayLogo" placeholder="로고 URL (선택)"></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">홈로고</label><input id="inputHomeLogo" placeholder="로고 URL (선택)"></div>
+      <button onclick="saveGame()" style="width:100%;padding:14px;font-size:16px;background:#0f3460;color:#fff;border:none;border-radius:12px;margin-top:8px">💾 경기 저장</button>
+      <button onclick="applyGame()" style="width:100%;padding:14px;font-size:16px;background:#4caf50;color:#fff;border:none;border-radius:12px;margin-top:8px">✅ 바로 적용</button>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px">저장된 경기</div>
+      <div id="gameList" style="max-height:240px;overflow-y:auto"></div>
+    </div>`;
+
+  // 라인업 탭
+  let linHTML='<div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)"><div style="font-size:18px;font-weight:700;margin-bottom:14px">우리팀 선발 라인업</div><div style="display:flex;gap:10px;margin-bottom:12px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">팀명</label><input id="lineupTeamInput" placeholder="우리팀 이름"></div>';
+  positions.forEach(p=>{
+    linHTML+=`<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center"><span style="font-size:15px;font-weight:900;color:#e94560;min-width:32px;text-align:center">${p}</span><input id="lin-name-${p}" placeholder="${posNames[p]} 이름" style="flex:1;padding:10px;font-size:15px"><input id="lin-num-${p}" class="num-input" placeholder="#" type="number" style="max-width:60px;padding:10px;font-size:15px"></div>`;
+  });
+  linHTML+=`<button onclick="saveLineup()" style="width:100%;padding:14px;font-size:16px;background:#0f3460;color:#fff;border:none;border-radius:12px;margin-top:8px">💾 라인업 저장</button><button onclick="applyLineup()" style="width:100%;padding:14px;font-size:16px;background:#4caf50;color:#fff;border:none;border-radius:12px;margin-top:8px">✅ 라인업 표시</button></div>`;
+  document.getElementById('tabLineup').innerHTML=linHTML;
+
+  // 관리 탭
+  document.getElementById('tabAdmin').innerHTML=`
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px">🔒 관리자 비밀번호 변경</div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">새 비번</label><input id="newAdminPw" type="password" placeholder="새 관리자 비밀번호"></div>
+      <button onclick="changeAdminPassword()" style="width:100%;padding:14px;font-size:16px;background:#0f3460;color:#fff;border:none;border-radius:12px;margin-top:8px">비밀번호 변경</button>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px">👤 사용자 비밀번호 관리</div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">현재</label><input id="currentUserPw" readonly style="color:#e94560;font-weight:700"></div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">새 비번</label><input id="newUserPw" placeholder="새 사용자 비밀번호"></div>
+      <button onclick="changeUserPassword()" style="width:100%;padding:14px;font-size:16px;background:#ff9800;color:#fff;border:none;border-radius:12px;margin-top:8px">사용자 비밀번호 변경</button>
+      <button onclick="resetUserPassword()" style="width:100%;padding:14px;font-size:16px;background:#e94560;color:#fff;border:none;border-radius:12px;margin-top:8px">사용자 비밀번호 삭제</button>
+    </div>`;
 }
 
 function initApp(){
-  // admin이면 현재 일반 비밀번호 표시
-  if(isAdmin){
-    configRef.child('userPassword').on('value',snap=>{
-      const pw=snap.val();
-      const el=document.getElementById('currentUserPw');
-      if(el)el.value=pw||'(없음)';
-    });
-  }
-  // 라인업 입력 폼 생성
-  const container=document.getElementById('lineupInputs');
-  positions.forEach(pos=>{
-    container.innerHTML+=`<div class="lineup-row">
-      <span class="pos-label">${pos}</span>
-      <input id="lin-name-${pos}" placeholder="${posNames[pos]} 이름">
-      <input class="num-input" id="lin-num-${pos}" placeholder="#" type="number">
-    </div>`;
-  });
-
-  // BSO 도트 생성
-  for(let i=0;i<3;i++)document.getElementById('bDots').innerHTML+=`<div class="bso-dot ball" id="bd${i}"></div>`;
-  for(let i=0;i<2;i++)document.getElementById('sDots').innerHTML+=`<div class="bso-dot strike" id="sd${i}"></div>`;
-  for(let i=0;i<2;i++)document.getElementById('oDots').innerHTML+=`<div class="bso-dot out" id="od${i}"></div>`;
-
-  // Firebase 실시간 동기화
-  gameRef.on('value',snap=>{
-    const d=snap.val();if(!d)return;
-    gameData=d;
-    updateUI();
-  });
-  lineupRef.on('value',snap=>{
-    const d=snap.val();if(d)lineupData=d;
-  });
+  if(isAdmin){configRef.child('userPassword').on('value',s=>{const el=document.getElementById('currentUserPw');if(el)el.value=s.val()||'(없음)'})}
+  gameRef.on('value',s=>{const d=s.val();if(!d)return;gameData=d;updateUI()});
+  lineupRef.on('value',s=>{const d=s.val();if(d)lineupData=d});
   loadSavedGames();
 }
-
 function updateUI(){
-  document.getElementById('ctrlAwayName').textContent=gameData.awayName||'AWAY';
-  document.getElementById('ctrlHomeName').textContent=gameData.homeName||'HOME';
-  document.getElementById('ctrlAwayScore').textContent=gameData.awayScore||0;
-  document.getElementById('ctrlHomeScore').textContent=gameData.homeScore||0;
-  document.getElementById('ctrlInning').textContent=gameData.inning||1;
-  document.getElementById('ctrlHalf').textContent=gameData.inningHalf==='bottom'?'▼':'▲';
-  // BSO
-  for(let i=0;i<3;i++)document.getElementById('bd'+i).classList.toggle('active',i<(gameData.balls||0));
-  for(let i=0;i<2;i++)document.getElementById('sd'+i).classList.toggle('active',i<(gameData.strikes||0));
-  for(let i=0;i<2;i++)document.getElementById('od'+i).classList.toggle('active',i<(gameData.outs||0));
-  // 베이스
-  document.getElementById('ctrlBase1').classList.toggle('active',!!gameData.base1);
-  document.getElementById('ctrlBase2').classList.toggle('active',!!gameData.base2);
-  document.getElementById('ctrlBase3').classList.toggle('active',!!gameData.base3);
+  const $=id=>document.getElementById(id);
+  $('ctrlAwayName').textContent=gameData.awayName||'AWAY';
+  $('ctrlHomeName').textContent=gameData.homeName||'HOME';
+  $('ctrlAwayScore').textContent=gameData.awayScore||0;
+  $('ctrlHomeScore').textContent=gameData.homeScore||0;
+  $('ctrlInning').textContent=gameData.inning||1;
+  $('ctrlHalf').textContent=gameData.inningHalf==='bottom'?'▼':'▲';
+  for(let i=0;i<3;i++){const el=$('bd'+i);if(el){el.style.background=i<(gameData.balls||0)?'#4caf50':'#f8f8f8';el.style.borderColor=i<(gameData.balls||0)?'#4caf50':'#ddd'}}
+  for(let i=0;i<2;i++){const el=$('sd'+i);if(el){el.style.background=i<(gameData.strikes||0)?'#ffd700':'#f8f8f8';el.style.borderColor=i<(gameData.strikes||0)?'#ffd700':'#ddd'}}
+  for(let i=0;i<2;i++){const el=$('od'+i);if(el){el.style.background=i<(gameData.outs||0)?'#e94560':'#f8f8f8';el.style.borderColor=i<(gameData.outs||0)?'#e94560':'#ddd'}}
+  ['1','2','3'].forEach(n=>{const el=$('ctrlBase'+n);if(el){const on=!!gameData['base'+n];el.style.background=on?'#ffd700':'#f8f8f8';el.style.borderColor=on?'#ffd700':'#ddd'}});
 }
-
-// 오버레이 토글
-function toggleOverlay(type,on){
-  if(type==='scoreboard')gameRef.update({visible:on});
-  else lineupRef.update({visible:on});
-}
-
-// 점수
-function changeScore(team,delta){
-  const key=team==='away'?'awayScore':'homeScore';
-  const val=Math.max(0,(gameData[key]||0)+delta);
-  gameRef.update({[key]:val});
-}
-
-// 선후공 변경
-function swapHomeAway(){
-  gameRef.update({
-    awayName:gameData.homeName,homeName:gameData.awayName,
-    awayScore:gameData.homeScore,homeScore:gameData.awayScore,
-    awayLogo:gameData.homeLogo||'',homeLogo:gameData.awayLogo||''
-  });
-}
-
-// 이닝
-function changeInning(delta){
-  const val=Math.max(1,(gameData.inning||1)+delta);
-  gameRef.update({inning:val});
-}
-function toggleHalf(){
-  gameRef.update({inningHalf:gameData.inningHalf==='top'?'bottom':'top'});
-}
-
-// BSO
-function changeBSO(type,delta){
-  const max=type==='balls'?3:2;
-  let val=(gameData[type]||0)+delta;
-  if(val>max)val=0;
-  gameRef.update({[type]:val});
-}
-function resetBSO(type){gameRef.update({[type]:0})}
+function toggleOverlay(t,on){if(t==='scoreboard')gameRef.update({visible:on});else lineupRef.update({visible:on})}
+function changeScore(t,d){const k=t==='away'?'awayScore':'homeScore';gameRef.update({[k]:Math.max(0,(gameData[k]||0)+d)})}
+function swapHomeAway(){gameRef.update({awayName:gameData.homeName,homeName:gameData.awayName,awayScore:gameData.homeScore,homeScore:gameData.awayScore,awayLogo:gameData.homeLogo||'',homeLogo:gameData.awayLogo||''})}
+function changeInning(d){gameRef.update({inning:Math.max(1,(gameData.inning||1)+d)})}
+function toggleHalf(){gameRef.update({inningHalf:gameData.inningHalf==='top'?'bottom':'top'})}
+function toggleBSO(type,val){const cur=gameData[type]||0;gameRef.update({[type]:cur>=val?val-1:val})}
 function resetCount(){gameRef.update({balls:0,strikes:0,outs:0})}
-
-// 베이스
-function toggleBase(n){
-  const key='base'+n;
-  gameRef.update({[key]:!gameData[key]});
-}
+function toggleBase(n){gameRef.update({['base'+n]:!gameData['base'+n]})}
 function clearBases(){gameRef.update({base1:false,base2:false,base3:false})}
-
-// 탭 전환
-function switchTab(id,el){
-  document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById(id).style.display='block';
-  el.classList.add('active');
-}
-
-// 경기 저장/불러오기
-function saveGame(){
-  const g={
-    gameTitle:document.getElementById('inputTitle').value,
-    awayName:document.getElementById('inputAway').value,
-    homeName:document.getElementById('inputHome').value,
-    awayLogo:document.getElementById('inputAwayLogo').value,
-    homeLogo:document.getElementById('inputHomeLogo').value,
-    createdAt:Date.now()
-  };
-  savedGamesRef.push(g);
-  alert('경기가 저장되었습니다');
-}
-function applyGame(){
-  gameRef.update({
-    gameTitle:document.getElementById('inputTitle').value,
-    awayName:document.getElementById('inputAway').value||'AWAY',
-    homeName:document.getElementById('inputHome').value||'HOME',
-    awayLogo:document.getElementById('inputAwayLogo').value,
-    homeLogo:document.getElementById('inputHomeLogo').value,
-    awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false
-  });
-  alert('경기 정보가 적용되었습니다');
-}
-function loadSavedGames(){
-  savedGamesRef.on('value',snap=>{
-    const list=document.getElementById('gameList');
-    list.innerHTML='';
-    const data=snap.val();if(!data)return;
-    Object.entries(data).forEach(([key,g])=>{
-      list.innerHTML+=`<div class="game-item">
-        <div class="info"><div class="title">${g.gameTitle||'제목없음'}</div>${g.awayName||'?'} vs ${g.homeName||'?'}</div>
-        <div><button class="btn-on" style="font-size:11px;padding:4px 8px;margin-right:4px" onclick="loadGame('${key}')">적용</button><button class="btn-danger" style="font-size:11px;padding:4px 8px" onclick="deleteGame('${key}')">삭제</button></div>
-      </div>`;
-    });
-  });
-}
-function loadGame(key){
-  savedGamesRef.child(key).once('value',snap=>{
-    const g=snap.val();if(!g)return;
-    gameRef.update({
-      gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',
-      awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',
-      awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false
-    });
-    alert('경기가 적용되었습니다');
-  });
-}
-function deleteGame(key){if(confirm('삭제할까요?'))savedGamesRef.child(key).remove()}
-
-// 라인업
-function saveLineup(){
-  const players={};
-  positions.forEach(pos=>{
-    const name=document.getElementById('lin-name-'+pos).value;
-    const number=document.getElementById('lin-num-'+pos).value;
-    players[pos]={name:name||'-',number:number||''};
-  });
-  const data={visible:lineupData.visible||false,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players:players};
-  lineupRef.set(data).then(()=>{
-    alert('라인업이 저장되었습니다');
-  }).catch(err=>{
-    alert('저장 실패: '+err.message);
-  });
-}
-function applyLineup(){
-  const players={};
-  positions.forEach(pos=>{
-    const name=document.getElementById('lin-name-'+pos).value;
-    const number=document.getElementById('lin-num-'+pos).value;
-    players[pos]={name:name||'-',number:number||''};
-  });
-  const data={visible:true,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players:players};
-  lineupRef.set(data).then(()=>{
-    alert('라인업이 표시됩니다');
-  }).catch(err=>{
-    alert('적용 실패: '+err.message);
-  });
-}
+function switchTab(id,el){document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');document.querySelectorAll('.tab').forEach(t=>t.style.color='#aaa');document.getElementById(id).style.display='block';el.style.color='#e94560'}
+function changeAdminPassword(){const p=document.getElementById('newAdminPw').value;if(!p||p.length<4){alert('4자 이상 입력하세요');return}configRef.child('adminPassword').set(p);alert('관리자 비밀번호 변경 완료');document.getElementById('newAdminPw').value=''}
+function changeUserPassword(){const p=document.getElementById('newUserPw').value;if(!p){alert('비밀번호를 입력하세요');return}configRef.child('userPassword').set(p);alert('사용자 비밀번호 설정: '+p);document.getElementById('currentUserPw').value=p;document.getElementById('newUserPw').value=''}
+function resetUserPassword(){if(confirm('사용자 비밀번호를 삭제할까요?')){configRef.child('userPassword').remove();document.getElementById('currentUserPw').value='(없음)'}}
+function saveGame(){const g={gameTitle:document.getElementById('inputTitle').value,awayName:document.getElementById('inputAway').value,homeName:document.getElementById('inputHome').value,awayLogo:document.getElementById('inputAwayLogo').value,homeLogo:document.getElementById('inputHomeLogo').value,createdAt:Date.now()};savedGamesRef.push(g);alert('경기 저장 완료')}
+function applyGame(){gameRef.update({gameTitle:document.getElementById('inputTitle').value,awayName:document.getElementById('inputAway').value||'AWAY',homeName:document.getElementById('inputHome').value||'HOME',awayLogo:document.getElementById('inputAwayLogo').value,homeLogo:document.getElementById('inputHomeLogo').value,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});alert('경기 적용 완료')}
+function loadSavedGames(){savedGamesRef.on('value',s=>{const list=document.getElementById('gameList');if(!list)return;list.innerHTML='';const d=s.val();if(!d)return;Object.entries(d).forEach(([k,g])=>{list.innerHTML+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:#f8f8f8;border-radius:12px;margin-bottom:8px"><div><div style="color:#888;font-size:12px">${g.gameTitle||'제목없음'}</div><div style="font-size:15px;font-weight:600">${g.awayName||'?'} vs ${g.homeName||'?'}</div></div><div style="display:flex;gap:6px"><button onclick="loadGame('${k}')" style="padding:8px 14px;font-size:13px;background:#4caf50;color:#fff;border:none;border-radius:8px">적용</button><button onclick="deleteGame('${k}')" style="padding:8px 14px;font-size:13px;background:#e94560;color:#fff;border:none;border-radius:8px">삭제</button></div></div>`})})}
+function loadGame(k){savedGamesRef.child(k).once('value',s=>{const g=s.val();if(!g)return;gameRef.update({gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});alert('경기 적용 완료')})}
+function deleteGame(k){if(confirm('삭제할까요?'))savedGamesRef.child(k).remove()}
+function saveLineup(){const players={};positions.forEach(p=>{players[p]={name:document.getElementById('lin-name-'+p).value||'-',number:document.getElementById('lin-num-'+p).value||''}});lineupRef.set({visible:lineupData.visible||false,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players}).then(()=>alert('라인업 저장 완료')).catch(e=>alert('저장 실패: '+e.message))}
+function applyLineup(){const players={};positions.forEach(p=>{players[p]={name:document.getElementById('lin-name-'+p).value||'-',number:document.getElementById('lin-num-'+p).value||''}});lineupRef.set({visible:true,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players}).then(()=>alert('라인업 표시됩니다')).catch(e=>alert('실패: '+e.message))}
 </script>
-</body>
-</html>
