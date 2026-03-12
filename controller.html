@@ -311,7 +311,30 @@ function delPlayer(k){if(confirm('삭제?'))rosterRef.child(k).remove()}
 function renderRoster(){
   const el=document.getElementById('rosterListEl');if(!el)return;
   if(!rosterList.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:12px">등록된 선수가 없습니다</div>';return}
-  el.innerHTML=rosterList.map(r=>`<div class="roster-item"><span class="r-num">#${r.number}</span><span class="r-name">${r.name}</span><span class="r-pos">${r.position}</span><button style="background:#e94560;color:#fff;border:none" onclick="delPlayer('${r.key}')">삭제</button></div>`).join('');
+  el.innerHTML=rosterList.map(r=>{
+    const posLabel=APN[r.position]||r.position||'미정';
+    return `<div class="roster-item"><span class="r-num">#${r.number}</span><span class="r-name">${r.name}</span><span class="r-pos">${posLabel}</span><button style="background:#ff9800;color:#fff;border:none" onclick="editPlayer('${r.key}')">수정</button><button style="background:#e94560;color:#fff;border:none" onclick="delPlayer('${r.key}')">삭제</button></div>`;
+  }).join('');
+}
+function editPlayer(k){
+  const r=rosterList.find(x=>x.key===k);if(!r)return;
+  const posOpts=ALLPOS.map(p=>`<option value="${p}"${r.position===p?' selected':''}>${['IF','OF','UT'].includes(p)?APN[p]:p+' '+APN[p]}</option>`).join('');
+  const modal=document.createElement('div');modal.className='modal-bg';modal.id='editPlayerModal';
+  modal.innerHTML=`<div class="modal"><div class="card-title">선수 정보 수정</div>
+    <div class="form-row"><label>이름</label><input id="epName" value="${r.name}"></div>
+    <div class="form-row"><label>번호</label><input id="epNum" value="${r.number}" type="number" style="max-width:100px"></div>
+    <div class="form-row"><label>포지션</label><select id="epPos" style="max-width:140px"><option value="">미정</option>${posOpts}</select></div>
+    <button class="btn-save" onclick="saveEditPlayer('${k}')">저장</button>
+    <button class="btn-danger" onclick="document.getElementById('editPlayerModal').remove()" style="margin-top:6px">취소</button></div>`;
+  document.body.appendChild(modal);
+}
+function saveEditPlayer(k){
+  const name=document.getElementById('epName').value.trim();
+  const num=document.getElementById('epNum').value.trim();
+  const pos=document.getElementById('epPos').value;
+  if(!name||!num){alert('이름과 번호를 입력하세요');return}
+  rosterRef.child(k).update({name,number:num,position:pos||''});
+  document.getElementById('editPlayerModal').remove();
 }
 
 function buildAdminTab(){

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>선수 업로드</title></head><body>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database(),rosterRef=db.ref('roster');
+const players=[
+["강태우",23,"투수"],["고산",21,"투수"],["권익한",38,"내야수"],["김건",36,"내야수"],["김도윤",8,"내야수"],
+["김동환",22,"포수"],["김성재",29,"투수"],["문정환",5,"내야수"],["박슬우",34,"내야수"],["박슬찬",33,"외야수"],
+["박시환",7,"내야수"],["박지후",3,"외야수"],["박찬혁",37,"내야수"],["신담",27,"포수"],["신지수",9,"외야수"],
+["신지후",18,"외야수"],["심민용",14,"내야수"],["심윤태",2,"내야수"],["양승준",10,"내야수"],["오승유",35,"내야수"],
+["윤준",13,"내야수"],["이동희",1,"투수"],["이라온",30,"외야수"],["이서준",11,"투수"],["이석현",28,"외야수"],
+["이승빈",40,"내야수"],["이영현",4,"투수"],["임서찬",16,"외야수"],["임세준",12,"내야수"],["전성제",24,"내야수"],
+["전제민",26,"외야수"],["정승원",15,"투수"],["정시우",17,"외야수"],["정유진",25,"포수"],["정태림",19,"외야수"],
+["주민혁",6,"내야수"],["한정겸",31,"외야수"],["홍지용",32,"내야수"],["황규연",20,"투수"]
+];
+const posMap={"투수":"P","포수":"C","내야수":"IF","외야수":"OF"};
+async function upload(){
+  for(const [name,number,pos] of players){
+    await rosterRef.push({name,number:String(number),position:posMap[pos]||'UT'});
+  }
+  document.body.innerHTML='<h1 style="color:green">39명 업로드 완료!</h1>';
+}
+upload();
+</script>
+</body></html>
