@@ -128,6 +128,8 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),savedLineupsRef=db.ref('savedLineups'),configRef=db.ref('config'),rosterRef=db.ref('roster'),teamsRef=db.ref('teams');
 let isAdmin=false,selectedRole='user',activeGameKey='';
 const DEFAULT_ADMIN_PW='admin1234';
+async function sha256(msg){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+const DEFAULT_ADMIN_HASH=sha256(DEFAULT_ADMIN_PW);
 let gd={visible:false,gameTitle:'',awayName:'AWAY',homeName:'HOME',awayScore:0,homeScore:0,awayLogo:'',homeLogo:'',inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false};
 let ld={visible:false,teamName:'',players:{},displayMode:'defense'};
 let rosterList=[],teamsList=[];
@@ -149,8 +151,25 @@ function toggleAdminMode(){
 function doLogin(){
   const pw=document.getElementById('pwInput').value;if(!pw){alert('비밀번호를 입력하세요');return}
   document.getElementById('loginError').style.display='none';
-  if(selectedRole==='admin'){configRef.child('adminPassword').once('value',s=>{if(pw===(s.val()||DEFAULT_ADMIN_PW)){isAdmin=true;sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}else document.getElementById('loginError').style.display='block'})}
-  else{configRef.child('userPassword').once('value',s=>{if(!s.val()){alert('사용자 비밀번호가 설정되지 않았습니다.\n관리자에게 문의하세요.');return}if(pw===s.val()){isAdmin=false;sessionStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}else document.getElementById('loginError').style.display='block'})}
+  sha256(pw).then(hash=>{
+    if(selectedRole==='admin'){
+      configRef.child('adminPassword').once('value',async s=>{
+        const stored=s.val();
+        if(!stored){if(hash===await DEFAULT_ADMIN_HASH){isAdmin=true;sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}else document.getElementById('loginError').style.display='block';return}
+        if(hash===stored){isAdmin=true;sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}
+        else if(pw===stored){isAdmin=true;configRef.child('adminPassword').set(hash);sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}
+        else document.getElementById('loginError').style.display='block';
+      });
+    }else{
+      configRef.child('userPassword').once('value',s=>{
+        const stored=s.val();
+        if(!stored){alert('사용자 비밀번호가 설정되지 않았습니다.\n관리자에게 문의하세요.');return}
+        if(hash===stored){isAdmin=false;sessionStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}
+        else if(pw===stored){isAdmin=false;configRef.child('userPassword').set(hash);sessionStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}
+        else document.getElementById('loginError').style.display='block';
+      });
+    }
+  });
 }
 document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 function doLogout(){sessionStorage.removeItem('scoreSession');location.reload()}
@@ -344,7 +363,7 @@ document.getElementById('tabAdmin').innerHTML=`
 </script>
 <script>
 function initApp(){
-  if(isAdmin)configRef.child('userPassword').on('value',s=>{const el=document.getElementById('curUPw');if(el)el.value=s.val()||'(없음)'});
+  if(isAdmin)configRef.child('userPassword').on('value',s=>{const el=document.getElementById('curUPw');if(el)el.value=s.val()?'(설정됨)':'(없음)'});
   gameRef.on('value',s=>{const d=s.val();if(!d)return;gd=d;scoreVisible=!!gd.visible;updUI();updOvBtns()});
   lineupRef.on('value',s=>{const d=s.val();if(d){ld=d;lineupVisible=!!ld.visible;updOvBtns();
     const dm=d.displayMode||'defense';const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
@@ -385,8 +404,8 @@ function clrB(){gameRef.update({base1:false,base2:false,base3:false})}
 function switchTab(id,el){document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).style.display='block';el.classList.add('active')}
 </script>
 <script>
-function chAdmPw(){const p=document.getElementById('nAdmPw').value;if(!p||p.length<4){alert('4자 이상');return}configRef.child('adminPassword').set(p);alert('변경 완료');document.getElementById('nAdmPw').value=''}
-function chUPw(){const p=document.getElementById('nUPw').value;if(!p){alert('입력하세요');return}configRef.child('userPassword').set(p);alert('설정: '+p);document.getElementById('curUPw').value=p;document.getElementById('nUPw').value=''}
+function chAdmPw(){const p=document.getElementById('nAdmPw').value;if(!p||p.length<4){alert('4자 이상');return}sha256(p).then(h=>{configRef.child('adminPassword').set(h);alert('변경 완료');document.getElementById('nAdmPw').value=''})}
+function chUPw(){const p=document.getElementById('nUPw').value;if(!p){alert('입력하세요');return}sha256(p).then(h=>{configRef.child('userPassword').set(h);alert('설정 완료');document.getElementById('curUPw').value='(설정됨)';document.getElementById('nUPw').value=''})}
 function rstUPw(){if(confirm('삭제할까요?')){configRef.child('userPassword').remove();document.getElementById('curUPw').value='(없음)'}}
 function saveG(){const aN=document.getElementById('inAway').value,hN=document.getElementById('inHome').value,aL=document.getElementById('inALogo').value,hL=document.getElementById('inHLogo').value;savedGamesRef.push({gameTitle:document.getElementById('inTitle').value,awayName:aN,homeName:hN,awayLogo:aL,homeLogo:hL,createdAt:Date.now()});saveTeamLogo(aN,aL);saveTeamLogo(hN,hL);alert('저장 완료')}
 function applyG(){const aN=document.getElementById('inAway').value||'AWAY',hN=document.getElementById('inHome').value||'HOME',aL=document.getElementById('inALogo').value,hL=document.getElementById('inHLogo').value;gameRef.update({gameTitle:document.getElementById('inTitle').value,awayName:aN,homeName:hN,awayLogo:aL,homeLogo:hL,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});saveTeamLogo(aN,aL);saveTeamLogo(hN,hL);alert('적용 완료')}
