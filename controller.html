@@ -214,11 +214,11 @@ function buildSetupTab(){
 document.getElementById('tabSetup').innerHTML=`
 <div class="card"><div class="card-title">경기 정보</div>
 <div class="form-row"><label>경기명</label><input id="inTitle" placeholder="예: 스토브리그 in 창녕"></div>
-<div class="form-row"><label>원정팀</label><input id="inAway" placeholder="원정팀명" oninput="suggestTeam('away')"><div id="sugAway" style="position:relative"></div></div>
-<div class="form-row"><label>원정로고</label><input id="inALogo" placeholder="로고 URL (선택)" readonly style="font-size:12px;color:#888"></div>
+<div class="form-row"><label>원정팀</label><input id="inAway" placeholder="원정팀명" oninput="suggestTeam('away')" style="flex:1"><button onclick="showTeamPicker('away')" style="padding:10px 12px;font-size:13px;background:#0f3460;color:#fff;border:none;border-radius:10px;white-space:nowrap;margin-left:4px">저장된 팀</button></div><div id="sugAway" style="position:relative"></div>
+<div class="form-row"><label>원정로고</label><input id="inALogo" placeholder="로고 (선택)" readonly style="font-size:12px;color:#888;flex:1"><img id="prevALogo" style="width:32px;height:32px;border-radius:6px;margin-left:6px;display:none;object-fit:contain"></div>
 <div class="form-row"><label></label><input type="file" id="fileALogo" accept="image/*" onchange="uploadLogo('away')" style="font-size:13px;padding:8px"></div>
-<div class="form-row"><label>홈팀</label><input id="inHome" placeholder="홈팀명" oninput="suggestTeam('home')"><div id="sugHome" style="position:relative"></div></div>
-<div class="form-row"><label>홈로고</label><input id="inHLogo" placeholder="로고 URL (선택)" readonly style="font-size:12px;color:#888"></div>
+<div class="form-row"><label>홈팀</label><input id="inHome" placeholder="홈팀명" oninput="suggestTeam('home')" style="flex:1"><button onclick="showTeamPicker('home')" style="padding:10px 12px;font-size:13px;background:#0f3460;color:#fff;border:none;border-radius:10px;white-space:nowrap;margin-left:4px">저장된 팀</button></div><div id="sugHome" style="position:relative"></div>
+<div class="form-row"><label>홈로고</label><input id="inHLogo" placeholder="로고 (선택)" readonly style="font-size:12px;color:#888;flex:1"><img id="prevHLogo" style="width:32px;height:32px;border-radius:6px;margin-left:6px;display:none;object-fit:contain"></div>
 <div class="form-row"><label></label><input type="file" id="fileHLogo" accept="image/*" onchange="uploadLogo('home')" style="font-size:13px;padding:8px"></div>
 <button class="btn-save" onclick="saveG()">경기 저장</button>
 <button class="btn-apply" onclick="applyG()">바로 적용</button></div>
@@ -476,6 +476,7 @@ function uploadLogo(team){
   const r=new FileReader();r.onload=e=>{
     const dataUrl=e.target.result;
     document.getElementById(team==='away'?'inALogo':'inHLogo').value=dataUrl;
+    updateLogoPreview(team);
     const teamName=document.getElementById(team==='away'?'inAway':'inHome').value.trim();
     if(teamName)saveTeamLogo(teamName,dataUrl);
     alert('로고 업로드 완료');
@@ -495,6 +496,26 @@ function pickTeam(side,key){
   document.getElementById(side==='away'?'inAway':'inHome').value=t.name;
   document.getElementById(side==='away'?'inALogo':'inHLogo').value=t.logo||'';
   document.getElementById(side==='away'?'sugAway':'sugHome').innerHTML='';
+  updateLogoPreview(side);
+}
+function showTeamPicker(side){
+  if(!teamsList.length){alert('저장된 팀이 없습니다.\n팀 이름과 로고를 입력 후 경기를 저장하면 자동으로 팀이 등록됩니다.');return}
+  const modal=document.createElement('div');modal.className='modal-bg';modal.id='teamPickerModal';
+  modal.innerHTML='<div class="modal"><div class="card-title">저장된 팀 선택</div><div style="max-height:60vh;overflow-y:auto">'+
+    teamsList.map(t=>'<div style="display:flex;align-items:center;padding:12px;background:#f8f8f8;border-radius:10px;margin-bottom:6px;cursor:pointer" onclick="pickTeamFromModal(\''+side+'\',\''+t.key+'\')">'+
+      (t.logo?'<img src="'+t.logo+'" style="width:36px;height:36px;border-radius:6px;margin-right:10px;object-fit:contain">':'<div style="width:36px;height:36px;border-radius:6px;margin-right:10px;background:#ddd;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999">없음</div>')+
+      '<span style="font-weight:700;font-size:15px">'+t.name+'</span></div>').join('')+
+    '</div><button class="btn-danger" onclick="document.getElementById(\'teamPickerModal\').remove()" style="margin-top:10px">닫기</button></div>';
+  document.body.appendChild(modal);
+}
+function pickTeamFromModal(side,key){
+  pickTeam(side,key);
+  const m=document.getElementById('teamPickerModal');if(m)m.remove();
+}
+function updateLogoPreview(side){
+  const logo=document.getElementById(side==='away'?'inALogo':'inHLogo').value;
+  const img=document.getElementById(side==='away'?'prevALogo':'prevHLogo');
+  if(img){if(logo&&logo.length>10){img.src=logo;img.style.display='block'}else{img.style.display='none'}}
 }
 function saveTeamLogo(name,logo){
   if(!name||!logo)return;
