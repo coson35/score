@@ -22,6 +22,7 @@ input:focus,select:focus{outline:none;border-color:#2c6fbb}
 </style>
 </head>
 <body>
+<script>!function(){var h=location.hostname;if(h&&h!=='coson35.github.io'&&h!=='localhost'&&h!=='127.0.0.1'){document.documentElement.innerHTML=''}}()</script>
 <div id="loginScreen">
   <button id="adminToggle" onclick="toggleAdminMode()" style="position:absolute;top:16px;right:16px;font-size:11px;color:#aaa;background:transparent;border:1px solid #ddd;padding:6px 12px;border-radius:20px">
     <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:middle;margin-right:3px"><path d="M12 2a5 5 0 015 5v3H7V7a5 5 0 015-5z" fill="none" stroke="#aaa" stroke-width="2"/><rect x="3" y="10" width="18" height="12" rx="2" fill="none" stroke="#aaa" stroke-width="2"/><circle cx="12" cy="16" r="1.5" fill="#aaa"/></svg>관리자
@@ -140,7 +141,7 @@ const APN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS
 let scoreVisible=false,lineupVisible=false;
 
 (function checkSession(){
-  const s=sessionStorage.getItem('scoreSession');
+  const s=localStorage.getItem('scoreSession');
   if(s){try{const d=JSON.parse(s);selectedRole=d.role;isAdmin=d.role==='admin';enterApp();}catch(e){}}
 })();
 
@@ -155,24 +156,24 @@ function doLogin(){
     if(selectedRole==='admin'){
       configRef.child('adminPassword').once('value',async s=>{
         const stored=s.val();
-        if(!stored){if(hash===await DEFAULT_ADMIN_HASH){isAdmin=true;sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}else document.getElementById('loginError').style.display='block';return}
-        if(hash===stored){isAdmin=true;sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}
-        else if(pw===stored){isAdmin=true;configRef.child('adminPassword').set(hash);sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}
+        if(!stored){if(hash===await DEFAULT_ADMIN_HASH){isAdmin=true;localStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}else document.getElementById('loginError').style.display='block';return}
+        if(hash===stored){isAdmin=true;localStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}
+        else if(pw===stored){isAdmin=true;configRef.child('adminPassword').set(hash);localStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}
         else document.getElementById('loginError').style.display='block';
       });
     }else{
       configRef.child('userPassword').once('value',s=>{
         const stored=s.val();
         if(!stored){alert('사용자 비밀번호가 설정되지 않았습니다.\n관리자에게 문의하세요.');return}
-        if(hash===stored){isAdmin=false;sessionStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}
-        else if(pw===stored){isAdmin=false;configRef.child('userPassword').set(hash);sessionStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}
+        if(hash===stored){isAdmin=false;localStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}
+        else if(pw===stored){isAdmin=false;configRef.child('userPassword').set(hash);localStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}
         else document.getElementById('loginError').style.display='block';
       });
     }
   });
 }
 document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
-function doLogout(){sessionStorage.removeItem('scoreSession');location.reload()}
+function doLogout(){localStorage.removeItem('scoreSession');location.reload()}
 function enterApp(){document.getElementById('loginScreen').style.display='none';const m=document.getElementById('mainApp');m.style.display='block';m.style.padding='12px';m.style.paddingBottom='70px';buildUI();initApp()}
 </script>
 <script>
