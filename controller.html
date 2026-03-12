@@ -109,12 +109,15 @@ input:focus,select:focus{outline:none;border-color:#e94560}
 <!-- 메인 앱 -->
 <div id="mainApp">
 
-  <!-- 오버레이 표시 컨트롤 -->
-  <div class="section" style="display:flex;justify-content:space-between;align-items:center">
-    <div class="section-title" style="margin-bottom:0">📺 오버레이 표시</div>
-    <button onclick="doLogout()" style="background:#333;color:#ff6b6b;padding:6px 14px;font-size:12px">로그아웃</button>
+  <!-- 상단 바 -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <span style="color:#e94560;font-size:15px;font-weight:700">⚾ 스코어보드</span>
+    <button onclick="doLogout()" style="background:#333;color:#ff6b6b;padding:8px 16px;font-size:13px;border-radius:6px">로그아웃</button>
   </div>
+
+  <!-- 오버레이 표시 컨트롤 -->
   <div class="section">
+    <div class="section-title">📺 오버레이 표시</div>
     <div class="overlay-btns">
       <button class="btn-on" id="btnScoreOn" onclick="toggleOverlay('scoreboard',true)">스코어보드 ON</button>
       <button class="btn-off" id="btnScoreOff" onclick="toggleOverlay('scoreboard',false)">스코어보드 OFF</button>
