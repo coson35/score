@@ -245,7 +245,7 @@ document.getElementById('tabRoster').innerHTML=`
 <div class="card"><div class="card-title">선수 등록</div>
 <div class="form-row"><label>이름</label><input id="rName" placeholder="선수 이름"></div>
 <div class="form-row"><label>번호</label><input id="rNum" placeholder="등번호" type="number" style="max-width:100px"></div>
-<div class="form-row"><label>포지션</label><select id="rPos" style="max-width:140px"><option value="">미정</option>${ALLPOS.map(p=>`<option value="${p}">${p} ${APN[p]}</option>`).join('')}</select></div>
+<div class="form-row"><label>포지션</label><select id="rPos" style="max-width:140px"><option value="">미정</option>${ALLPOS.map(p=>`<option value="${p}">${['IF','OF','UT'].includes(p)?APN[p]:p+' '+APN[p]}</option>`).join('')}</select></div>
 <button class="btn-save" onclick="addPlayer()">선수 추가</button></div>
 <div class="card"><div class="card-title">선수 명단</div><div id="rosterListEl"></div></div>`}
 
@@ -276,6 +276,7 @@ function initApp(){
   lineupRef.on('value',s=>{const d=s.val();if(d){ld=d;lineupVisible=!!ld.visible;updOvBtns();
     const dm=d.displayMode||'defense';const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
     if(md)md.className='mode-btn'+(dm==='defense'?' active':'');if(mb)mb.className='mode-btn'+(dm==='batting'?' active':'');
+    fillLineupFields();
   }});
   rosterRef.on('value',s=>{rosterList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>rosterList.push({key:k,...v}));rosterList.sort((a,b)=>Number(a.number)-Number(b.number));renderRoster();updateLineupSelects()});
   teamsRef.on('value',s=>{teamsList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>teamsList.push({key:k,...v}));teamsList.sort((a,b)=>(a.name||'').localeCompare(b.name||''))});
@@ -350,6 +351,22 @@ function saveEditG(k){
 function closeEditModal(){const m=document.getElementById('editModal');if(m)m.remove()}
 </script>
 <script>
+function fillLineupFields(){
+  const $=id=>document.getElementById(id);
+  if($('linTeam'))$('linTeam').value=ld.teamName||'';
+  if(ld.players){POS.forEach(p=>{
+    const nm=$('ln-'+p),nu=$('ln-n-'+p),sel=$('ln-sel-'+p);
+    if(nm)nm.value=ld.players[p]?ld.players[p].name||'':'';
+    if(nu)nu.value=ld.players[p]?ld.players[p].number||'':'';
+    if(sel){const r=rosterList.find(x=>x.name===(ld.players[p]&&ld.players[p].name)&&x.number==String(ld.players[p]&&ld.players[p].number));if(r)sel.value=r.key;else sel.value=''}
+  })}
+  if(ld.battingOrder){for(let i=1;i<=9;i++){
+    const sel=$('bat-sel-'+i),pos=$('bat-pos-'+i);
+    const bo=ld.battingOrder[i];
+    if(bo&&sel){const r=rosterList.find(x=>x.name===bo.name&&x.number==String(bo.number));if(r)sel.value=r.key;else sel.value=''}
+    if(bo&&pos)pos.value=bo.position||'';
+  }}
+}
 function saveLin(){
   const p={};POS.forEach(pos=>{p[pos]={name:document.getElementById('ln-'+pos).value||'-',number:document.getElementById('ln-n-'+pos).value||''}});
   const bo={};for(let i=1;i<=9;i++){
