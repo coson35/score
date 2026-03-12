@@ -7,29 +7,29 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:flex-end}
-#scoreboard{width:100%;height:49px;display:flex;align-items:center;background:linear-gradient(to right,#1a1a2e,#16213e);border-top:2px solid #e94560;color:#fff;opacity:0;transition:opacity 0.5s}
+#scoreboard{width:100%;height:44px;display:flex;align-items:center;background:linear-gradient(to right,#1a1a2e,#16213e);border-top:2px solid #e94560;color:#fff;opacity:0;transition:opacity 0.5s}
 #scoreboard.visible{opacity:1}
-.game-info{background:#0f3460;padding:0 12px;height:100%;display:flex;align-items:center;font-size:12px;color:#a0c4ff;white-space:nowrap;max-width:220px;overflow:hidden}
+.game-info{background:#0f3460;padding:0 10px;height:100%;display:flex;align-items:center;font-size:11px;color:#a0c4ff;white-space:nowrap;max-width:200px;overflow:hidden}
 .team-section{display:flex;align-items:center;height:100%;flex:1;justify-content:center;gap:4px}
 .team{display:flex;align-items:center;gap:5px;padding:0 6px}
 .team-name{font-size:14px;font-weight:700;letter-spacing:1px}
-.team-logo{width:32px;height:32px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(255,255,255,0.3);box-shadow:0 0 6px rgba(255,255,255,0.2)}
+.team-logo{width:30px;height:30px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 8px rgba(255,255,255,0.25);flex-shrink:0}
 .team-logo.has-logo{display:block}
-.score{font-size:26px;font-weight:900;min-width:28px;text-align:center;color:#ffd700}
-.vs-divider{width:2px;height:28px;background:#e94560;margin:0 3px}
-.count-section{display:flex;align-items:center;gap:10px;padding:0 12px;height:100%;background:#0a1628}
-.inning{font-size:14px;font-weight:700;color:#e94560;min-width:36px;text-align:center}
-.inning-half{font-size:10px}
-.bases{position:relative;width:34px;height:34px}
-.base{position:absolute;width:13px;height:13px;border:1.5px solid #666;background:transparent;transform:rotate(45deg)}
+.score{font-size:24px;font-weight:900;min-width:26px;text-align:center;color:#ffd700}
+.vs-divider{width:2px;height:24px;background:#e94560;margin:0 3px}
+.count-section{display:flex;align-items:center;gap:14px;padding:0 14px;height:100%;background:#0a1628}
+.inning{font-size:17px;font-weight:900;color:#e94560;min-width:42px;text-align:center;letter-spacing:1px}
+.inning-half{font-size:12px}
+.bases{position:relative;width:38px;height:38px;flex-shrink:0}
+.base{position:absolute;width:14px;height:14px;border:1.5px solid #666;background:transparent;transform:rotate(45deg)}
 .base.active{background:#ffd700;border-color:#ffd700}
-.base-1{right:0;top:50%;transform:rotate(45deg) translate(-2px,-2px)}
-.base-2{left:50%;top:0;transform:rotate(45deg) translate(-6px,0)}
-.base-3{left:0;top:50%;transform:rotate(45deg) translate(2px,-7px)}
-.bso{display:flex;gap:7px;font-size:12px;font-weight:700}
-.bso-row{display:flex;align-items:center;gap:3px}
-.bso-label{color:#888;margin-right:2px;font-size:11px}
-.dot{width:10px;height:10px;border-radius:50%;border:1.5px solid #666;background:transparent}
+.base-2{left:50%;top:1px;margin-left:-7px}
+.base-3{left:1px;top:50%;margin-top:-7px}
+.base-1{right:1px;top:50%;margin-top:-7px}
+.bso{display:flex;gap:10px;font-size:12px;font-weight:700}
+.bso-row{display:flex;align-items:center;gap:4px}
+.bso-label{color:#999;margin-right:2px;font-size:12px;font-weight:900}
+.dot{width:11px;height:11px;border-radius:50%;border:1.5px solid #666;background:transparent}
 .dot.ball.active{background:#4caf50;border-color:#4caf50}
 .dot.strike.active{background:#ffd700;border-color:#ffd700}
 .dot.out.active{background:#e94560;border-color:#e94560}
@@ -54,9 +54,9 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
   <div class="count-section">
     <div class="inning"><span class="inning-half" id="inningHalf">▲</span><span id="inningNum">1</span></div>
     <div class="bases">
-      <div class="base base-1" id="base1"></div>
       <div class="base base-2" id="base2"></div>
       <div class="base base-3" id="base3"></div>
+      <div class="base base-1" id="base1"></div>
     </div>
     <div class="bso">
       <div class="bso-row"><span class="bso-label">B</span><span class="dot ball" id="b1"></span><span class="dot ball" id="b2"></span><span class="dot ball" id="b3"></span></div>
