@@ -133,6 +133,8 @@ let ld={visible:false,teamName:'',players:{},displayMode:'defense'};
 let rosterList=[],teamsList=[];
 const POS=['P','C','1B','2B','3B','SS','LF','CF','RF'];
 const PN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
+const ALLPOS=['P','C','1B','2B','3B','SS','LF','CF','RF','IF','OF','UT'];
+const APN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수',IF:'내야수',OF:'외야수',UT:'야수'};
 let scoreVisible=false,lineupVisible=false;
 
 (function checkSession(){
@@ -207,7 +209,7 @@ function rosterOptions(){return rosterList.map(r=>`<option value="${r.key}">#${r
 
 function buildLineupTab(){
 let opts=rosterOptions();
-let h=`<div class="card"><div class="card-title">라인업 표시 모드</div><div class="lineup-mode-section"><button class="mode-btn active" id="modeDefense" onclick="setLineupMode('defense')">⛳ 수비 위치</button><button class="mode-btn" id="modeBatting" onclick="setLineupMode('batting')">📋 타순</button></div></div>`;
+let h=`<div class="card"><div class="card-title">라인업 표시 모드</div><div class="lineup-mode-section"><button class="mode-btn active" id="modeDefense" onclick="setLineupMode('defense')"><svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:4px"><path d="M12 2L3 9l2 11h14l2-11L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2" fill="currentColor"/><circle cx="8" cy="14" r="1.5" fill="currentColor"/><circle cx="16" cy="14" r="1.5" fill="currentColor"/></svg>수비 위치</button><button class="mode-btn" id="modeBatting" onclick="setLineupMode('batting')"><svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:4px"><line x1="8" y1="6" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="10" x2="18" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="14" x2="18" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="18" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="4.5" cy="6" r="1.5" fill="currentColor"/><circle cx="4.5" cy="10" r="1.5" fill="currentColor"/><circle cx="4.5" cy="14" r="1.5" fill="currentColor"/><circle cx="4.5" cy="18" r="1.5" fill="currentColor"/></svg>타순</button></div></div>`;
 h+=`<div class="card"><div class="card-title">우리팀 선발 라인업</div><div class="form-row"><label>팀명</label><input id="linTeam" placeholder="우리팀 이름"></div><div style="margin-top:8px">`;
 POS.forEach(p=>{h+=`<div class="lin-row"><span class="pos">${p}</span><select class="player-select" id="ln-sel-${p}" onchange="fillFromRoster('${p}')"><option value="">선수 선택</option>${opts}</select><input id="ln-${p}" placeholder="${PN[p]}" style="max-width:90px"><input class="num" id="ln-n-${p}" placeholder="#" type="number" style="max-width:50px"></div>`});
 h+=`</div><div style="margin-top:12px"><div class="card-title">타순 설정</div>`;
@@ -243,7 +245,7 @@ document.getElementById('tabRoster').innerHTML=`
 <div class="card"><div class="card-title">선수 등록</div>
 <div class="form-row"><label>이름</label><input id="rName" placeholder="선수 이름"></div>
 <div class="form-row"><label>번호</label><input id="rNum" placeholder="등번호" type="number" style="max-width:100px"></div>
-<div class="form-row"><label>포지션</label><select id="rPos" style="max-width:120px"><option value="">선택</option>${POS.map(p=>`<option value="${p}">${p} ${PN[p]}</option>`).join('')}</select></div>
+<div class="form-row"><label>포지션</label><select id="rPos" style="max-width:140px"><option value="">미정</option>${ALLPOS.map(p=>`<option value="${p}">${p} ${APN[p]}</option>`).join('')}</select></div>
 <button class="btn-save" onclick="addPlayer()">선수 추가</button></div>
 <div class="card"><div class="card-title">선수 명단</div><div id="rosterListEl"></div></div>`}
 
@@ -264,8 +266,8 @@ function renderRoster(){
 
 function buildAdminTab(){
 document.getElementById('tabAdmin').innerHTML=`
-<div class="card"><div class="card-title">🔒 관리자 비밀번호</div><div class="form-row"><label>새 비번</label><input id="nAdmPw" type="password" placeholder="새 관리자 비밀번호"></div><button class="btn-save" onclick="chAdmPw()">변경</button></div>
-<div class="card"><div class="card-title">👤 사용자 비밀번호</div><div class="form-row"><label>현재</label><input id="curUPw" readonly style="color:#e94560;font-weight:700"></div><div class="form-row"><label>새 비번</label><input id="nUPw" placeholder="새 사용자 비밀번호"></div><button class="btn-warn" onclick="chUPw()">변경</button><button class="btn-danger" onclick="rstUPw()">삭제</button></div>`}
+<div class="card"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="3" y="11" width="18" height="11" rx="2" fill="none" stroke="#e94560" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" fill="none" stroke="#e94560" stroke-width="2"/><circle cx="12" cy="16" r="1.5" fill="#e94560"/><line x1="12" y1="17.5" x2="12" y2="19.5" stroke="#e94560" stroke-width="2"/></svg>관리자 비밀번호</div><div class="form-row"><label>새 비번</label><input id="nAdmPw" type="password" placeholder="새 관리자 비밀번호"></div><button class="btn-save" onclick="chAdmPw()">변경</button></div>
+<div class="card"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><circle cx="12" cy="8" r="4" fill="none" stroke="#0f3460" stroke-width="2"/><path d="M4 21v-2a8 8 0 0116 0v2" fill="none" stroke="#0f3460" stroke-width="2"/></svg>사용자 비밀번호</div><div class="form-row"><label>현재</label><input id="curUPw" readonly style="color:#e94560;font-weight:700"></div><div class="form-row"><label>새 비번</label><input id="nUPw" placeholder="새 사용자 비밀번호"></div><button class="btn-warn" onclick="chUPw()">변경</button><button class="btn-danger" onclick="rstUPw()">삭제</button></div>`}
 </script>
 <script>
 function initApp(){
@@ -313,7 +315,7 @@ function chUPw(){const p=document.getElementById('nUPw').value;if(!p){alert('입
 function rstUPw(){if(confirm('삭제할까요?')){configRef.child('userPassword').remove();document.getElementById('curUPw').value='(없음)'}}
 function saveG(){const aN=document.getElementById('inAway').value,hN=document.getElementById('inHome').value,aL=document.getElementById('inALogo').value,hL=document.getElementById('inHLogo').value;savedGamesRef.push({gameTitle:document.getElementById('inTitle').value,awayName:aN,homeName:hN,awayLogo:aL,homeLogo:hL,createdAt:Date.now()});saveTeamLogo(aN,aL);saveTeamLogo(hN,hL);alert('저장 완료')}
 function applyG(){const aN=document.getElementById('inAway').value||'AWAY',hN=document.getElementById('inHome').value||'HOME',aL=document.getElementById('inALogo').value,hL=document.getElementById('inHLogo').value;gameRef.update({gameTitle:document.getElementById('inTitle').value,awayName:aN,homeName:hN,awayLogo:aL,homeLogo:hL,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});saveTeamLogo(aN,aL);saveTeamLogo(hN,hL);alert('적용 완료')}
-function loadGames(){savedGamesRef.on('value',s=>{const el=document.getElementById('gList');if(!el)return;el.innerHTML='';const d=s.val();if(!d)return;Object.entries(d).forEach(([k,g])=>{
+function loadGames(){savedGamesRef.on('value',s=>{const el=document.getElementById('gList');if(!el)return;el.innerHTML='';const d=s.val();if(!d)return;const entries=Object.entries(d);entries.sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));entries.forEach(([k,g])=>{
 el.innerHTML+=`<div class="game-item${k===activeGameKey?' active-game':''}" id="gi-${k}"><div class="info"><div class="sub">${g.gameTitle||'제목없음'}</div>${g.awayName||'?'} vs ${g.homeName||'?'}</div><div class="btns"><button style="background:#ff9800;color:#fff;border:none" onclick="editG('${k}')">수정</button><button style="background:#4caf50;color:#fff;border:none" onclick="loadG('${k}')">적용</button><button style="background:#e94560;color:#fff;border:none" onclick="delG('${k}')">삭제</button></div></div>`})})}
 function loadG(k){activeGameKey=k;savedGamesRef.child(k).once('value',s=>{const g=s.val();if(!g)return;gameRef.update({gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});loadGames()})}
 function delG(k){if(confirm('삭제?')){if(k===activeGameKey)activeGameKey='';savedGamesRef.child(k).remove()}}
