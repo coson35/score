@@ -9,12 +9,12 @@
 body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#f5f5f5;color:#222;min-height:100vh;-webkit-tap-highlight-color:transparent}
 button{font-family:inherit;cursor:pointer;border:1px solid #ddd;border-radius:12px;font-weight:700;transition:all 0.1s;background:#fff;color:#222}
 button:active{transform:scale(0.96)}
-input{font-family:inherit;border-radius:12px;border:1px solid #ddd;background:#fff;color:#222;padding:12px 14px;font-size:16px;width:100%}
-input:focus{outline:none;border-color:#2c6fbb}
+input,select{font-family:inherit;border-radius:12px;border:1px solid #ddd;background:#fff;color:#222;padding:12px 14px;font-size:16px;width:100%}
+input:focus,select:focus{outline:none;border-color:#2c6fbb}
 #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:14px;padding:24px;background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);position:relative}
 .login-title{font-size:22px;font-weight:900;color:#1a1a2e;letter-spacing:1px}
 #loginScreen input{max-width:280px;text-align:center;font-size:18px}
-.login-btn{background:linear-gradient(135deg,#2c6fbb,#1a4a8a);color:#fff;padding:14px;font-size:17px;border:none;border-radius:12px;width:100%;max-width:280px}
+.login-btn{background:linear-gradient(135deg,#1a4a8a,#2c6fbb);color:#fff;padding:14px;font-size:17px;border:none;border-radius:12px;width:100%;max-width:280px}
 #loginError{color:#e94560;font-size:14px;display:none}
 .login-credit{position:absolute;bottom:24px;color:#999;font-size:13px;font-weight:600}
 .bso-dot:active,.base-b:active{transform:scale(0.9);opacity:0.7}
@@ -26,14 +26,12 @@ input:focus{outline:none;border-color:#2c6fbb}
   <button id="adminToggle" onclick="toggleAdminMode()" style="position:absolute;top:16px;right:16px;font-size:11px;color:#aaa;background:transparent;border:1px solid #ddd;padding:6px 12px;border-radius:20px">
     <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:middle;margin-right:3px"><path d="M12 2a5 5 0 015 5v3H7V7a5 5 0 015-5z" fill="none" stroke="#aaa" stroke-width="2"/><rect x="3" y="10" width="18" height="12" rx="2" fill="none" stroke="#aaa" stroke-width="2"/><circle cx="12" cy="16" r="1.5" fill="#aaa"/></svg>관리자
   </button>
+  <!-- 신월중학교 스타일 로고 -->
   <svg viewBox="0 0 100 100" width="80" height="80">
-    <defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a4a8a"/><stop offset="100%" stop-color="#2c6fbb"/></linearGradient></defs>
-    <rect width="100" height="100" rx="22" fill="url(#bg)"/>
-    <text x="50" y="42" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="sans-serif">SCORE</text>
-    <text x="50" y="58" text-anchor="middle" font-size="11" fill="#a0c4ff" font-family="sans-serif">BOARD</text>
-    <line x1="25" y1="66" x2="75" y2="66" stroke="#e94560" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="50" cy="78" r="6" fill="none" stroke="#ffd700" stroke-width="1.5"/>
-    <path d="M44.5 76Q47 78 50 74t5.5 2M44.5 80Q47 78 50 82t5.5-2" fill="none" stroke="#ffd700" stroke-width="1"/>
+    <rect width="100" height="100" rx="20" fill="#1a4a8a"/>
+    <line x1="15" y1="15" x2="85" y2="85" stroke="#e94560" stroke-width="10" stroke-linecap="round"/>
+    <text x="28" y="38" font-size="22" font-weight="900" fill="#fff" font-family="sans-serif">신</text>
+    <text x="58" y="82" font-size="22" font-weight="900" fill="#fff" font-family="sans-serif">월</text>
   </svg>
   <div class="login-title">스코어보드</div>
   <input type="password" id="pwInput" placeholder="비밀번호" autocomplete="off">
@@ -83,11 +81,11 @@ input:focus{outline:none;border-color:#2c6fbb}
 .tab{flex:1;padding:10px 0;text-align:center;font-size:13px;font-weight:700;color:#bbb;background:#fff;border:none;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:2px}
 .tab svg{width:20px;height:20px;fill:currentColor}
 .tab.active{color:#e94560}
-</style>
-<style>
 .form-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
 .form-row label{font-size:13px;color:#888;min-width:55px;font-weight:600}
-.form-row input{flex:1}
+.form-row input,.form-row select{flex:1}
+</style>
+<style>
 .game-list{max-height:300px;overflow-y:auto}
 .game-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8f8f8;border-radius:12px;margin-bottom:6px;border:2px solid transparent}
 .game-item.active-game{border-color:#0f3460;background:#eef3ff}
@@ -97,7 +95,7 @@ input:focus{outline:none;border-color:#2c6fbb}
 .game-item .btns button{padding:6px 10px;font-size:12px;border-radius:8px}
 .lin-row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
 .lin-row .pos{font-size:14px;font-weight:900;color:#e94560;min-width:30px;text-align:center}
-.lin-row input{flex:1;padding:10px;font-size:14px}
+.lin-row input,.lin-row select{flex:1;padding:10px;font-size:14px}
 .lin-row .num{max-width:55px}
 .btn-save{width:100%;padding:12px;font-size:15px;background:#0f3460;color:#fff;border:none;border-radius:12px;margin-top:8px}
 .btn-apply{width:100%;padding:12px;font-size:15px;background:#4caf50;color:#fff;border:none;border-radius:12px;margin-top:8px}
@@ -108,33 +106,38 @@ input:focus{outline:none;border-color:#2c6fbb}
 .mode-btn.active{background:#0f3460;color:#fff;border-color:#0f3460}
 .bat-row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
 .bat-row .order{font-size:16px;font-weight:900;color:#0f3460;min-width:24px;text-align:center}
-.bat-row input{flex:1;padding:10px;font-size:14px}
+.bat-row input,.bat-row select{flex:1;padding:10px;font-size:14px}
 .bat-row .num{max-width:55px}
-.bat-row select{padding:10px;font-size:14px;border-radius:12px;border:1px solid #ddd;background:#fff;max-width:70px}
+.bat-row .pos-sel{max-width:70px}
 .modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:360px;max-height:80vh;overflow-y:auto}
 .modal .card-title{margin-bottom:16px}
+/* 선수 명단 */
+.roster-item{display:flex;align-items:center;padding:10px;background:#f8f8f8;border-radius:10px;margin-bottom:4px;gap:8px}
+.roster-item .r-num{font-weight:900;color:#0f3460;min-width:30px;text-align:center}
+.roster-item .r-name{flex:1;font-weight:600}
+.roster-item .r-pos{color:#888;font-size:13px;min-width:30px}
+.roster-item button{padding:4px 8px;font-size:11px;border-radius:6px}
+.player-select{padding:10px;font-size:14px;border-radius:12px;border:1px solid #ddd;background:#fff;width:100%}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script>
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),configRef=db.ref('config');
+const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),configRef=db.ref('config'),rosterRef=db.ref('roster');
 let isAdmin=false,selectedRole='user',activeGameKey='';
 const DEFAULT_ADMIN_PW='admin1234';
 let gd={visible:false,gameTitle:'',awayName:'AWAY',homeName:'HOME',awayScore:0,homeScore:0,awayLogo:'',homeLogo:'',inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false};
 let ld={visible:false,teamName:'',players:{},displayMode:'defense'};
+let rosterList=[];
 const POS=['P','C','1B','2B','3B','SS','LF','CF','RF'];
 const PN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
 let scoreVisible=false,lineupVisible=false;
 
-// 세션 유지
 (function checkSession(){
   const s=sessionStorage.getItem('scoreSession');
-  if(s){
-    try{const d=JSON.parse(s);selectedRole=d.role;isAdmin=d.role==='admin';enterApp();}catch(e){}
-  }
+  if(s){try{const d=JSON.parse(s);selectedRole=d.role;isAdmin=d.role==='admin';enterApp();}catch(e){}}
 })();
 
 function toggleAdminMode(){
@@ -142,19 +145,10 @@ function toggleAdminMode(){
   else{selectedRole='user';document.getElementById('adminToggle').style.borderColor='#ddd';document.getElementById('adminToggle').style.color='#aaa';document.getElementById('pwInput').placeholder='비밀번호'}
 }
 function doLogin(){
-  const pw=document.getElementById('pwInput').value;
-  if(!pw){alert('비밀번호를 입력하세요');return}
+  const pw=document.getElementById('pwInput').value;if(!pw){alert('비밀번호를 입력하세요');return}
   document.getElementById('loginError').style.display='none';
-  if(selectedRole==='admin'){
-    configRef.child('adminPassword').once('value',s=>{
-      if(pw===(s.val()||DEFAULT_ADMIN_PW)){isAdmin=true;sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}
-      else document.getElementById('loginError').style.display='block'})
-  }else{
-    configRef.child('userPassword').once('value',s=>{
-      if(!s.val()){alert('사용자 비밀번호가 설정되지 않았습니다.\n관리자에게 문의하세요.');return}
-      if(pw===s.val()){isAdmin=false;sessionStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}
-      else document.getElementById('loginError').style.display='block'})
-  }
+  if(selectedRole==='admin'){configRef.child('adminPassword').once('value',s=>{if(pw===(s.val()||DEFAULT_ADMIN_PW)){isAdmin=true;sessionStorage.setItem('scoreSession',JSON.stringify({role:'admin'}));enterApp()}else document.getElementById('loginError').style.display='block'})}
+  else{configRef.child('userPassword').once('value',s=>{if(!s.val()){alert('사용자 비밀번호가 설정되지 않았습니다.\n관리자에게 문의하세요.');return}if(pw===s.val()){isAdmin=false;sessionStorage.setItem('scoreSession',JSON.stringify({role:'user'}));enterApp()}else document.getElementById('loginError').style.display='block'})}
 }
 document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 function doLogout(){sessionStorage.removeItem('scoreSession');location.reload()}
@@ -164,95 +158,103 @@ function enterApp(){document.getElementById('loginScreen').style.display='none';
 function buildUI(){
 const m=document.getElementById('mainApp');
 let h=`<div class="top-bar"><span class="title">⚾ 스코어보드</span><button class="logout-btn" onclick="doLogout()">로그아웃</button></div>`;
-h+=`<div class="overlay-section">
-<button class="ov-btn" id="ovScoreOn" onclick="setOv('score',true)">스코어 ON</button>
-<button class="ov-btn" id="ovScoreOff" onclick="setOv('score',false)">스코어 OFF</button>
-<button class="ov-btn" id="ovLineupOn" onclick="setOv('lineup',true)">라인업 ON</button>
-<button class="ov-btn" id="ovLineupOff" onclick="setOv('lineup',false)">라인업 OFF</button>
-</div>`;
-h+=`<div id="tabGame" class="tab-content"></div>`;
-h+=`<div id="tabSetup" class="tab-content" style="display:none"></div>`;
-h+=`<div id="tabLineup" class="tab-content" style="display:none"></div>`;
-h+=`<div id="tabAdmin" class="tab-content" style="display:none"></div>`;
+h+=`<div class="overlay-section"><button class="ov-btn" id="ovScoreOn" onclick="setOv('score',true)">스코어 ON</button><button class="ov-btn" id="ovScoreOff" onclick="setOv('score',false)">스코어 OFF</button><button class="ov-btn" id="ovLineupOn" onclick="setOv('lineup',true)">라인업 ON</button><button class="ov-btn" id="ovLineupOff" onclick="setOv('lineup',false)">라인업 OFF</button></div>`;
+h+=`<div id="tabGame" class="tab-content"></div><div id="tabSetup" class="tab-content" style="display:none"></div><div id="tabLineup" class="tab-content" style="display:none"></div><div id="tabRoster" class="tab-content" style="display:none"></div><div id="tabAdmin" class="tab-content" style="display:none"></div>`;
 h+=`<div class="tabs">
 <div class="tab active" onclick="switchTab('tabGame',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 9.5Q7 11 12 7t9.5 2.5M2.5 14.5Q7 13 12 17t9.5-2.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>경기</div>
 <div class="tab" onclick="switchTab('tabSetup',this)"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" fill="none" stroke="currentColor" stroke-width="2"/></svg>경기설정</div>
 <div class="tab" onclick="switchTab('tabLineup',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" fill="none" stroke="currentColor" stroke-width="2"/></svg>라인업</div>
+<div class="tab" onclick="switchTab('tabRoster',this)"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="2" width="8" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="2"/><line x1="8" y1="14" x2="16" y2="14" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="12" y2="18" stroke="currentColor" stroke-width="2"/></svg>선수</div>
 <div class="tab" id="tabAdminBtn" onclick="switchTab('tabAdmin',this)" style="display:none"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" fill="none" stroke="currentColor" stroke-width="2"/></svg>관리</div>
 </div>`;
 m.innerHTML=h;
 if(isAdmin)document.getElementById('tabAdminBtn').style.display='flex';
-buildGameTab();buildSetupTab();buildLineupTab();buildAdminTab();
+buildGameTab();buildSetupTab();buildLineupTab();buildRosterTab();buildAdminTab();
 }
 </script>
 <script>
 function buildGameTab(){
 document.getElementById('tabGame').innerHTML=`
-<div class="card">
-  <div class="score-grid">
-    <div class="score-team"><div class="name" id="cAway">AWAY</div><div class="val" id="cAwayS">0</div><div class="btns"><button class="btn-plus" onclick="chScore('away',1)">+1</button><button class="btn-minus" onclick="chScore('away',-1)">-1</button></div></div>
-    <div class="score-vs">vs</div>
-    <div class="score-team"><div class="name" id="cHome">HOME</div><div class="val" id="cHomeS">0</div><div class="btns"><button class="btn-plus" onclick="chScore('home',1)">+1</button><button class="btn-minus" onclick="chScore('home',-1)">-1</button></div></div>
-  </div>
-  <button class="swap-btn" onclick="swapHA()"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:4px"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>선후공 변경</button>
-</div>
-<div class="card">
-  <div class="card-title">이닝</div>
-  <div class="inning-row"><button class="arrow" onclick="chInn(-1)">◀</button><div class="val"><span id="cHalf">▲</span> <span id="cInn">1</span>회</div><button class="arrow" onclick="chInn(1)">▶</button></div>
-  <div style="text-align:center"><button class="half-btn" onclick="togHalf()">초 ↔ 말</button></div>
-</div>
-<div class="card">
-  <div class="card-title">카운트</div>
-  <div class="bso-row"><span class="bso-name">볼</span><div class="dots"><div class="bso-dot" id="bd0" onclick="togBSO('balls',1)"></div><div class="bso-dot" id="bd1" onclick="togBSO('balls',2)"></div><div class="bso-dot" id="bd2" onclick="togBSO('balls',3)"></div></div></div>
-  <div class="bso-row"><span class="bso-name">스트라이크</span><div class="dots"><div class="bso-dot" id="sd0" onclick="togBSO('strikes',1)"></div><div class="bso-dot" id="sd1" onclick="togBSO('strikes',2)"></div></div></div>
-  <div class="bso-row"><span class="bso-name">아웃</span><div class="dots"><div class="bso-dot" id="od0" onclick="togBSO('outs',1)"></div><div class="bso-dot" id="od1" onclick="togBSO('outs',2)"></div></div></div>
-  <button class="bso-reset" onclick="rstCnt()">카운트 초기화</button>
-</div>
-<div class="card">
-  <div class="card-title">베이스</div>
-  <div class="base-wrap"><div class="base-b b2" id="cB2" onclick="togB(2)"></div><div class="base-b b3" id="cB3" onclick="togB(3)"></div><div class="base-b b1" id="cB1" onclick="togB(1)"></div></div>
-  <button class="base-clear" onclick="clrB()">베이스 클리어</button>
-</div>`}
+<div class="card"><div class="score-grid">
+<div class="score-team"><div class="name" id="cAway">AWAY</div><div class="val" id="cAwayS">0</div><div class="btns"><button class="btn-plus" onclick="chScore('away',1)">+1</button><button class="btn-minus" onclick="chScore('away',-1)">-1</button></div></div>
+<div class="score-vs">vs</div>
+<div class="score-team"><div class="name" id="cHome">HOME</div><div class="val" id="cHomeS">0</div><div class="btns"><button class="btn-plus" onclick="chScore('home',1)">+1</button><button class="btn-minus" onclick="chScore('home',-1)">-1</button></div></div>
+</div><button class="swap-btn" onclick="swapHA()"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:4px"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>선후공 변경</button></div>
+<div class="card"><div class="card-title">이닝</div><div class="inning-row"><button class="arrow" onclick="chInn(-1)">◀</button><div class="val"><span id="cHalf">▲</span> <span id="cInn">1</span>회</div><button class="arrow" onclick="chInn(1)">▶</button></div><div style="text-align:center"><button class="half-btn" onclick="togHalf()">초 ↔ 말</button></div></div>
+<div class="card"><div class="card-title">카운트</div>
+<div class="bso-row"><span class="bso-name">볼</span><div class="dots"><div class="bso-dot" id="bd0" onclick="togBSO('balls',1)"></div><div class="bso-dot" id="bd1" onclick="togBSO('balls',2)"></div><div class="bso-dot" id="bd2" onclick="togBSO('balls',3)"></div></div></div>
+<div class="bso-row"><span class="bso-name">스트라이크</span><div class="dots"><div class="bso-dot" id="sd0" onclick="togBSO('strikes',1)"></div><div class="bso-dot" id="sd1" onclick="togBSO('strikes',2)"></div></div></div>
+<div class="bso-row"><span class="bso-name">아웃</span><div class="dots"><div class="bso-dot" id="od0" onclick="togBSO('outs',1)"></div><div class="bso-dot" id="od1" onclick="togBSO('outs',2)"></div></div></div>
+<button class="bso-reset" onclick="rstCnt()">카운트 초기화</button></div>
+<div class="card"><div class="card-title">베이스</div><div class="base-wrap"><div class="base-b b2" id="cB2" onclick="togB(2)"></div><div class="base-b b3" id="cB3" onclick="togB(3)"></div><div class="base-b b1" id="cB1" onclick="togB(1)"></div></div><button class="base-clear" onclick="clrB()">베이스 클리어</button></div>`}
 
 function buildSetupTab(){
 document.getElementById('tabSetup').innerHTML=`
-<div class="card">
-  <div class="card-title">경기 정보</div>
-  <div class="form-row"><label>경기명</label><input id="inTitle" placeholder="예: 스토브리그 in 창녕"></div>
-  <div class="form-row"><label>원정팀</label><input id="inAway" placeholder="원정팀명"></div>
-  <div class="form-row"><label>홈팀</label><input id="inHome" placeholder="홈팀명"></div>
-  <div class="form-row"><label>원정로고</label><input id="inALogo" placeholder="로고 URL (선택)"></div>
-  <div class="form-row"><label></label><input type="file" id="fileALogo" accept="image/*" onchange="uploadLogo('away')" style="font-size:13px;padding:8px"></div>
-  <div class="form-row"><label>홈로고</label><input id="inHLogo" placeholder="로고 URL (선택)"></div>
-  <div class="form-row"><label></label><input type="file" id="fileHLogo" accept="image/*" onchange="uploadLogo('home')" style="font-size:13px;padding:8px"></div>
-  <button class="btn-save" onclick="saveG()"><svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:4px"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" fill="none" stroke="#fff" stroke-width="2"/><polyline points="17 21 17 13 7 13 7 21" fill="none" stroke="#fff" stroke-width="2"/><polyline points="7 3 7 8 15 8" fill="none" stroke="#fff" stroke-width="2"/></svg>경기 저장</button>
-  <button class="btn-apply" onclick="applyG()"><svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>바로 적용</button>
-</div>
+<div class="card"><div class="card-title">경기 정보</div>
+<div class="form-row"><label>경기명</label><input id="inTitle" placeholder="예: 스토브리그 in 창녕"></div>
+<div class="form-row"><label>원정팀</label><input id="inAway" placeholder="원정팀명"></div>
+<div class="form-row"><label>홈팀</label><input id="inHome" placeholder="홈팀명"></div>
+<div class="form-row"><label>원정로고</label><input id="inALogo" placeholder="로고 URL (선택)"></div>
+<div class="form-row"><label></label><input type="file" id="fileALogo" accept="image/*" onchange="uploadLogo('away')" style="font-size:13px;padding:8px"></div>
+<div class="form-row"><label>홈로고</label><input id="inHLogo" placeholder="로고 URL (선택)"></div>
+<div class="form-row"><label></label><input type="file" id="fileHLogo" accept="image/*" onchange="uploadLogo('home')" style="font-size:13px;padding:8px"></div>
+<button class="btn-save" onclick="saveG()">경기 저장</button>
+<button class="btn-apply" onclick="applyG()">바로 적용</button></div>
 <div class="card"><div class="card-title">저장된 경기</div><div class="game-list" id="gList"></div></div>`}
 </script>
 <script>
+function rosterOptions(){return rosterList.map(r=>`<option value="${r.key}">#${r.number} ${r.name} (${r.position})</option>`).join('')}
+
 function buildLineupTab(){
-let h=`<div class="card"><div class="card-title">라인업 표시 모드</div>
-<div class="lineup-mode-section">
-<button class="mode-btn active" id="modeDefense" onclick="setLineupMode('defense')">⛳ 수비 위치</button>
-<button class="mode-btn" id="modeBatting" onclick="setLineupMode('batting')">📋 타순</button>
-</div></div>`;
+let opts=rosterOptions();
+let h=`<div class="card"><div class="card-title">라인업 표시 모드</div><div class="lineup-mode-section"><button class="mode-btn active" id="modeDefense" onclick="setLineupMode('defense')">⛳ 수비 위치</button><button class="mode-btn" id="modeBatting" onclick="setLineupMode('batting')">📋 타순</button></div></div>`;
 h+=`<div class="card"><div class="card-title">우리팀 선발 라인업</div><div class="form-row"><label>팀명</label><input id="linTeam" placeholder="우리팀 이름"></div><div style="margin-top:8px">`;
-POS.forEach(p=>{h+=`<div class="lin-row"><span class="pos">${p}</span><input id="ln-${p}" placeholder="${PN[p]}"><input class="num" id="ln-n-${p}" placeholder="#" type="number"></div>`});
+POS.forEach(p=>{h+=`<div class="lin-row"><span class="pos">${p}</span><select class="player-select" id="ln-sel-${p}" onchange="fillFromRoster('${p}')"><option value="">선수 선택</option>${opts}</select><input id="ln-${p}" placeholder="${PN[p]}" style="max-width:90px"><input class="num" id="ln-n-${p}" placeholder="#" type="number" style="max-width:50px"></div>`});
 h+=`</div><div style="margin-top:12px"><div class="card-title">타순 설정</div>`;
-for(let i=1;i<=9;i++){
-h+=`<div class="bat-row"><span class="order">${i}</span><input id="bat-name-${i}" placeholder="${i}번 타자"><input class="num" id="bat-num-${i}" placeholder="#" type="number"><select id="bat-pos-${i}"><option value="">포지션</option>`;
-POS.forEach(p=>{h+=`<option value="${p}">${p}</option>`});
-h+=`</select></div>`}
-h+=`</div>`;
-h+=`<button class="btn-save" onclick="saveLin()">라인업 저장</button>`;
-h+=`<button class="btn-apply" onclick="applyLin()">라인업 표시</button></div>`;
+for(let i=1;i<=9;i++){h+=`<div class="bat-row"><span class="order">${i}</span><select class="player-select" id="bat-sel-${i}" onchange="fillBatFromRoster(${i})"><option value="">선수 선택</option>${opts}</select><select class="pos-sel" id="bat-pos-${i}"><option value="">포지션</option>`;POS.forEach(p=>{h+=`<option value="${p}">${p}</option>`});h+=`</select></div>`}
+h+=`</div><button class="btn-apply" onclick="saveLin()">라인업 저장 및 표시</button></div>`;
 document.getElementById('tabLineup').innerHTML=h;
+}
+
+function fillFromRoster(pos){
+  const sel=document.getElementById('ln-sel-'+pos);
+  const r=rosterList.find(x=>x.key===sel.value);
+  if(r){document.getElementById('ln-'+pos).value=r.name;document.getElementById('ln-n-'+pos).value=r.number}
+}
+function fillBatFromRoster(i){
+  const sel=document.getElementById('bat-sel-'+i);
+  const r=rosterList.find(x=>x.key===sel.value);
+  if(r){const posEl=document.getElementById('bat-pos-'+i);if(r.position)posEl.value=r.position}
 }
 function setLineupMode(mode){
   lineupRef.update({displayMode:mode});
   document.getElementById('modeDefense').className='mode-btn'+(mode==='defense'?' active':'');
   document.getElementById('modeBatting').className='mode-btn'+(mode==='batting'?' active':'');
+}
+</script>
+<script>
+function buildRosterTab(){
+document.getElementById('tabRoster').innerHTML=`
+<div class="card"><div class="card-title">선수 등록</div>
+<div class="form-row"><label>이름</label><input id="rName" placeholder="선수 이름"></div>
+<div class="form-row"><label>번호</label><input id="rNum" placeholder="등번호" type="number" style="max-width:100px"></div>
+<div class="form-row"><label>포지션</label><select id="rPos" style="max-width:120px"><option value="">선택</option>${POS.map(p=>`<option value="${p}">${p} ${PN[p]}</option>`).join('')}</select></div>
+<button class="btn-save" onclick="addPlayer()">선수 추가</button></div>
+<div class="card"><div class="card-title">선수 명단</div><div id="rosterListEl"></div></div>`}
+
+function addPlayer(){
+  const name=document.getElementById('rName').value.trim();
+  const num=document.getElementById('rNum').value.trim();
+  const pos=document.getElementById('rPos').value;
+  if(!name||!num){alert('이름과 번호를 입력하세요');return}
+  rosterRef.push({name,number:num,position:pos||''});
+  document.getElementById('rName').value='';document.getElementById('rNum').value='';document.getElementById('rPos').value='';
+}
+function delPlayer(k){if(confirm('삭제?'))rosterRef.child(k).remove()}
+function renderRoster(){
+  const el=document.getElementById('rosterListEl');if(!el)return;
+  if(!rosterList.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:12px">등록된 선수가 없습니다</div>';return}
+  el.innerHTML=rosterList.map(r=>`<div class="roster-item"><span class="r-num">#${r.number}</span><span class="r-name">${r.name}</span><span class="r-pos">${r.position}</span><button style="background:#e94560;color:#fff;border:none" onclick="delPlayer('${r.key}')">삭제</button></div>`).join('');
 }
 
 function buildAdminTab(){
@@ -265,21 +267,17 @@ function initApp(){
   if(isAdmin)configRef.child('userPassword').on('value',s=>{const el=document.getElementById('curUPw');if(el)el.value=s.val()||'(없음)'});
   gameRef.on('value',s=>{const d=s.val();if(!d)return;gd=d;scoreVisible=!!gd.visible;updUI();updOvBtns()});
   lineupRef.on('value',s=>{const d=s.val();if(d){ld=d;lineupVisible=!!ld.visible;updOvBtns();
-    const dm=d.displayMode||'defense';
-    const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
-    if(md)md.className='mode-btn'+(dm==='defense'?' active':'');
-    if(mb)mb.className='mode-btn'+(dm==='batting'?' active':'');
+    const dm=d.displayMode||'defense';const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
+    if(md)md.className='mode-btn'+(dm==='defense'?' active':'');if(mb)mb.className='mode-btn'+(dm==='batting'?' active':'');
   }});
+  rosterRef.on('value',s=>{rosterList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>rosterList.push({key:k,...v}));rosterList.sort((a,b)=>Number(a.number)-Number(b.number));renderRoster();buildLineupTab()});
   loadGames();
 }
 function updUI(){
   const $=id=>document.getElementById(id);
-  if($('cAway'))$('cAway').textContent=gd.awayName||'AWAY';
-  if($('cHome'))$('cHome').textContent=gd.homeName||'HOME';
-  if($('cAwayS'))$('cAwayS').textContent=gd.awayScore||0;
-  if($('cHomeS'))$('cHomeS').textContent=gd.homeScore||0;
-  if($('cInn'))$('cInn').textContent=gd.inning||1;
-  if($('cHalf'))$('cHalf').textContent=gd.inningHalf==='bottom'?'▼':'▲';
+  if($('cAway'))$('cAway').textContent=gd.awayName||'AWAY';if($('cHome'))$('cHome').textContent=gd.homeName||'HOME';
+  if($('cAwayS'))$('cAwayS').textContent=gd.awayScore||0;if($('cHomeS'))$('cHomeS').textContent=gd.homeScore||0;
+  if($('cInn'))$('cInn').textContent=gd.inning||1;if($('cHalf'))$('cHalf').textContent=gd.inningHalf==='bottom'?'▼':'▲';
   for(let i=0;i<3;i++){const el=$('bd'+i);if(el)el.className='bso-dot'+(i<(gd.balls||0)?' b-on':'')}
   for(let i=0;i<2;i++){const el=$('sd'+i);if(el)el.className='bso-dot'+(i<(gd.strikes||0)?' s-on':'')}
   for(let i=0;i<2;i++){const el=$('od'+i);if(el)el.className='bso-dot'+(i<(gd.outs||0)?' o-on':'')}
@@ -310,13 +308,7 @@ function rstUPw(){if(confirm('삭제할까요?')){configRef.child('userPassword'
 function saveG(){savedGamesRef.push({gameTitle:document.getElementById('inTitle').value,awayName:document.getElementById('inAway').value,homeName:document.getElementById('inHome').value,awayLogo:document.getElementById('inALogo').value,homeLogo:document.getElementById('inHLogo').value,createdAt:Date.now()});alert('저장 완료')}
 function applyG(){gameRef.update({gameTitle:document.getElementById('inTitle').value,awayName:document.getElementById('inAway').value||'AWAY',homeName:document.getElementById('inHome').value||'HOME',awayLogo:document.getElementById('inALogo').value,homeLogo:document.getElementById('inHLogo').value,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});alert('적용 완료')}
 function loadGames(){savedGamesRef.on('value',s=>{const el=document.getElementById('gList');if(!el)return;el.innerHTML='';const d=s.val();if(!d)return;Object.entries(d).forEach(([k,g])=>{
-el.innerHTML+=`<div class="game-item${k===activeGameKey?' active-game':''}" id="gi-${k}">
-<div class="info"><div class="sub">${g.gameTitle||'제목없음'}</div>${g.awayName||'?'} vs ${g.homeName||'?'}</div>
-<div class="btns">
-<button style="background:#ff9800;color:#fff;border:none" onclick="editG('${k}')">수정</button>
-<button style="background:#4caf50;color:#fff;border:none" onclick="loadG('${k}')">적용</button>
-<button style="background:#e94560;color:#fff;border:none" onclick="delG('${k}')">삭제</button>
-</div></div>`})})}
+el.innerHTML+=`<div class="game-item${k===activeGameKey?' active-game':''}" id="gi-${k}"><div class="info"><div class="sub">${g.gameTitle||'제목없음'}</div>${g.awayName||'?'} vs ${g.homeName||'?'}</div><div class="btns"><button style="background:#ff9800;color:#fff;border:none" onclick="editG('${k}')">수정</button><button style="background:#4caf50;color:#fff;border:none" onclick="loadG('${k}')">적용</button><button style="background:#e94560;color:#fff;border:none" onclick="delG('${k}')">삭제</button></div></div>`})})}
 function loadG(k){activeGameKey=k;savedGamesRef.child(k).once('value',s=>{const g=s.val();if(!g)return;gameRef.update({gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});loadGames()})}
 function delG(k){if(confirm('삭제?')){if(k===activeGameKey)activeGameKey='';savedGamesRef.child(k).remove()}}
 </script>
@@ -324,10 +316,8 @@ function delG(k){if(confirm('삭제?')){if(k===activeGameKey)activeGameKey='';sa
 function editG(k){
   savedGamesRef.child(k).once('value',s=>{
     const g=s.val();if(!g)return;
-    const modal=document.createElement('div');
-    modal.className='modal-bg';modal.id='editModal';
-    modal.innerHTML=`<div class="modal">
-      <div class="card-title">경기 정보 수정</div>
+    const modal=document.createElement('div');modal.className='modal-bg';modal.id='editModal';
+    modal.innerHTML=`<div class="modal"><div class="card-title">경기 정보 수정</div>
       <div class="form-row"><label>경기명</label><input id="edTitle" value="${g.gameTitle||''}"></div>
       <div class="form-row"><label>원정팀</label><input id="edAway" value="${g.awayName||''}"></div>
       <div class="form-row"><label>홈팀</label><input id="edHome" value="${g.homeName||''}"></div>
@@ -336,8 +326,7 @@ function editG(k){
       <div class="form-row"><label>홈로고</label><input id="edHLogo" value="${(g.homeLogo||'').length>100?'(업로드됨)':g.homeLogo||''}"></div>
       <div class="form-row"><label></label><input type="file" id="edFileHLogo" accept="image/*" style="font-size:13px;padding:8px"></div>
       <button class="btn-save" onclick="saveEditG('${k}')">저장</button>
-      <button class="btn-danger" onclick="closeEditModal()" style="margin-top:6px">취소</button>
-    </div>`;
+      <button class="btn-danger" onclick="closeEditModal()" style="margin-top:6px">취소</button></div>`;
     document.body.appendChild(modal);
     document.getElementById('edFileALogo').onchange=function(){const f=this.files[0];if(!f)return;if(f.size>500000){alert('500KB 이하');return}const r=new FileReader();r.onload=e=>{document.getElementById('edALogo').value=e.target.result};r.readAsDataURL(f)};
     document.getElementById('edFileHLogo').onchange=function(){const f=this.files[0];if(!f)return;if(f.size>500000){alert('500KB 이하');return}const r=new FileReader();r.onload=e=>{document.getElementById('edHLogo').value=e.target.result};r.readAsDataURL(f)};
@@ -345,10 +334,8 @@ function editG(k){
   });
 }
 function saveEditG(k){
-  const modal=document.getElementById('editModal');
-  let aLogo=document.getElementById('edALogo').value,hLogo=document.getElementById('edHLogo').value;
-  if(aLogo==='(업로드됨)')aLogo=modal._origALogo;
-  if(hLogo==='(업로드됨)')hLogo=modal._origHLogo;
+  const modal=document.getElementById('editModal');let aLogo=document.getElementById('edALogo').value,hLogo=document.getElementById('edHLogo').value;
+  if(aLogo==='(업로드됨)')aLogo=modal._origALogo;if(hLogo==='(업로드됨)')hLogo=modal._origHLogo;
   savedGamesRef.child(k).update({gameTitle:document.getElementById('edTitle').value,awayName:document.getElementById('edAway').value,homeName:document.getElementById('edHome').value,awayLogo:aLogo,homeLogo:hLogo});
   closeEditModal();alert('수정 완료');
 }
@@ -357,17 +344,16 @@ function closeEditModal(){const m=document.getElementById('editModal');if(m)m.re
 <script>
 function saveLin(){
   const p={};POS.forEach(pos=>{p[pos]={name:document.getElementById('ln-'+pos).value||'-',number:document.getElementById('ln-n-'+pos).value||''}});
-  const bo={};for(let i=1;i<=9;i++){bo[i]={name:document.getElementById('bat-name-'+i).value||'-',number:document.getElementById('bat-num-'+i).value||'',position:document.getElementById('bat-pos-'+i).value||''}}
-  lineupRef.set({visible:ld.visible||false,displayMode:ld.displayMode||'defense',teamName:document.getElementById('linTeam').value||'우리팀',players:p,battingOrder:bo}).then(()=>alert('저장 완료')).catch(e=>alert('실패: '+e.message));
-}
-function applyLin(){
-  const p={};POS.forEach(pos=>{p[pos]={name:document.getElementById('ln-'+pos).value||'-',number:document.getElementById('ln-n-'+pos).value||''}});
-  const bo={};for(let i=1;i<=9;i++){bo[i]={name:document.getElementById('bat-name-'+i).value||'-',number:document.getElementById('bat-num-'+i).value||'',position:document.getElementById('bat-pos-'+i).value||''}}
-  lineupRef.set({visible:true,displayMode:ld.displayMode||'defense',teamName:document.getElementById('linTeam').value||'우리팀',players:p,battingOrder:bo}).then(()=>alert('라인업 표시됩니다')).catch(e=>alert('실패: '+e.message));
+  const bo={};for(let i=1;i<=9;i++){
+    const sel=document.getElementById('bat-sel-'+i);
+    const r=rosterList.find(x=>x.key===sel.value);
+    bo[i]={name:r?r.name:(sel.value?sel.options[sel.selectedIndex].text:'-'),number:r?r.number:'',position:document.getElementById('bat-pos-'+i).value||''};
+  }
+  lineupRef.set({visible:true,displayMode:ld.displayMode||'defense',teamName:document.getElementById('linTeam').value||'우리팀',players:p,battingOrder:bo}).then(()=>alert('라인업 저장 및 표시 완료')).catch(e=>alert('실패: '+e.message));
 }
 function uploadLogo(team){
-  const fi=document.getElementById(team==='away'?'fileALogo':'fileHLogo');
-  const f=fi.files[0];if(!f)return;if(f.size>500000){alert('500KB 이하');return}
+  const fi=document.getElementById(team==='away'?'fileALogo':'fileHLogo');const f=fi.files[0];if(!f)return;
+  if(f.size>500000){alert('500KB 이하');return}
   const r=new FileReader();r.onload=e=>{document.getElementById(team==='away'?'inALogo':'inHLogo').value=e.target.result;alert('로고 업로드 완료')};r.readAsDataURL(f);
 }
 </script>
