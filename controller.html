@@ -97,7 +97,10 @@ input:focus,select:focus{outline:none;border-color:#e94560}
 <!-- 비밀번호 화면 -->
 <div id="loginScreen">
   <h2>⚾ 스코어보드 컨트롤러</h2>
-  <p style="color:#888;font-size:13px">비밀번호를 입력하세요</p>
+  <div style="display:flex;gap:10px;margin-bottom:12px">
+    <button id="roleAdmin" onclick="selectRole('admin')" style="flex:1;padding:12px;font-size:14px;background:#e94560;color:#fff;border:2px solid #e94560">🔒 관리자</button>
+    <button id="roleUser" onclick="selectRole('user')" style="flex:1;padding:12px;font-size:14px;background:#1a1a2e;color:#888;border:2px solid #333">👤 사용자</button>
+  </div>
   <input type="password" id="pwInput" placeholder="비밀번호" autocomplete="off">
   <button onclick="doLogin()">입장</button>
   <div id="loginError">비밀번호가 틀렸습니다</div>
@@ -257,26 +260,41 @@ const savedGamesRef=db.ref('savedGames');
 const configRef=db.ref('config');
 
 let isAdmin=false;
-const ADMIN_PASSWORD='admin1234'; // ★ 여기서 admin 비밀번호 변경하세요 ★
+let selectedRole='admin';
+const ADMIN_PASSWORD='admin1234'; // ★ admin 비밀번호 (여기서 변경) ★
 
 let gameData={visible:false,gameTitle:'',awayName:'AWAY',homeName:'HOME',awayScore:0,homeScore:0,awayLogo:'',homeLogo:'',inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false};
 let lineupData={visible:false,teamName:'',players:{}};
 const positions=['P','C','1B','2B','3B','SS','LF','CF','RF'];
 const posNames={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
 
+function selectRole(role){
+  selectedRole=role;
+  document.getElementById('roleAdmin').style.background=role==='admin'?'#e94560':'#1a1a2e';
+  document.getElementById('roleAdmin').style.color=role==='admin'?'#fff':'#888';
+  document.getElementById('roleAdmin').style.borderColor=role==='admin'?'#e94560':'#333';
+  document.getElementById('roleUser').style.background=role==='user'?'#0f3460':'#1a1a2e';
+  document.getElementById('roleUser').style.color=role==='user'?'#fff':'#888';
+  document.getElementById('roleUser').style.borderColor=role==='user'?'#0f3460':'#333';
+  document.getElementById('pwInput').placeholder=role==='admin'?'관리자 비밀번호':'사용자 비밀번호';
+}
+
 // 비밀번호
 function doLogin(){
   const pw=document.getElementById('pwInput').value;
   if(!pw){alert('비밀번호를 입력하세요');return}
-  // admin 체크
-  if(pw===ADMIN_PASSWORD){isAdmin=true;enterApp();return}
-  // 일반 사용자
-  configRef.child('password').once('value',snap=>{
-    const saved=snap.val();
-    if(!saved){configRef.child('password').set(pw);enterApp();return}
-    if(pw===saved){enterApp()}
+  document.getElementById('loginError').style.display='none';
+  if(selectedRole==='admin'){
+    if(pw===ADMIN_PASSWORD){isAdmin=true;enterApp()}
     else{document.getElementById('loginError').style.display='block'}
-  });
+  }else{
+    configRef.child('userPassword').once('value',snap=>{
+      const saved=snap.val();
+      if(!saved){alert('사용자 비밀번호가 아직 설정되지 않았습니다.\n관리자에게 문의하세요.');return}
+      if(pw===saved){isAdmin=false;enterApp()}
+      else{document.getElementById('loginError').style.display='block'}
+    });
+  }
 }
 function resetPassword(){
   // 사용하지 않음
@@ -290,27 +308,27 @@ function enterApp(){
   initApp();
 }
 
-// admin 기능: 일반 비밀번호 관리
+// admin 기능: 사용자 비밀번호 관리
 function changeUserPassword(){
   const newPw=document.getElementById('newUserPw').value;
   if(!newPw){alert('새 비밀번호를 입력하세요');return}
-  configRef.child('password').set(newPw);
-  alert('일반 비밀번호가 변경되었습니다: '+newPw);
+  configRef.child('userPassword').set(newPw);
+  alert('사용자 비밀번호가 설정되었습니다: '+newPw);
   document.getElementById('currentUserPw').value=newPw;
   document.getElementById('newUserPw').value='';
 }
 function resetUserPassword(){
-  if(confirm('일반 비밀번호를 삭제하시겠습니까?\n다음 접속하는 사람이 새 비밀번호를 설정하게 됩니다.')){
-    configRef.child('password').remove();
+  if(confirm('사용자 비밀번호를 삭제하시겠습니까?\n삭제하면 사용자가 로그인할 수 없습니다.')){
+    configRef.child('userPassword').remove();
     document.getElementById('currentUserPw').value='(없음)';
-    alert('일반 비밀번호가 초기화되었습니다');
+    alert('사용자 비밀번호가 삭제되었습니다');
   }
 }
 
 function initApp(){
   // admin이면 현재 일반 비밀번호 표시
   if(isAdmin){
-    configRef.child('password').on('value',snap=>{
+    configRef.child('userPassword').on('value',snap=>{
       const pw=snap.val();
       const el=document.getElementById('currentUserPw');
       if(el)el.value=pw||'(없음)';
