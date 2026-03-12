@@ -7,10 +7,12 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#f5f5f5;color:#222;min-height:100vh;-webkit-tap-highlight-color:transparent}
-button{font-family:inherit;cursor:pointer;border:1px solid #ddd;border-radius:10px;font-weight:700;transition:all 0.1s;background:#fff;color:#222}
-button:active{transform:scale(0.96);background:#eee}
-input{font-family:inherit;border-radius:10px;border:1px solid #ddd;background:#fff;color:#222;padding:12px 14px;font-size:16px;width:100%}
+button{font-family:inherit;cursor:pointer;border:1px solid #ddd;border-radius:12px;font-weight:700;transition:all 0.1s;background:#fff;color:#222}
+button:active{transform:scale(0.96)}
+input{font-family:inherit;border-radius:12px;border:1px solid #ddd;background:#fff;color:#222;padding:12px 14px;font-size:16px;width:100%}
 input:focus{outline:none;border-color:#e94560}
+
+/* 로그인 */
 #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px;padding:24px;background:#fff}
 #loginScreen h2{font-size:24px;color:#222}
 #loginScreen input{max-width:280px;text-align:center;font-size:20px}
@@ -20,14 +22,90 @@ input:focus{outline:none;border-color:#e94560}
 .role-btn.active-user{border-color:#0f3460;background:#0f3460;color:#fff}
 .login-btn{background:#222;color:#fff;padding:14px 50px;font-size:18px;border:none;border-radius:12px;width:100%;max-width:280px}
 #loginError{color:#e94560;font-size:14px;display:none}
-#mainApp{display:none;padding:16px;padding-bottom:90px}
-.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.top-bar .title{font-size:18px;font-weight:900}
-.logout-btn{background:#f0f0f0;color:#e94560;padding:10px 18px;font-size:14px;border:none}
-.overlay-section{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.overlay-section button{flex:1;min-width:70px;padding:12px;font-size:14px;border-radius:12px}
-.overlay-on{background:#4caf50;color:#fff;border:none}
-.overlay-off{background:#eee;color:#888;border:1px solid #ddd}
+
+/* 메인 */
+#mainApp{display:none;padding:12px;padding-bottom:70px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.top-bar .title{font-size:17px;font-weight:900}
+.logout-btn{background:#f0f0f0;color:#e94560;padding:8px 14px;font-size:13px;border:none}
+
+/* 오버레이 토글 */
+.overlay-section{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.ov-btn{padding:12px;font-size:14px;border-radius:12px;text-align:center;border:2px solid #ddd;background:#fff;color:#888}
+.ov-btn.on{background:#4caf50;color:#fff;border-color:#4caf50}
+.ov-btn.off-active{background:#f0f0f0;color:#e94560;border-color:#e94560}
+
+/* 카드 */
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.card-title{font-size:16px;font-weight:700;margin-bottom:12px;text-align:center}
+
+/* 점수 */
+.score-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+.score-team{text-align:center}
+.score-team .name{font-size:16px;font-weight:900;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score-team .val{font-size:44px;font-weight:900}
+.score-team .btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;padding:0 4px}
+.score-team .btns button{padding:10px 0;font-size:18px;border-radius:10px}
+.btn-plus{background:#4caf50;color:#fff;border:none}
+.btn-minus{background:#f0f0f0;color:#222}
+.score-vs{font-size:20px;color:#ccc;padding:0 6px}
+.swap-btn{width:100%;padding:12px;font-size:15px;background:#ff9800;color:#fff;border:none;border-radius:12px;margin-top:10px}
+
+/* 이닝 */
+.inning-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
+.inning-row .arrow{width:48px;height:48px;font-size:20px;border-radius:50%;background:#f0f0f0}
+.inning-row .val{font-size:32px;font-weight:900;min-width:80px;text-align:center}
+.half-btn{padding:12px 24px;font-size:15px;background:#ff9800;color:#fff;border:none;border-radius:12px}
+
+/* BSO */
+.bso-row{display:flex;align-items:center;margin-bottom:14px}
+.bso-row .bso-name{font-size:16px;font-weight:700;min-width:70px}
+.bso-row .dots{display:flex;gap:10px;flex:1;justify-content:center}
+.bso-dot{width:44px;height:44px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer}
+.bso-dot.b-on{background:#4caf50;border-color:#4caf50}
+.bso-dot.s-on{background:#ffd700;border-color:#ffd700}
+.bso-dot.o-on{background:#e94560;border-color:#e94560}
+.bso-reset{display:block;margin:0 auto;padding:10px 24px;font-size:14px;background:#f0f0f0;border-radius:12px}
+
+/* 베이스 */
+.base-wrap{position:relative;width:140px;height:140px;margin:0 auto 12px}
+.base-b{position:absolute;width:44px;height:44px;transform:rotate(45deg);border:2px solid #ddd;background:#f8f8f8;cursor:pointer;border-radius:6px}
+.base-b.on{background:#ffd700;border-color:#ffd700}
+.base-b.b2{left:48px;top:0}
+.base-b.b3{left:0;top:48px}
+.base-b.b1{right:0;top:48px}
+.base-clear{display:block;margin:0 auto;padding:10px 24px;font-size:14px;background:#f0f0f0;border-radius:12px}
+
+/* 탭 */
+.tabs{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;z-index:100}
+.tab{flex:1;padding:10px 0;text-align:center;font-size:13px;font-weight:700;color:#bbb;background:#fff;border:none;border-radius:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab svg{width:20px;height:20px;fill:currentColor}
+.tab.active{color:#e94560}
+
+/* 폼 */
+.form-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.form-row label{font-size:13px;color:#888;min-width:55px;font-weight:600}
+.form-row input{flex:1}
+
+/* 경기 목록 */
+.game-list{max-height:240px;overflow-y:auto}
+.game-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8f8f8;border-radius:12px;margin-bottom:6px;border:2px solid transparent}
+.game-item.active-game{border-color:#4caf50;background:#f0fff0}
+.game-item .info{font-size:14px;font-weight:600;flex:1;min-width:0}
+.game-item .info .sub{color:#888;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.game-item .btns{display:flex;gap:4px;flex-shrink:0}
+.game-item .btns button{padding:6px 10px;font-size:12px;border-radius:8px}
+
+/* 라인업 */
+.lin-row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
+.lin-row .pos{font-size:14px;font-weight:900;color:#e94560;min-width:30px;text-align:center}
+.lin-row input{flex:1;padding:10px;font-size:14px}
+.lin-row .num{max-width:55px}
+
+.btn-save{width:100%;padding:12px;font-size:15px;background:#0f3460;color:#fff;border:none;border-radius:12px;margin-top:8px}
+.btn-apply{width:100%;padding:12px;font-size:15px;background:#4caf50;color:#fff;border:none;border-radius:12px;margin-top:8px}
+.btn-danger{width:100%;padding:12px;font-size:15px;background:#e94560;color:#fff;border:none;border-radius:12px;margin-top:8px}
+.btn-warn{width:100%;padding:12px;font-size:15px;background:#ff9800;color:#fff;border:none;border-radius:12px;margin-top:8px}
 </style>
 </head>
 <body>
@@ -41,28 +119,7 @@ input:focus{outline:none;border-color:#e94560}
   <button class="login-btn" onclick="doLogin()">입장</button>
   <div id="loginError">비밀번호가 틀렸습니다</div>
 </div>
-<div id="mainApp">
-  <div class="top-bar">
-    <span class="title">⚾ 스코어보드</span>
-    <button class="logout-btn" onclick="doLogout()">로그아웃</button>
-  </div>
-  <div class="overlay-section">
-    <button class="overlay-on" onclick="toggleOverlay('scoreboard',true)">스코어 ON</button>
-    <button class="overlay-off" onclick="toggleOverlay('scoreboard',false)">스코어 OFF</button>
-    <button class="overlay-on" onclick="toggleOverlay('lineup',true)">라인업 ON</button>
-    <button class="overlay-off" onclick="toggleOverlay('lineup',false)">라인업 OFF</button>
-  </div>
-  <div id="tabGame" class="tab-content"></div>
-  <div id="tabSetup" class="tab-content" style="display:none"></div>
-  <div id="tabLineup" class="tab-content" style="display:none"></div>
-  <div id="tabAdmin" class="tab-content" style="display:none"></div>
-  <div class="tabs" style="display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;z-index:100">
-    <div class="tab active" onclick="switchTab('tabGame',this)" style="flex:1;padding:14px 0;text-align:center;font-size:15px;font-weight:700;color:#e94560;background:#fff;border:none;border-radius:0">⚾ 경기</div>
-    <div class="tab" onclick="switchTab('tabSetup',this)" style="flex:1;padding:14px 0;text-align:center;font-size:15px;font-weight:700;color:#aaa;background:#fff;border:none;border-radius:0">⚙️ 설정</div>
-    <div class="tab" onclick="switchTab('tabLineup',this)" style="flex:1;padding:14px 0;text-align:center;font-size:15px;font-weight:700;color:#aaa;background:#fff;border:none;border-radius:0">👥 라인업</div>
-    <div class="tab" id="tabAdminBtn" onclick="switchTab('tabAdmin',this)" style="flex:1;padding:14px 0;text-align:center;font-size:15px;font-weight:700;color:#aaa;background:#fff;border:none;border-radius:0;display:none">🔒 관리</div>
-  </div>
-</div>
+<div id="mainApp"></div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
@@ -71,174 +128,151 @@ input:focus{outline:none;border-color:#e94560}
 <script>
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),configRef=db.ref('config');
-let isAdmin=false,selectedRole='admin';
+let isAdmin=false,selectedRole='admin',activeGameKey='';
 const DEFAULT_ADMIN_PW='admin1234';
-let gameData={visible:false,gameTitle:'',awayName:'AWAY',homeName:'HOME',awayScore:0,homeScore:0,awayLogo:'',homeLogo:'',inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false};
-let lineupData={visible:false,teamName:'',players:{}};
-const positions=['P','C','1B','2B','3B','SS','LF','CF','RF'];
-const posNames={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
+let gd={visible:false,gameTitle:'',awayName:'AWAY',homeName:'HOME',awayScore:0,homeScore:0,awayLogo:'',homeLogo:'',inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false};
+let ld={visible:false,teamName:'',players:{}};
+const POS=['P','C','1B','2B','3B','SS','LF','CF','RF'];
+const PN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
+let scoreVisible=false,lineupVisible=false;
 
-function selectRole(r){
-  selectedRole=r;
-  document.getElementById('roleAdmin').className='role-btn'+(r==='admin'?' active-admin':'');
-  document.getElementById('roleUser').className='role-btn'+(r==='user'?' active-user':'');
-  document.getElementById('pwInput').placeholder=r==='admin'?'관리자 비밀번호':'사용자 비밀번호';
-}
-function doLogin(){
-  const pw=document.getElementById('pwInput').value;
-  if(!pw){alert('비밀번호를 입력하세요');return}
-  document.getElementById('loginError').style.display='none';
-  if(selectedRole==='admin'){
-    configRef.child('adminPassword').once('value',s=>{
-      if(pw===(s.val()||DEFAULT_ADMIN_PW)){isAdmin=true;enterApp()}
-      else document.getElementById('loginError').style.display='block';
-    });
-  }else{
-    configRef.child('userPassword').once('value',s=>{
-      if(!s.val()){alert('사용자 비밀번호가 설정되지 않았습니다.\n관리자에게 문의하세요.');return}
-      if(pw===s.val()){isAdmin=false;enterApp()}
-      else document.getElementById('loginError').style.display='block';
-    });
-  }
-}
+function selectRole(r){selectedRole=r;document.getElementById('roleAdmin').className='role-btn'+(r==='admin'?' active-admin':'');document.getElementById('roleUser').className='role-btn'+(r==='user'?' active-user':'');document.getElementById('pwInput').placeholder=r==='admin'?'관리자 비밀번호':'사용자 비밀번호'}
+function doLogin(){const pw=document.getElementById('pwInput').value;if(!pw){alert('비밀번호를 입력하세요');return}document.getElementById('loginError').style.display='none';if(selectedRole==='admin'){configRef.child('adminPassword').once('value',s=>{if(pw===(s.val()||DEFAULT_ADMIN_PW)){isAdmin=true;enterApp()}else document.getElementById('loginError').style.display='block'})}else{configRef.child('userPassword').once('value',s=>{if(!s.val()){alert('사용자 비밀번호가 설정되지 않았습니다.\n관리자에게 문의하세요.');return}if(pw===s.val()){isAdmin=false;enterApp()}else document.getElementById('loginError').style.display='block'})}}
 document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 function doLogout(){location.reload()}
-function enterApp(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('mainApp').style.display='block';
-  if(isAdmin)document.getElementById('tabAdminBtn').style.display='block';
-  buildUI();initApp();
-}
+function enterApp(){document.getElementById('loginScreen').style.display='none';const m=document.getElementById('mainApp');m.style.display='block';m.style.padding='12px';m.style.paddingBottom='70px';buildUI();initApp()}
 
 function buildUI(){
-  // 경기 탭
-  document.getElementById('tabGame').innerHTML=`
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
-      <div style="display:flex;justify-content:space-between">
-        <div style="text-align:center;flex:1">
-          <div style="font-size:20px;font-weight:900;margin-bottom:8px" id="ctrlAwayName">AWAY</div>
-          <div style="font-size:48px;font-weight:900" id="ctrlAwayScore">0</div>
-          <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-            <button onclick="changeScore('away',1)" style="width:80px;height:50px;font-size:22px;background:#4caf50;color:#fff;border:none;border-radius:12px">+1</button>
-            <button onclick="changeScore('away',-1)" style="width:80px;height:50px;font-size:22px;background:#f0f0f0;border-radius:12px">-1</button>
-          </div>
-        </div>
-        <div style="font-size:24px;color:#ccc;align-self:center;padding:0 8px">vs</div>
-        <div style="text-align:center;flex:1">
-          <div style="font-size:20px;font-weight:900;margin-bottom:8px" id="ctrlHomeName">HOME</div>
-          <div style="font-size:48px;font-weight:900" id="ctrlHomeScore">0</div>
-          <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-            <button onclick="changeScore('home',1)" style="width:80px;height:50px;font-size:22px;background:#4caf50;color:#fff;border:none;border-radius:12px">+1</button>
-            <button onclick="changeScore('home',-1)" style="width:80px;height:50px;font-size:22px;background:#f0f0f0;border-radius:12px">-1</button>
-          </div>
-        </div>
-      </div>
-      <button onclick="swapHomeAway()" style="width:100%;padding:14px;font-size:16px;background:#ff9800;color:#fff;border:none;border-radius:12px;margin-top:16px">🔄 선후공 변경</button>
-    </div>
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);text-align:center">
-      <div style="font-size:18px;font-weight:700;margin-bottom:12px">이닝</div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px">
-        <button onclick="changeInning(-1)" style="width:56px;height:56px;font-size:24px;border-radius:50%;background:#f0f0f0">◀</button>
-        <div style="font-size:36px;font-weight:900;min-width:80px"><span id="ctrlHalf">▲</span> <span id="ctrlInning">1</span>회</div>
-        <button onclick="changeInning(1)" style="width:56px;height:56px;font-size:24px;border-radius:50%;background:#f0f0f0">▶</button>
-      </div>
-      <button onclick="toggleHalf()" style="padding:14px 30px;font-size:16px;background:#ff9800;color:#fff;border:none;border-radius:12px">초 ↔ 말</button>
-    </div>
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
-      <div style="font-size:18px;font-weight:700;margin-bottom:16px;text-align:center">카운트</div>
-      <div style="display:flex;align-items:center;margin-bottom:16px"><span style="font-size:18px;font-weight:700;min-width:80px">볼</span><div style="display:flex;gap:12px;flex:1;justify-content:center"><div class="bso-d ball" id="bd0" onclick="toggleBSO('balls',1)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div><div class="bso-d ball" id="bd1" onclick="toggleBSO('balls',2)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div><div class="bso-d ball" id="bd2" onclick="toggleBSO('balls',3)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div></div></div>
-      <div style="display:flex;align-items:center;margin-bottom:16px"><span style="font-size:18px;font-weight:700;min-width:80px">스트라이크</span><div style="display:flex;gap:12px;flex:1;justify-content:center"><div class="bso-d strike" id="sd0" onclick="toggleBSO('strikes',1)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div><div class="bso-d strike" id="sd1" onclick="toggleBSO('strikes',2)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div></div></div>
-      <div style="display:flex;align-items:center;margin-bottom:16px"><span style="font-size:18px;font-weight:700;min-width:80px">아웃</span><div style="display:flex;gap:12px;flex:1;justify-content:center"><div class="bso-d out" id="od0" onclick="toggleBSO('outs',1)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div><div class="bso-d out" id="od1" onclick="toggleBSO('outs',2)" style="width:50px;height:50px;border-radius:50%;border:2px solid #ddd;background:#f8f8f8;cursor:pointer"></div></div></div>
-      <div style="text-align:center"><button onclick="resetCount()" style="padding:12px 30px;font-size:15px;background:#f0f0f0;border-radius:12px">카운트 초기화</button></div>
-    </div>
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);text-align:center">
-      <div style="font-size:18px;font-weight:700;margin-bottom:16px">베이스</div>
-      <div style="position:relative;width:160px;height:160px;margin:0 auto 16px">
-        <div id="ctrlBase2" onclick="toggleBase(2)" style="position:absolute;width:50px;height:50px;transform:rotate(45deg);border:2px solid #ddd;background:#f8f8f8;cursor:pointer;border-radius:6px;left:55px;top:0"></div>
-        <div id="ctrlBase3" onclick="toggleBase(3)" style="position:absolute;width:50px;height:50px;transform:rotate(45deg);border:2px solid #ddd;background:#f8f8f8;cursor:pointer;border-radius:6px;left:0;top:55px"></div>
-        <div id="ctrlBase1" onclick="toggleBase(1)" style="position:absolute;width:50px;height:50px;transform:rotate(45deg);border:2px solid #ddd;background:#f8f8f8;cursor:pointer;border-radius:6px;right:0;top:55px"></div>
-      </div>
-      <button onclick="clearBases()" style="padding:12px 30px;font-size:15px;background:#f0f0f0;border-radius:12px">베이스 클리어</button>
-    </div>`;
-
-  // 설정 탭
-  document.getElementById('tabSetup').innerHTML=`
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
-      <div style="font-size:18px;font-weight:700;margin-bottom:14px">경기 정보 설정</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">경기명</label><input id="inputTitle" placeholder="예: 스토브리그 in 창녕"></div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">원정팀</label><input id="inputAway" placeholder="원정팀명"></div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">홈팀</label><input id="inputHome" placeholder="홈팀명"></div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">원정로고</label><input id="inputAwayLogo" placeholder="로고 URL (선택)"></div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">홈로고</label><input id="inputHomeLogo" placeholder="로고 URL (선택)"></div>
-      <button onclick="saveGame()" style="width:100%;padding:14px;font-size:16px;background:#0f3460;color:#fff;border:none;border-radius:12px;margin-top:8px">💾 경기 저장</button>
-      <button onclick="applyGame()" style="width:100%;padding:14px;font-size:16px;background:#4caf50;color:#fff;border:none;border-radius:12px;margin-top:8px">✅ 바로 적용</button>
-    </div>
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
-      <div style="font-size:18px;font-weight:700;margin-bottom:14px">저장된 경기</div>
-      <div id="gameList" style="max-height:240px;overflow-y:auto"></div>
-    </div>`;
-
-  // 라인업 탭
-  let linHTML='<div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)"><div style="font-size:18px;font-weight:700;margin-bottom:14px">우리팀 선발 라인업</div><div style="display:flex;gap:10px;margin-bottom:12px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">팀명</label><input id="lineupTeamInput" placeholder="우리팀 이름"></div>';
-  positions.forEach(p=>{
-    linHTML+=`<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center"><span style="font-size:15px;font-weight:900;color:#e94560;min-width:32px;text-align:center">${p}</span><input id="lin-name-${p}" placeholder="${posNames[p]} 이름" style="flex:1;padding:10px;font-size:15px"><input id="lin-num-${p}" class="num-input" placeholder="#" type="number" style="max-width:60px;padding:10px;font-size:15px"></div>`;
-  });
-  linHTML+=`<button onclick="saveLineup()" style="width:100%;padding:14px;font-size:16px;background:#0f3460;color:#fff;border:none;border-radius:12px;margin-top:8px">💾 라인업 저장</button><button onclick="applyLineup()" style="width:100%;padding:14px;font-size:16px;background:#4caf50;color:#fff;border:none;border-radius:12px;margin-top:8px">✅ 라인업 표시</button></div>`;
-  document.getElementById('tabLineup').innerHTML=linHTML;
-
-  // 관리 탭
-  document.getElementById('tabAdmin').innerHTML=`
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
-      <div style="font-size:18px;font-weight:700;margin-bottom:14px">🔒 관리자 비밀번호 변경</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">새 비번</label><input id="newAdminPw" type="password" placeholder="새 관리자 비밀번호"></div>
-      <button onclick="changeAdminPassword()" style="width:100%;padding:14px;font-size:16px;background:#0f3460;color:#fff;border:none;border-radius:12px;margin-top:8px">비밀번호 변경</button>
-    </div>
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
-      <div style="font-size:18px;font-weight:700;margin-bottom:14px">👤 사용자 비밀번호 관리</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">현재</label><input id="currentUserPw" readonly style="color:#e94560;font-weight:700"></div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center"><label style="font-size:14px;color:#888;min-width:65px;font-weight:600">새 비번</label><input id="newUserPw" placeholder="새 사용자 비밀번호"></div>
-      <button onclick="changeUserPassword()" style="width:100%;padding:14px;font-size:16px;background:#ff9800;color:#fff;border:none;border-radius:12px;margin-top:8px">사용자 비밀번호 변경</button>
-      <button onclick="resetUserPassword()" style="width:100%;padding:14px;font-size:16px;background:#e94560;color:#fff;border:none;border-radius:12px;margin-top:8px">사용자 비밀번호 삭제</button>
-    </div>`;
+const m=document.getElementById('mainApp');
+let h=`<div class="top-bar"><span class="title">⚾ 스코어보드</span><button class="logout-btn" onclick="doLogout()">로그아웃</button></div>`;
+// 오버레이
+h+=`<div class="overlay-section">
+<button class="ov-btn" id="ovScoreOn" onclick="setOv('score',true)">스코어 ON</button>
+<button class="ov-btn" id="ovScoreOff" onclick="setOv('score',false)">스코어 OFF</button>
+<button class="ov-btn" id="ovLineupOn" onclick="setOv('lineup',true)">라인업 ON</button>
+<button class="ov-btn" id="ovLineupOff" onclick="setOv('lineup',false)">라인업 OFF</button>
+</div>`;
+// 탭 컨텐츠
+h+=`<div id="tabGame" class="tab-content"></div>`;
+h+=`<div id="tabSetup" class="tab-content" style="display:none"></div>`;
+h+=`<div id="tabLineup" class="tab-content" style="display:none"></div>`;
+h+=`<div id="tabAdmin" class="tab-content" style="display:none"></div>`;
+// 탭바
+h+=`<div class="tabs">
+<div class="tab active" onclick="switchTab('tabGame',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 9.5Q7 11 12 7t9.5 2.5M2.5 14.5Q7 13 12 17t9.5-2.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>경기</div>
+<div class="tab" onclick="switchTab('tabSetup',this)"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" fill="none" stroke="currentColor" stroke-width="2"/></svg>경기설정</div>
+<div class="tab" onclick="switchTab('tabLineup',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" fill="none" stroke="currentColor" stroke-width="2"/></svg>라인업</div>
+<div class="tab" id="tabAdminBtn" onclick="switchTab('tabAdmin',this)" style="display:none"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" fill="none" stroke="currentColor" stroke-width="2"/></svg>관리</div>
+</div>`;
+m.innerHTML=h;
+if(isAdmin)document.getElementById('tabAdminBtn').style.display='flex';
+buildGameTab();buildSetupTab();buildLineupTab();buildAdminTab();
 }
+
+function buildGameTab(){
+document.getElementById('tabGame').innerHTML=`
+<div class="card">
+  <div class="score-grid">
+    <div class="score-team"><div class="name" id="cAway">AWAY</div><div class="val" id="cAwayS">0</div><div class="btns"><button class="btn-plus" onclick="chScore('away',1)">+1</button><button class="btn-minus" onclick="chScore('away',-1)">-1</button></div></div>
+    <div class="score-vs">vs</div>
+    <div class="score-team"><div class="name" id="cHome">HOME</div><div class="val" id="cHomeS">0</div><div class="btns"><button class="btn-plus" onclick="chScore('home',1)">+1</button><button class="btn-minus" onclick="chScore('home',-1)">-1</button></div></div>
+  </div>
+  <button class="swap-btn" onclick="swapHA()">🔄 선후공 변경</button>
+</div>
+<div class="card">
+  <div class="card-title">이닝</div>
+  <div class="inning-row"><button class="arrow" onclick="chInn(-1)">◀</button><div class="val"><span id="cHalf">▲</span> <span id="cInn">1</span>회</div><button class="arrow" onclick="chInn(1)">▶</button></div>
+  <div style="text-align:center"><button class="half-btn" onclick="togHalf()">초 ↔ 말</button></div>
+</div>
+<div class="card">
+  <div class="card-title">카운트</div>
+  <div class="bso-row"><span class="bso-name">볼</span><div class="dots"><div class="bso-dot" id="bd0" onclick="togBSO('balls',1)"></div><div class="bso-dot" id="bd1" onclick="togBSO('balls',2)"></div><div class="bso-dot" id="bd2" onclick="togBSO('balls',3)"></div></div></div>
+  <div class="bso-row"><span class="bso-name">스트라이크</span><div class="dots"><div class="bso-dot" id="sd0" onclick="togBSO('strikes',1)"></div><div class="bso-dot" id="sd1" onclick="togBSO('strikes',2)"></div></div></div>
+  <div class="bso-row"><span class="bso-name">아웃</span><div class="dots"><div class="bso-dot" id="od0" onclick="togBSO('outs',1)"></div><div class="bso-dot" id="od1" onclick="togBSO('outs',2)"></div></div></div>
+  <button class="bso-reset" onclick="rstCnt()">카운트 초기화</button>
+</div>
+<div class="card">
+  <div class="card-title">베이스</div>
+  <div class="base-wrap"><div class="base-b b2" id="cB2" onclick="togB(2)"></div><div class="base-b b3" id="cB3" onclick="togB(3)"></div><div class="base-b b1" id="cB1" onclick="togB(1)"></div></div>
+  <button class="base-clear" onclick="clrB()">베이스 클리어</button>
+</div>`}
+
+function buildSetupTab(){
+document.getElementById('tabSetup').innerHTML=`
+<div class="card">
+  <div class="card-title">경기 정보</div>
+  <div class="form-row"><label>경기명</label><input id="inTitle" placeholder="예: 스토브리그 in 창녕"></div>
+  <div class="form-row"><label>원정팀</label><input id="inAway" placeholder="원정팀명"></div>
+  <div class="form-row"><label>홈팀</label><input id="inHome" placeholder="홈팀명"></div>
+  <div class="form-row"><label>원정로고</label><input id="inALogo" placeholder="로고 URL (선택)"></div>
+  <div class="form-row"><label>홈로고</label><input id="inHLogo" placeholder="로고 URL (선택)"></div>
+  <button class="btn-save" onclick="saveG()">💾 경기 저장</button>
+  <button class="btn-apply" onclick="applyG()">✅ 바로 적용</button>
+</div>
+<div class="card"><div class="card-title">저장된 경기</div><div class="game-list" id="gList"></div></div>`}
+
+function buildLineupTab(){
+let h=`<div class="card"><div class="card-title">우리팀 선발 라인업</div><div class="form-row"><label>팀명</label><input id="linTeam" placeholder="우리팀 이름"></div><div style="margin-top:8px">`;
+POS.forEach(p=>{h+=`<div class="lin-row"><span class="pos">${p}</span><input id="ln-${p}" placeholder="${PN[p]}"><input class="num" id="ln-n-${p}" placeholder="#" type="number"></div>`});
+h+=`</div><button class="btn-save" onclick="saveLin()">💾 라인업 저장</button><button class="btn-apply" onclick="applyLin()">✅ 라인업 표시</button></div>`;
+document.getElementById('tabLineup').innerHTML=h}
+
+function buildAdminTab(){
+document.getElementById('tabAdmin').innerHTML=`
+<div class="card"><div class="card-title">🔒 관리자 비밀번호</div><div class="form-row"><label>새 비번</label><input id="nAdmPw" type="password" placeholder="새 관리자 비밀번호"></div><button class="btn-save" onclick="chAdmPw()">변경</button></div>
+<div class="card"><div class="card-title">👤 사용자 비밀번호</div><div class="form-row"><label>현재</label><input id="curUPw" readonly style="color:#e94560;font-weight:700"></div><div class="form-row"><label>새 비번</label><input id="nUPw" placeholder="새 사용자 비밀번호"></div><button class="btn-warn" onclick="chUPw()">변경</button><button class="btn-danger" onclick="rstUPw()">삭제</button></div>`}
 
 function initApp(){
-  if(isAdmin){configRef.child('userPassword').on('value',s=>{const el=document.getElementById('currentUserPw');if(el)el.value=s.val()||'(없음)'})}
-  gameRef.on('value',s=>{const d=s.val();if(!d)return;gameData=d;updateUI()});
-  lineupRef.on('value',s=>{const d=s.val();if(d)lineupData=d});
-  loadSavedGames();
+  if(isAdmin)configRef.child('userPassword').on('value',s=>{const el=document.getElementById('curUPw');if(el)el.value=s.val()||'(없음)'});
+  gameRef.on('value',s=>{const d=s.val();if(!d)return;gd=d;scoreVisible=!!gd.visible;updUI();updOvBtns()});
+  lineupRef.on('value',s=>{const d=s.val();if(d){ld=d;lineupVisible=!!ld.visible;updOvBtns()}});
+  loadGames();
 }
-function updateUI(){
+
+function updUI(){
   const $=id=>document.getElementById(id);
-  $('ctrlAwayName').textContent=gameData.awayName||'AWAY';
-  $('ctrlHomeName').textContent=gameData.homeName||'HOME';
-  $('ctrlAwayScore').textContent=gameData.awayScore||0;
-  $('ctrlHomeScore').textContent=gameData.homeScore||0;
-  $('ctrlInning').textContent=gameData.inning||1;
-  $('ctrlHalf').textContent=gameData.inningHalf==='bottom'?'▼':'▲';
-  for(let i=0;i<3;i++){const el=$('bd'+i);if(el){el.style.background=i<(gameData.balls||0)?'#4caf50':'#f8f8f8';el.style.borderColor=i<(gameData.balls||0)?'#4caf50':'#ddd'}}
-  for(let i=0;i<2;i++){const el=$('sd'+i);if(el){el.style.background=i<(gameData.strikes||0)?'#ffd700':'#f8f8f8';el.style.borderColor=i<(gameData.strikes||0)?'#ffd700':'#ddd'}}
-  for(let i=0;i<2;i++){const el=$('od'+i);if(el){el.style.background=i<(gameData.outs||0)?'#e94560':'#f8f8f8';el.style.borderColor=i<(gameData.outs||0)?'#e94560':'#ddd'}}
-  ['1','2','3'].forEach(n=>{const el=$('ctrlBase'+n);if(el){const on=!!gameData['base'+n];el.style.background=on?'#ffd700':'#f8f8f8';el.style.borderColor=on?'#ffd700':'#ddd'}});
+  if($('cAway'))$('cAway').textContent=gd.awayName||'AWAY';
+  if($('cHome'))$('cHome').textContent=gd.homeName||'HOME';
+  if($('cAwayS'))$('cAwayS').textContent=gd.awayScore||0;
+  if($('cHomeS'))$('cHomeS').textContent=gd.homeScore||0;
+  if($('cInn'))$('cInn').textContent=gd.inning||1;
+  if($('cHalf'))$('cHalf').textContent=gd.inningHalf==='bottom'?'▼':'▲';
+  for(let i=0;i<3;i++){const el=$('bd'+i);if(el)el.className='bso-dot'+(i<(gd.balls||0)?' b-on':'')}
+  for(let i=0;i<2;i++){const el=$('sd'+i);if(el)el.className='bso-dot'+(i<(gd.strikes||0)?' s-on':'')}
+  for(let i=0;i<2;i++){const el=$('od'+i);if(el)el.className='bso-dot'+(i<(gd.outs||0)?' o-on':'')}
+  ['1','2','3'].forEach(n=>{const el=$('cB'+n);if(el)el.className='base-b b'+n+(gd['base'+n]?' on':'')});
 }
-function toggleOverlay(t,on){if(t==='scoreboard')gameRef.update({visible:on});else lineupRef.update({visible:on})}
-function changeScore(t,d){const k=t==='away'?'awayScore':'homeScore';gameRef.update({[k]:Math.max(0,(gameData[k]||0)+d)})}
-function swapHomeAway(){gameRef.update({awayName:gameData.homeName,homeName:gameData.awayName,awayScore:gameData.homeScore,homeScore:gameData.awayScore,awayLogo:gameData.homeLogo||'',homeLogo:gameData.awayLogo||''})}
-function changeInning(d){gameRef.update({inning:Math.max(1,(gameData.inning||1)+d)})}
-function toggleHalf(){gameRef.update({inningHalf:gameData.inningHalf==='top'?'bottom':'top'})}
-function toggleBSO(type,val){const cur=gameData[type]||0;gameRef.update({[type]:cur>=val?val-1:val})}
-function resetCount(){gameRef.update({balls:0,strikes:0,outs:0})}
-function toggleBase(n){gameRef.update({['base'+n]:!gameData['base'+n]})}
-function clearBases(){gameRef.update({base1:false,base2:false,base3:false})}
-function switchTab(id,el){document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');document.querySelectorAll('.tab').forEach(t=>t.style.color='#aaa');document.getElementById(id).style.display='block';el.style.color='#e94560'}
-function changeAdminPassword(){const p=document.getElementById('newAdminPw').value;if(!p||p.length<4){alert('4자 이상 입력하세요');return}configRef.child('adminPassword').set(p);alert('관리자 비밀번호 변경 완료');document.getElementById('newAdminPw').value=''}
-function changeUserPassword(){const p=document.getElementById('newUserPw').value;if(!p){alert('비밀번호를 입력하세요');return}configRef.child('userPassword').set(p);alert('사용자 비밀번호 설정: '+p);document.getElementById('currentUserPw').value=p;document.getElementById('newUserPw').value=''}
-function resetUserPassword(){if(confirm('사용자 비밀번호를 삭제할까요?')){configRef.child('userPassword').remove();document.getElementById('currentUserPw').value='(없음)'}}
-function saveGame(){const g={gameTitle:document.getElementById('inputTitle').value,awayName:document.getElementById('inputAway').value,homeName:document.getElementById('inputHome').value,awayLogo:document.getElementById('inputAwayLogo').value,homeLogo:document.getElementById('inputHomeLogo').value,createdAt:Date.now()};savedGamesRef.push(g);alert('경기 저장 완료')}
-function applyGame(){gameRef.update({gameTitle:document.getElementById('inputTitle').value,awayName:document.getElementById('inputAway').value||'AWAY',homeName:document.getElementById('inputHome').value||'HOME',awayLogo:document.getElementById('inputAwayLogo').value,homeLogo:document.getElementById('inputHomeLogo').value,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});alert('경기 적용 완료')}
-function loadSavedGames(){savedGamesRef.on('value',s=>{const list=document.getElementById('gameList');if(!list)return;list.innerHTML='';const d=s.val();if(!d)return;Object.entries(d).forEach(([k,g])=>{list.innerHTML+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:#f8f8f8;border-radius:12px;margin-bottom:8px"><div><div style="color:#888;font-size:12px">${g.gameTitle||'제목없음'}</div><div style="font-size:15px;font-weight:600">${g.awayName||'?'} vs ${g.homeName||'?'}</div></div><div style="display:flex;gap:6px"><button onclick="loadGame('${k}')" style="padding:8px 14px;font-size:13px;background:#4caf50;color:#fff;border:none;border-radius:8px">적용</button><button onclick="deleteGame('${k}')" style="padding:8px 14px;font-size:13px;background:#e94560;color:#fff;border:none;border-radius:8px">삭제</button></div></div>`})})}
-function loadGame(k){savedGamesRef.child(k).once('value',s=>{const g=s.val();if(!g)return;gameRef.update({gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});alert('경기 적용 완료')})}
-function deleteGame(k){if(confirm('삭제할까요?'))savedGamesRef.child(k).remove()}
-function saveLineup(){const players={};positions.forEach(p=>{players[p]={name:document.getElementById('lin-name-'+p).value||'-',number:document.getElementById('lin-num-'+p).value||''}});lineupRef.set({visible:lineupData.visible||false,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players}).then(()=>alert('라인업 저장 완료')).catch(e=>alert('저장 실패: '+e.message))}
-function applyLineup(){const players={};positions.forEach(p=>{players[p]={name:document.getElementById('lin-name-'+p).value||'-',number:document.getElementById('lin-num-'+p).value||''}});lineupRef.set({visible:true,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players}).then(()=>alert('라인업 표시됩니다')).catch(e=>alert('실패: '+e.message))}
+
+function updOvBtns(){
+  const $=id=>document.getElementById(id);
+  if($('ovScoreOn'))$('ovScoreOn').className='ov-btn'+(scoreVisible?' on':'');
+  if($('ovScoreOff'))$('ovScoreOff').className='ov-btn'+(!scoreVisible?' off-active':'');
+  if($('ovLineupOn'))$('ovLineupOn').className='ov-btn'+(lineupVisible?' on':'');
+  if($('ovLineupOff'))$('ovLineupOff').className='ov-btn'+(!lineupVisible?' off-active':'');
+}
+
+function setOv(t,on){if(t==='score'){gameRef.update({visible:on});scoreVisible=on}else{lineupRef.update({visible:on});lineupVisible=on}updOvBtns()}
+function chScore(t,d){const k=t==='away'?'awayScore':'homeScore';gameRef.update({[k]:Math.max(0,(gd[k]||0)+d)})}
+function swapHA(){gameRef.update({awayName:gd.homeName,homeName:gd.awayName,awayScore:gd.homeScore,homeScore:gd.awayScore,awayLogo:gd.homeLogo||'',homeLogo:gd.awayLogo||''})}
+function chInn(d){gameRef.update({inning:Math.max(1,(gd.inning||1)+d)})}
+function togHalf(){gameRef.update({inningHalf:gd.inningHalf==='top'?'bottom':'top'})}
+function togBSO(t,v){gameRef.update({[t]:(gd[t]||0)>=v?v-1:v})}
+function rstCnt(){gameRef.update({balls:0,strikes:0,outs:0})}
+function togB(n){gameRef.update({['base'+n]:!gd['base'+n]})}
+function clrB(){gameRef.update({base1:false,base2:false,base3:false})}
+
+function switchTab(id,el){document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).style.display='block';el.classList.add('active')}
+
+function chAdmPw(){const p=document.getElementById('nAdmPw').value;if(!p||p.length<4){alert('4자 이상');return}configRef.child('adminPassword').set(p);alert('변경 완료');document.getElementById('nAdmPw').value=''}
+function chUPw(){const p=document.getElementById('nUPw').value;if(!p){alert('입력하세요');return}configRef.child('userPassword').set(p);alert('설정: '+p);document.getElementById('curUPw').value=p;document.getElementById('nUPw').value=''}
+function rstUPw(){if(confirm('삭제할까요?')){configRef.child('userPassword').remove();document.getElementById('curUPw').value='(없음)'}}
+
+function saveG(){savedGamesRef.push({gameTitle:document.getElementById('inTitle').value,awayName:document.getElementById('inAway').value,homeName:document.getElementById('inHome').value,awayLogo:document.getElementById('inALogo').value,homeLogo:document.getElementById('inHLogo').value,createdAt:Date.now()});alert('저장 완료')}
+function applyG(){gameRef.update({gameTitle:document.getElementById('inTitle').value,awayName:document.getElementById('inAway').value||'AWAY',homeName:document.getElementById('inHome').value||'HOME',awayLogo:document.getElementById('inALogo').value,homeLogo:document.getElementById('inHLogo').value,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});alert('적용 완료')}
+function loadGames(){savedGamesRef.on('value',s=>{const el=document.getElementById('gList');if(!el)return;el.innerHTML='';const d=s.val();if(!d)return;Object.entries(d).forEach(([k,g])=>{el.innerHTML+=`<div class="game-item${k===activeGameKey?' active-game':''}" id="gi-${k}"><div class="info"><div class="sub">${g.gameTitle||'제목없음'}</div>${g.awayName||'?'} vs ${g.homeName||'?'}</div><div class="btns"><button style="background:#4caf50;color:#fff;border:none" onclick="loadG('${k}')">적용</button><button style="background:#e94560;color:#fff;border:none" onclick="delG('${k}')">삭제</button></div></div>`})})}
+function loadG(k){activeGameKey=k;savedGamesRef.child(k).once('value',s=>{const g=s.val();if(!g)return;gameRef.update({gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});loadGames()})}
+function delG(k){if(confirm('삭제?')){if(k===activeGameKey)activeGameKey='';savedGamesRef.child(k).remove()}}
+
+function saveLin(){const p={};POS.forEach(pos=>{p[pos]={name:document.getElementById('ln-'+pos).value||'-',number:document.getElementById('ln-n-'+pos).value||''}});lineupRef.set({visible:ld.visible||false,teamName:document.getElementById('linTeam').value||'우리팀',players:p}).then(()=>alert('저장 완료')).catch(e=>alert('실패: '+e.message))}
+function applyLin(){const p={};POS.forEach(pos=>{p[pos]={name:document.getElementById('ln-'+pos).value||'-',number:document.getElementById('ln-n-'+pos).value||''}});lineupRef.set({visible:true,teamName:document.getElementById('linTeam').value||'우리팀',players:p}).then(()=>alert('라인업 표시됩니다')).catch(e=>alert('실패: '+e.message))}
 </script>
