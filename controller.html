@@ -125,12 +125,12 @@ input:focus,select:focus{outline:none;border-color:#2c6fbb}
 <script src="firebase-config.js"></script>
 <script>
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),configRef=db.ref('config'),rosterRef=db.ref('roster');
+const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),configRef=db.ref('config'),rosterRef=db.ref('roster'),teamsRef=db.ref('teams');
 let isAdmin=false,selectedRole='user',activeGameKey='';
 const DEFAULT_ADMIN_PW='admin1234';
 let gd={visible:false,gameTitle:'',awayName:'AWAY',homeName:'HOME',awayScore:0,homeScore:0,awayLogo:'',homeLogo:'',inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false};
 let ld={visible:false,teamName:'',players:{},displayMode:'defense'};
-let rosterList=[];
+let rosterList=[],teamsList=[];
 const POS=['P','C','1B','2B','3B','SS','LF','CF','RF'];
 const PN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
 let scoreVisible=false,lineupVisible=false;
@@ -192,11 +192,11 @@ function buildSetupTab(){
 document.getElementById('tabSetup').innerHTML=`
 <div class="card"><div class="card-title">경기 정보</div>
 <div class="form-row"><label>경기명</label><input id="inTitle" placeholder="예: 스토브리그 in 창녕"></div>
-<div class="form-row"><label>원정팀</label><input id="inAway" placeholder="원정팀명"></div>
-<div class="form-row"><label>홈팀</label><input id="inHome" placeholder="홈팀명"></div>
-<div class="form-row"><label>원정로고</label><input id="inALogo" placeholder="로고 URL (선택)"></div>
+<div class="form-row"><label>원정팀</label><input id="inAway" placeholder="원정팀명" oninput="suggestTeam('away')"><div id="sugAway" style="position:relative"></div></div>
+<div class="form-row"><label>원정로고</label><input id="inALogo" placeholder="로고 URL (선택)" readonly style="font-size:12px;color:#888"></div>
 <div class="form-row"><label></label><input type="file" id="fileALogo" accept="image/*" onchange="uploadLogo('away')" style="font-size:13px;padding:8px"></div>
-<div class="form-row"><label>홈로고</label><input id="inHLogo" placeholder="로고 URL (선택)"></div>
+<div class="form-row"><label>홈팀</label><input id="inHome" placeholder="홈팀명" oninput="suggestTeam('home')"><div id="sugHome" style="position:relative"></div></div>
+<div class="form-row"><label>홈로고</label><input id="inHLogo" placeholder="로고 URL (선택)" readonly style="font-size:12px;color:#888"></div>
 <div class="form-row"><label></label><input type="file" id="fileHLogo" accept="image/*" onchange="uploadLogo('home')" style="font-size:13px;padding:8px"></div>
 <button class="btn-save" onclick="saveG()">경기 저장</button>
 <button class="btn-apply" onclick="applyG()">바로 적용</button></div>
@@ -230,6 +230,11 @@ function setLineupMode(mode){
   lineupRef.update({displayMode:mode});
   document.getElementById('modeDefense').className='mode-btn'+(mode==='defense'?' active':'');
   document.getElementById('modeBatting').className='mode-btn'+(mode==='batting'?' active':'');
+}
+function updateLineupSelects(){
+  const opts=rosterOptions();
+  POS.forEach(p=>{const el=document.getElementById('ln-sel-'+p);if(el){const v=el.value;el.innerHTML='<option value="">선수 선택</option>'+opts;el.value=v}});
+  for(let i=1;i<=9;i++){const el=document.getElementById('bat-sel-'+i);if(el){const v=el.value;el.innerHTML='<option value="">선수 선택</option>'+opts;el.value=v}}
 }
 </script>
 <script>
@@ -270,7 +275,8 @@ function initApp(){
     const dm=d.displayMode||'defense';const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
     if(md)md.className='mode-btn'+(dm==='defense'?' active':'');if(mb)mb.className='mode-btn'+(dm==='batting'?' active':'');
   }});
-  rosterRef.on('value',s=>{rosterList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>rosterList.push({key:k,...v}));rosterList.sort((a,b)=>Number(a.number)-Number(b.number));renderRoster();buildLineupTab()});
+  rosterRef.on('value',s=>{rosterList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>rosterList.push({key:k,...v}));rosterList.sort((a,b)=>Number(a.number)-Number(b.number));renderRoster();updateLineupSelects()});
+  teamsRef.on('value',s=>{teamsList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>teamsList.push({key:k,...v}));teamsList.sort((a,b)=>(a.name||'').localeCompare(b.name||''))});
   loadGames();
 }
 function updUI(){
@@ -305,8 +311,8 @@ function switchTab(id,el){document.querySelectorAll('.tab-content').forEach(t=>t
 function chAdmPw(){const p=document.getElementById('nAdmPw').value;if(!p||p.length<4){alert('4자 이상');return}configRef.child('adminPassword').set(p);alert('변경 완료');document.getElementById('nAdmPw').value=''}
 function chUPw(){const p=document.getElementById('nUPw').value;if(!p){alert('입력하세요');return}configRef.child('userPassword').set(p);alert('설정: '+p);document.getElementById('curUPw').value=p;document.getElementById('nUPw').value=''}
 function rstUPw(){if(confirm('삭제할까요?')){configRef.child('userPassword').remove();document.getElementById('curUPw').value='(없음)'}}
-function saveG(){savedGamesRef.push({gameTitle:document.getElementById('inTitle').value,awayName:document.getElementById('inAway').value,homeName:document.getElementById('inHome').value,awayLogo:document.getElementById('inALogo').value,homeLogo:document.getElementById('inHLogo').value,createdAt:Date.now()});alert('저장 완료')}
-function applyG(){gameRef.update({gameTitle:document.getElementById('inTitle').value,awayName:document.getElementById('inAway').value||'AWAY',homeName:document.getElementById('inHome').value||'HOME',awayLogo:document.getElementById('inALogo').value,homeLogo:document.getElementById('inHLogo').value,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});alert('적용 완료')}
+function saveG(){const aN=document.getElementById('inAway').value,hN=document.getElementById('inHome').value,aL=document.getElementById('inALogo').value,hL=document.getElementById('inHLogo').value;savedGamesRef.push({gameTitle:document.getElementById('inTitle').value,awayName:aN,homeName:hN,awayLogo:aL,homeLogo:hL,createdAt:Date.now()});saveTeamLogo(aN,aL);saveTeamLogo(hN,hL);alert('저장 완료')}
+function applyG(){const aN=document.getElementById('inAway').value||'AWAY',hN=document.getElementById('inHome').value||'HOME',aL=document.getElementById('inALogo').value,hL=document.getElementById('inHLogo').value;gameRef.update({gameTitle:document.getElementById('inTitle').value,awayName:aN,homeName:hN,awayLogo:aL,homeLogo:hL,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});saveTeamLogo(aN,aL);saveTeamLogo(hN,hL);alert('적용 완료')}
 function loadGames(){savedGamesRef.on('value',s=>{const el=document.getElementById('gList');if(!el)return;el.innerHTML='';const d=s.val();if(!d)return;Object.entries(d).forEach(([k,g])=>{
 el.innerHTML+=`<div class="game-item${k===activeGameKey?' active-game':''}" id="gi-${k}"><div class="info"><div class="sub">${g.gameTitle||'제목없음'}</div>${g.awayName||'?'} vs ${g.homeName||'?'}</div><div class="btns"><button style="background:#ff9800;color:#fff;border:none" onclick="editG('${k}')">수정</button><button style="background:#4caf50;color:#fff;border:none" onclick="loadG('${k}')">적용</button><button style="background:#e94560;color:#fff;border:none" onclick="delG('${k}')">삭제</button></div></div>`})})}
 function loadG(k){activeGameKey=k;savedGamesRef.child(k).once('value',s=>{const g=s.val();if(!g)return;gameRef.update({gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});loadGames()})}
@@ -347,15 +353,43 @@ function saveLin(){
   const bo={};for(let i=1;i<=9;i++){
     const sel=document.getElementById('bat-sel-'+i);
     const r=rosterList.find(x=>x.key===sel.value);
-    bo[i]={name:r?r.name:(sel.value?sel.options[sel.selectedIndex].text:'-'),number:r?r.number:'',position:document.getElementById('bat-pos-'+i).value||''};
+    bo[i]={name:r?r.name:'-',number:r?r.number:'',position:document.getElementById('bat-pos-'+i).value||''};
   }
   lineupRef.set({visible:true,displayMode:ld.displayMode||'defense',teamName:document.getElementById('linTeam').value||'우리팀',players:p,battingOrder:bo}).then(()=>alert('라인업 저장 및 표시 완료')).catch(e=>alert('실패: '+e.message));
 }
 function uploadLogo(team){
   const fi=document.getElementById(team==='away'?'fileALogo':'fileHLogo');const f=fi.files[0];if(!f)return;
   if(f.size>500000){alert('500KB 이하');return}
-  const r=new FileReader();r.onload=e=>{document.getElementById(team==='away'?'inALogo':'inHLogo').value=e.target.result;alert('로고 업로드 완료')};r.readAsDataURL(f);
+  const r=new FileReader();r.onload=e=>{
+    const dataUrl=e.target.result;
+    document.getElementById(team==='away'?'inALogo':'inHLogo').value=dataUrl;
+    const teamName=document.getElementById(team==='away'?'inAway':'inHome').value.trim();
+    if(teamName)saveTeamLogo(teamName,dataUrl);
+    alert('로고 업로드 완료');
+  };r.readAsDataURL(f);
 }
+function suggestTeam(side){
+  const input=document.getElementById(side==='away'?'inAway':'inHome');
+  const sugEl=document.getElementById(side==='away'?'sugAway':'sugHome');
+  const q=input.value.trim().toLowerCase();
+  if(!q||q.length<1){sugEl.innerHTML='';return}
+  const matches=teamsList.filter(t=>t.name.toLowerCase().includes(q));
+  if(!matches.length){sugEl.innerHTML='';return}
+  sugEl.innerHTML='<div style="position:absolute;top:0;left:0;right:0;background:#fff;border:1px solid #ddd;border-radius:8px;z-index:50;max-height:150px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.15)">'+matches.map(t=>`<div style="padding:10px;cursor:pointer;font-size:14px;border-bottom:1px solid #f0f0f0" onclick="pickTeam('${side}','${t.key}')">${t.name}</div>`).join('')+'</div>';
+}
+function pickTeam(side,key){
+  const t=teamsList.find(x=>x.key===key);if(!t)return;
+  document.getElementById(side==='away'?'inAway':'inHome').value=t.name;
+  document.getElementById(side==='away'?'inALogo':'inHLogo').value=t.logo||'';
+  document.getElementById(side==='away'?'sugAway':'sugHome').innerHTML='';
+}
+function saveTeamLogo(name,logo){
+  if(!name||!logo)return;
+  const existing=teamsList.find(t=>t.name===name);
+  if(existing){teamsRef.child(existing.key).update({logo})}
+  else{teamsRef.push({name,logo})}
+}
+
 </script>
 </body>
 </html>
