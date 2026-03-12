@@ -25,7 +25,7 @@ input:focus,select:focus{outline:none;border-color:#e94560}
 
 /* 탭 네비게이션 */
 .tabs{display:flex;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;border-top:2px solid #e94560;z-index:100}
-.tab{flex:1;padding:12px 0;text-align:center;font-size:12px;font-weight:700;color:#666;background:transparent}
+.tab{flex:1;padding:12px 0;text-align:center;font-size:14px;font-weight:700;color:#666;background:transparent}
 .tab.active{color:#e94560;background:#16213e}
 
 /* 오버레이 컨트롤 */
@@ -516,8 +516,12 @@ function saveLineup(){
     const number=document.getElementById('lin-num-'+pos).value;
     players[pos]={name:name||'-',number:number||''};
   });
-  lineupRef.set({visible:lineupData.visible||false,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players});
-  alert('라인업이 저장되었습니다');
+  const data={visible:lineupData.visible||false,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players:players};
+  lineupRef.set(data).then(()=>{
+    alert('라인업이 저장되었습니다');
+  }).catch(err=>{
+    alert('저장 실패: '+err.message);
+  });
 }
 function applyLineup(){
   const players={};
@@ -526,8 +530,12 @@ function applyLineup(){
     const number=document.getElementById('lin-num-'+pos).value;
     players[pos]={name:name||'-',number:number||''};
   });
-  lineupRef.set({visible:true,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players});
-  alert('라인업이 표시됩니다');
+  const data={visible:true,teamName:document.getElementById('lineupTeamInput').value||'우리팀',players:players};
+  lineupRef.set(data).then(()=>{
+    alert('라인업이 표시됩니다');
+  }).catch(err=>{
+    alert('적용 실패: '+err.message);
+  });
 }
 </script>
 </body>
