@@ -184,6 +184,7 @@ function buildUI(){
 const m=document.getElementById('mainApp');
 let h=`<div class="top-bar"><span class="title">⚾ 스코어보드</span><button class="logout-btn" onclick="doLogout()">로그아웃</button></div>`;
 h+=`<div class="overlay-section"><button class="ov-btn" id="ovScoreOn" onclick="setOv('score',true)">스코어 ON</button><button class="ov-btn" id="ovScoreOff" onclick="setOv('score',false)">스코어 OFF</button><button class="ov-btn" id="ovLineupOn" onclick="setOv('lineup',true)">라인업 ON</button><button class="ov-btn" id="ovLineupOff" onclick="setOv('lineup',false)">라인업 OFF</button></div>`;
+h+=`<div id="linModeQuick" style="display:none;margin-bottom:14px"><div class="lineup-mode-section"><button class="mode-btn" id="qModeDefense" onclick="setLineupMode('defense')"><svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:middle;margin-right:3px"><path d="M12 2L3 9l2 11h14l2-11L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2" fill="currentColor"/></svg>수비 위치</button><button class="mode-btn" id="qModeBatting" onclick="setLineupMode('batting')"><svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:middle;margin-right:3px"><line x1="8" y1="6" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="10" x2="18" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="14" x2="18" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="4.5" cy="6" r="1.5" fill="currentColor"/><circle cx="4.5" cy="10" r="1.5" fill="currentColor"/><circle cx="4.5" cy="14" r="1.5" fill="currentColor"/></svg>타순</button></div></div>`;
 h+=`<div id="tabGame" class="tab-content"></div><div id="tabSetup" class="tab-content" style="display:none"></div><div id="tabLineup" class="tab-content" style="display:none"></div><div id="tabRoster" class="tab-content" style="display:none"></div><div id="tabAdmin" class="tab-content" style="display:none"></div>`;
 h+=`<div class="tabs">
 <div class="tab active" onclick="switchTab('tabGame',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 9.5Q7 11 12 7t9.5 2.5M2.5 14.5Q7 13 12 17t9.5-2.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>경기</div>
@@ -256,8 +257,10 @@ function fillBatFromRoster(i){
 }
 function setLineupMode(mode){
   lineupRef.update({displayMode:mode});
-  document.getElementById('modeDefense').className='mode-btn'+(mode==='defense'?' active':'');
-  document.getElementById('modeBatting').className='mode-btn'+(mode==='batting'?' active':'');
+  const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
+  if(md)md.className='mode-btn'+(mode==='defense'?' active':'');
+  if(mb)mb.className='mode-btn'+(mode==='batting'?' active':'');
+  updQuickMode();
 }
 function updateLineupSelects(){
   const opts=rosterOptions();
@@ -395,6 +398,14 @@ function updOvBtns(){
   if($('ovScoreOff'))$('ovScoreOff').className='ov-btn'+(!scoreVisible?' off-active':'');
   if($('ovLineupOn'))$('ovLineupOn').className='ov-btn'+(lineupVisible?' on':'');
   if($('ovLineupOff'))$('ovLineupOff').className='ov-btn'+(!lineupVisible?' off-active':'');
+  const qp=$('linModeQuick');if(qp)qp.style.display=lineupVisible?'block':'none';
+  updQuickMode();
+}
+function updQuickMode(){
+  const dm=ld.displayMode||'defense';
+  const qd=document.getElementById('qModeDefense'),qb=document.getElementById('qModeBatting');
+  if(qd)qd.className='mode-btn'+(dm==='defense'?' active':'');
+  if(qb)qb.className='mode-btn'+(dm==='batting'?' active':'');
 }
 function setOv(t,on){if(t==='score'){gameRef.update({visible:on});scoreVisible=on}else{lineupRef.update({visible:on});lineupVisible=on}updOvBtns()}
 function chScore(t,d){const k=t==='away'?'awayScore':'homeScore';gameRef.update({[k]:Math.max(0,(gd[k]||0)+d)})}
