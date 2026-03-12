@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>스코어보드 컨트롤러</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#0f0f1a;color:#fff;min-height:100vh}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:6px;font-weight:700;transition:all 0.15s}
+input,select{font-family:inherit;border-radius:6px;border:1px solid #333;background:#1a1a2e;color:#fff;padding:8px 10px;font-size:14px;width:100%}
+input:focus,select:focus{outline:none;border-color:#e94560}
+
+/* 비밀번호 화면 */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:16px;padding:20px}
+#loginScreen h2{color:#e94560;font-size:20px}
+#loginScreen input{max-width:260px;text-align:center;font-size:18px}
+#loginScreen button{background:#e94560;color:#fff;padding:12px 40px;font-size:16px}
+#loginError{color:#ff6b6b;font-size:13px;display:none}
+
+/* 메인 */
+#mainApp{display:none;padding:12px;padding-bottom:80px}
+.section{background:#1a1a2e;border-radius:10px;padding:14px;margin-bottom:12px}
+.section-title{font-size:13px;color:#e94560;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+
+/* 탭 네비게이션 */
+.tabs{display:flex;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;border-top:2px solid #e94560;z-index:100}
+.tab{flex:1;padding:12px 0;text-align:center;font-size:12px;font-weight:700;color:#666;background:transparent}
+.tab.active{color:#e94560;background:#16213e}
+
+/* 오버레이 컨트롤 */
+.overlay-btns{display:flex;gap:8px;flex-wrap:wrap}
+.overlay-btns button{flex:1;min-width:100px;padding:10px;font-size:13px}
+.btn-on{background:#4caf50;color:#fff}
+.btn-off{background:#333;color:#aaa}
+.btn-danger{background:#e94560;color:#fff}
+.btn-primary{background:#0f3460;color:#fff}
+.btn-warn{background:#ff9800;color:#fff}
+
+/* 스코어 조작 */
+.score-control{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0}
+.score-control .team-label{font-size:13px;min-width:60px;text-align:center;color:#a0c4ff}
+.score-control .score-val{font-size:32px;font-weight:900;color:#ffd700;min-width:50px;text-align:center}
+.score-control button{width:44px;height:44px;font-size:22px;border-radius:50%}
+.btn-plus{background:#4caf50;color:#fff}
+.btn-minus{background:#e94560;color:#fff}
+
+/* 이닝 */
+.inning-control{display:flex;align-items:center;justify-content:center;gap:10px;margin:8px 0}
+.inning-control .val{font-size:22px;font-weight:700;color:#e94560;min-width:60px;text-align:center}
+.inning-control button{width:40px;height:40px;font-size:18px;border-radius:50%;background:#0f3460;color:#fff}
+
+/* BSO */
+.bso-control{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.bso-item{text-align:center}
+.bso-item .label{font-size:12px;color:#888;margin-bottom:4px}
+.bso-dots{display:flex;gap:4px;justify-content:center;margin-bottom:4px}
+.bso-dot{width:18px;height:18px;border-radius:50%;border:2px solid #555;cursor:pointer}
+.bso-dot.active.ball{background:#4caf50;border-color:#4caf50}
+.bso-dot.active.strike{background:#ffd700;border-color:#ffd700}
+.bso-dot.active.out{background:#e94560;border-color:#e94560}
+.bso-item button{font-size:11px;padding:4px 10px;background:#333;color:#fff;margin-top:2px}
+
+/* 베이스 */
+.bases-control{display:flex;justify-content:center;margin:8px 0}
+.bases-diamond{position:relative;width:100px;height:100px}
+.base-btn{position:absolute;width:28px;height:28px;transform:rotate(45deg);border:2px solid #555;background:transparent;cursor:pointer}
+.base-btn.active{background:#ffd700;border-color:#ffd700}
+.base-btn-1{right:4px;top:50%;margin-top:-14px}
+.base-btn-2{left:50%;top:4px;margin-left:-14px}
+.base-btn-3{left:4px;top:50%;margin-top:-14px}
+
+/* 경기 설정 */
+.form-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.form-row label{font-size:12px;color:#888;min-width:60px}
+.form-row input{flex:1}
+
+/* 경기 목록 */
+.game-list{max-height:200px;overflow-y:auto}
+.game-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#16213e;border-radius:6px;margin-bottom:6px}
+.game-item .info{font-size:13px}
+.game-item .info .title{color:#a0c4ff;font-size:11px}
+.game-item button{padding:6px 12px;font-size:12px}
+
+/* 라인업 입력 */
+.lineup-row{display:flex;gap:6px;margin-bottom:6px;align-items:center}
+.lineup-row .pos-label{font-size:12px;font-weight:700;color:#e94560;min-width:28px;text-align:center}
+.lineup-row input{flex:1;padding:6px 8px;font-size:13px}
+.lineup-row input.num-input{max-width:50px}
+
+/* 선후공 */
+.swap-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;width:100%;font-size:14px;background:#ff9800;color:#fff;margin:8px 0}
+</style>
+</head>
+<body>
+
+<!-- 비밀번호 화면 -->
+<div id="loginScreen">
+  <h2>⚾ 스코어보드 컨트롤러</h2>
+  <p style="color:#888;font-size:13px">비밀번호를 입력하세요</p>
+  <input type="password" id="pwInput" placeholder="비밀번호" autocomplete="off">
+  <button onclick="doLogin()">입장</button>
+  <div id="loginError">비밀번호가 틀렸습니다</div>
+  <button onclick="resetPassword()" style="margin-top:20px;background:transparent;color:#666;font-size:11px;text-decoration:underline;padding:4px">비밀번호 초기화</button>
+</div>
+
+<!-- 메인 앱 -->
+<div id="mainApp">
+
+  <!-- 오버레이 표시 컨트롤 -->
+  <div class="section">
+    <div class="section-title">📺 오버레이 표시</div>
+    <div class="overlay-btns">
+      <button class="btn-on" id="btnScoreOn" onclick="toggleOverlay('scoreboard',true)">스코어보드 ON</button>
+      <button class="btn-off" id="btnScoreOff" onclick="toggleOverlay('scoreboard',false)">스코어보드 OFF</button>
+      <button class="btn-on" id="btnLineupOn" onclick="toggleOverlay('lineup',true)">라인업 ON</button>
+      <button class="btn-off" id="btnLineupOff" onclick="toggleOverlay('lineup',false)">라인업 OFF</button>
+    </div>
+  </div>
+
+  <!-- 탭 컨텐츠 -->
+  <div id="tabGame" class="tab-content">
+    <!-- 점수 -->
+    <div class="section">
+      <div class="section-title">⚾ 점수</div>
+      <div class="score-control">
+        <button class="btn-minus" onclick="changeScore('away',-1)">−</button>
+        <div><div class="team-label" id="ctrlAwayName">AWAY</div><div class="score-val" id="ctrlAwayScore">0</div></div>
+        <button class="btn-plus" onclick="changeScore('away',1)">+</button>
+        <span style="color:#e94560;font-size:20px;margin:0 4px">:</span>
+        <button class="btn-minus" onclick="changeScore('home',-1)">−</button>
+        <div><div class="team-label" id="ctrlHomeName">HOME</div><div class="score-val" id="ctrlHomeScore">0</div></div>
+        <button class="btn-plus" onclick="changeScore('home',1)">+</button>
+      </div>
+      <button class="swap-btn" onclick="swapHomeAway()">🔄 선후공 변경 (홈↔원정)</button>
+    </div>
+
+    <!-- 이닝 -->
+    <div class="section">
+      <div class="section-title">이닝</div>
+      <div class="inning-control">
+        <button onclick="changeInning(-1)">◀</button>
+        <div class="val"><span id="ctrlHalf">▲</span> <span id="ctrlInning">1</span>회</div>
+        <button onclick="changeInning(1)">▶</button>
+        <button style="background:#ff9800;color:#fff;padding:8px 14px;font-size:13px;margin-left:8px" onclick="toggleHalf()">초↔말</button>
+      </div>
+    </div>
+
+    <!-- BSO -->
+    <div class="section">
+      <div class="section-title">카운트</div>
+      <div class="bso-control">
+        <div class="bso-item">
+          <div class="label">BALL</div>
+          <div class="bso-dots" id="bDots"></div>
+          <button onclick="changeBSO('balls',1)">+</button>
+          <button onclick="resetBSO('balls')">R</button>
+        </div>
+        <div class="bso-item">
+          <div class="label">STRIKE</div>
+          <div class="bso-dots" id="sDots"></div>
+          <button onclick="changeBSO('strikes',1)">+</button>
+          <button onclick="resetBSO('strikes')">R</button>
+        </div>
+        <div class="bso-item">
+          <div class="label">OUT</div>
+          <div class="bso-dots" id="oDots"></div>
+          <button onclick="changeBSO('outs',1)">+</button>
+          <button onclick="resetBSO('outs')">R</button>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:8px">
+        <button class="btn-danger" style="padding:8px 20px;font-size:13px" onclick="resetCount()">카운트 초기화</button>
+      </div>
+    </div>
+
+    <!-- 베이스 -->
+    <div class="section">
+      <div class="section-title">베이스</div>
+      <div class="bases-control">
+        <div class="bases-diamond">
+          <div class="base-btn base-btn-2" id="ctrlBase2" onclick="toggleBase(2)"></div>
+          <div class="base-btn base-btn-3" id="ctrlBase3" onclick="toggleBase(3)"></div>
+          <div class="base-btn base-btn-1" id="ctrlBase1" onclick="toggleBase(1)"></div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <button class="btn-danger" style="padding:6px 16px;font-size:12px" onclick="clearBases()">베이스 클리어</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 경기 설정 탭 -->
+  <div id="tabSetup" class="tab-content" style="display:none">
+    <div class="section">
+      <div class="section-title">경기 정보 설정</div>
+      <div class="form-row"><label>경기명</label><input id="inputTitle" placeholder="예: 스토브리그 in 창녕"></div>
+      <div class="form-row"><label>원정팀</label><input id="inputAway" placeholder="원정팀명"></div>
+      <div class="form-row"><label>홈팀</label><input id="inputHome" placeholder="홈팀명"></div>
+      <div class="form-row"><label>원정로고</label><input id="inputAwayLogo" placeholder="로고 이미지 URL (선택)"></div>
+      <div class="form-row"><label>홈로고</label><input id="inputHomeLogo" placeholder="로고 이미지 URL (선택)"></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn-primary" style="flex:1;padding:10px;font-size:14px" onclick="saveGame()">💾 경기 저장</button>
+        <button class="btn-on" style="flex:1;padding:10px;font-size:14px" onclick="applyGame()">✅ 바로 적용</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">저장된 경기 목록</div>
+      <div class="game-list" id="gameList"></div>
+    </div>
+  </div>
+
+  <!-- 라인업 탭 -->
+  <div id="tabLineup" class="tab-content" style="display:none">
+    <div class="section">
+      <div class="section-title">우리팀 선발 라인업</div>
+      <div class="form-row"><label>팀명</label><input id="lineupTeamInput" placeholder="우리팀 이름"></div>
+      <div style="margin-top:10px" id="lineupInputs"></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn-primary" style="flex:1;padding:10px;font-size:14px" onclick="saveLineup()">💾 라인업 저장</button>
+        <button class="btn-on" style="flex:1;padding:10px;font-size:14px" onclick="applyLineup()">✅ 적용</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 바 -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('tabGame',this)">⚾ 경기</div>
+    <div class="tab" onclick="switchTab('tabSetup',this)">⚙️ 설정</div>
+    <div class="tab" onclick="switchTab('tabLineup',this)">👥 라인업</div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const gameRef=db.ref('game');
+const lineupRef=db.ref('lineup');
+const savedGamesRef=db.ref('savedGames');
+const configRef=db.ref('config');
+
+let gameData={visible:false,gameTitle:'',awayName:'AWAY',homeName:'HOME',awayScore:0,homeScore:0,awayLogo:'',homeLogo:'',inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false};
+let lineupData={visible:false,teamName:'',players:{}};
+const positions=['P','C','1B','2B','3B','SS','LF','CF','RF'];
+const posNames={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
+
+// 비밀번호
+function doLogin(){
+  const pw=document.getElementById('pwInput').value;
+  if(!pw){alert('비밀번호를 입력하세요');return}
+  configRef.child('password').once('value',snap=>{
+    const saved=snap.val();
+    if(!saved){configRef.child('password').set(pw);enterApp();return}
+    if(pw===saved){enterApp()}
+    else{document.getElementById('loginError').style.display='block'}
+  });
+}
+function resetPassword(){
+  if(confirm('비밀번호를 초기화하시겠습니까? 새로 입력하는 비밀번호로 재설정됩니다.')){
+    configRef.child('password').remove();
+    document.getElementById('loginError').style.display='none';
+    alert('초기화 완료. 이제 새 비밀번호를 입력하세요.');
+  }
+}
+document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+function enterApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initApp();
+}
+
+function initApp(){
+  // 라인업 입력 폼 생성
+  const container=document.getElementById('lineupInputs');
+  positions.forEach(pos=>{
+    container.innerHTML+=`<div class="lineup-row">
+      <span class="pos-label">${pos}</span>
+      <input id="lin-name-${pos}" placeholder="${posNames[pos]} 이름">
+      <input class="num-input" id="lin-num-${pos}" placeholder="#" type="number">
+    </div>`;
+  });
+
+  // BSO 도트 생성
+  for(let i=0;i<3;i++)document.getElementById('bDots').innerHTML+=`<div class="bso-dot ball" id="bd${i}"></div>`;
+  for(let i=0;i<2;i++)document.getElementById('sDots').innerHTML+=`<div class="bso-dot strike" id="sd${i}"></div>`;
+  for(let i=0;i<2;i++)document.getElementById('oDots').innerHTML+=`<div class="bso-dot out" id="od${i}"></div>`;
+
+  // Firebase 실시간 동기화
+  gameRef.on('value',snap=>{
+    const d=snap.val();if(!d)return;
+    gameData=d;
+    updateUI();
+  });
+  lineupRef.on('value',snap=>{
+    const d=snap.val();if(d)lineupData=d;
+  });
+  loadSavedGames();
+}
+
+function updateUI(){
+  document.getElementById('ctrlAwayName').textContent=gameData.awayName||'AWAY';
+  document.getElementById('ctrlHomeName').textContent=gameData.homeName||'HOME';
+  document.getElementById('ctrlAwayScore').textContent=gameData.awayScore||0;
+  document.getElementById('ctrlHomeScore').textContent=gameData.homeScore||0;
+  document.getElementById('ctrlInning').textContent=gameData.inning||1;
+  document.getElementById('ctrlHalf').textContent=gameData.inningHalf==='bottom'?'▼':'▲';
+  // BSO
+  for(let i=0;i<3;i++)document.getElementById('bd'+i).classList.toggle('active',i<(gameData.balls||0));
+  for(let i=0;i<2;i++)document.getElementById('sd'+i).classList.toggle('active',i<(gameData.strikes||0));
+  for(let i=0;i<2;i++)document.getElementById('od'+i).classList.toggle('active',i<(gameData.outs||0));
+  // 베이스
+  document.getElementById('ctrlBase1').classList.toggle('active',!!gameData.base1);
+  document.getElementById('ctrlBase2').classList.toggle('active',!!gameData.base2);
+  document.getElementById('ctrlBase3').classList.toggle('active',!!gameData.base3);
+}
+
+// 오버레이 토글
+function toggleOverlay(type,on){
+  if(type==='scoreboard')gameRef.update({visible:on});
+  else lineupRef.update({visible:on});
+}
+
+// 점수
+function changeScore(team,delta){
+  const key=team==='away'?'awayScore':'homeScore';
+  const val=Math.max(0,(gameData[key]||0)+delta);
+  gameRef.update({[key]:val});
+}
+
+// 선후공 변경
+function swapHomeAway(){
+  gameRef.update({
+    awayName:gameData.homeName,homeName:gameData.awayName,
+    awayScore:gameData.homeScore,homeScore:gameData.awayScore,
+    awayLogo:gameData.homeLogo||'',homeLogo:gameData.awayLogo||''
+  });
+}
+
+// 이닝
+function changeInning(delta){
+  const val=Math.max(1,(gameData.inning||1)+delta);
+  gameRef.update({inning:val});
+}
+function toggleHalf(){
+  gameRef.update({inningHalf:gameData.inningHalf==='top'?'bottom':'top'});
+}
+
+// BSO
+function changeBSO(type,delta){
+  const max=type==='balls'?3:2;
+  let val=(gameData[type]||0)+delta;
+  if(val>max)val=0;
+  gameRef.update({[type]:val});
+}
+function resetBSO(type){gameRef.update({[type]:0})}
+function resetCount(){gameRef.update({balls:0,strikes:0,outs:0})}
+
+// 베이스
+function toggleBase(n){
+  const key='base'+n;
+  gameRef.update({[key]:!gameData[key]});
+}
+function clearBases(){gameRef.update({base1:false,base2:false,base3:false})}
+
+// 탭 전환
+function switchTab(id,el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).style.display='block';
+  el.classList.add('active');
+}
+
+// 경기 저장/불러오기
+function saveGame(){
+  const g={
+    gameTitle:document.getElementById('inputTitle').value,
+    awayName:document.getElementById('inputAway').value,
+    homeName:document.getElementById('inputHome').value,
+    awayLogo:document.getElementById('inputAwayLogo').value,
+    homeLogo:document.getElementById('inputHomeLogo').value,
+    createdAt:Date.now()
+  };
+  savedGamesRef.push(g);
+  alert('경기가 저장되었습니다');
+}
+function applyGame(){
+  gameRef.update({
+    gameTitle:document.getElementById('inputTitle').value,
+    awayName:document.getElementById('inputAway').value||'AWAY',
+    homeName:document.getElementById('inputHome').value||'HOME',
+    awayLogo:document.getElementById('inputAwayLogo').value,
+    homeLogo:document.getElementById('inputHomeLogo').value,
+    awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false
+  });
+  alert('경기 정보가 적용되었습니다');
+}
+function loadSavedGames(){
+  savedGamesRef.on('value',snap=>{
+    const list=document.getElementById('gameList');
+    list.innerHTML='';
+    const data=snap.val();if(!data)return;
+    Object.entries(data).forEach(([key,g])=>{
+      list.innerHTML+=`<div class="game-item">
+        <div class="info"><div class="title">${g.gameTitle||'제목없음'}</div>${g.awayName||'?'} vs ${g.homeName||'?'}</div>
+        <div><button class="btn-on" style="font-size:11px;padding:4px 8px;margin-right:4px" onclick="loadGame('${key}')">적용</button><button class="btn-danger" style="font-size:11px;padding:4px 8px" onclick="deleteGame('${key}')">삭제</button></div>
+      </div>`;
+    });
+  });
+}
+function loadGame(key){
+  savedGamesRef.child(key).once('value',snap=>{
+    const g=snap.val();if(!g)return;
+    gameRef.update({
+      gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',
+      awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',
+      awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false
+    });
+    alert('경기가 적용되었습니다');
+  });
+}
+function deleteGame(key){if(confirm('삭제할까요?'))savedGamesRef.child(key).remove()}
+
+// 라인업
+function saveLineup(){
+  const players={};
+  positions.forEach(pos=>{
+    const name=document.getElementById('lin-name-'+pos).value;
+    const number=document.getElementById('lin-num-'+pos).value;
+    if(name)players[pos]={name,number:number||''};
+  });
+  lineupRef.update({teamName:document.getElementById('lineupTeamInput').value,players});
+  alert('라인업이 저장되었습니다');
+}
+function applyLineup(){
+  saveLineup();
+  lineupRef.update({visible:true});
+}
+</script>
+</body>
+</html>

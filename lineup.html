@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>라인업</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
+#lineup-overlay{width:580px;height:420px;position:relative;opacity:0;transition:opacity 0.5s}
+#lineup-overlay.visible{opacity:1}
+.field-bg{width:100%;height:100%;position:relative}
+/* 야구장 SVG 배경 */
+.field-svg{width:100%;height:100%}
+.team-banner{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;padding:6px 24px;border-radius:6px;font-size:16px;font-weight:700;text-align:center;white-space:nowrap}
+.team-banner .sub{font-size:11px;color:#a0c4ff;font-weight:400}
+/* 포지션 라벨 */
+.pos{position:absolute;text-align:center;transform:translate(-50%,-50%)}
+.pos .name{background:rgba(0,0,0,0.8);color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700;white-space:nowrap}
+.pos .num{font-size:10px;color:#ffd700;margin-top:1px}
+.pos .position-label{font-size:9px;color:#aaa}
+/* 포지션 좌표 (%) */
+.pos-p{top:62%;left:50%}
+.pos-c{top:82%;left:50%}
+.pos-1b{top:62%;left:68%}
+.pos-2b{top:48%;left:62%}
+.pos-3b{top:62%;left:32%}
+.pos-ss{top:48%;left:38%}
+.pos-lf{top:28%;left:22%}
+.pos-cf{top:18%;left:50%}
+.pos-rf{top:28%;left:78%}
+</style>
+</head>
+<body>
+<div id="lineup-overlay">
+  <div class="field-bg">
+    <svg class="field-svg" viewBox="0 0 580 420" xmlns="http://www.w3.org/2000/svg">
+      <!-- 잔디 -->
+      <rect width="580" height="420" rx="12" fill="#2d8a4e"/>
+      <!-- 외야 -->
+      <path d="M290,380 L60,140 Q290,10 520,140 Z" fill="#3da55d"/>
+      <!-- 내야 다이아몬드 -->
+      <polygon points="290,240 370,320 290,400 210,320" fill="#c4a44a" opacity="0.35"/>
+      <!-- 베이스라인 -->
+      <line x1="290" y1="400" x2="210" y2="320" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+      <line x1="290" y1="400" x2="370" y2="320" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+      <line x1="210" y1="320" x2="290" y2="240" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+      <line x1="370" y1="320" x2="290" y2="240" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+      <!-- 마운드 -->
+      <circle cx="290" cy="310" r="8" fill="#c4a44a" opacity="0.6"/>
+      <!-- 홈플레이트 -->
+      <rect x="285" y="395" width="10" height="10" fill="#fff" transform="rotate(45,290,400)"/>
+    </svg>
+    <div class="team-banner">
+      <span id="lineupTeamName">우리팀</span>
+      <div class="sub">선발 라인업</div>
+    </div>
+    <!-- 9개 포지션 -->
+    <div class="pos pos-p" id="pos-P"><div class="name" id="name-P">-</div><div class="num" id="num-P"></div><div class="position-label">P</div></div>
+    <div class="pos pos-c" id="pos-C"><div class="name" id="name-C">-</div><div class="num" id="num-C"></div><div class="position-label">C</div></div>
+    <div class="pos pos-1b" id="pos-1B"><div class="name" id="name-1B">-</div><div class="num" id="num-1B"></div><div class="position-label">1B</div></div>
+    <div class="pos pos-2b" id="pos-2B"><div class="name" id="name-2B">-</div><div class="num" id="num-2B"></div><div class="position-label">2B</div></div>
+    <div class="pos pos-3b" id="pos-3B"><div class="name" id="name-3B">-</div><div class="num" id="num-3B"></div><div class="position-label">3B</div></div>
+    <div class="pos pos-ss" id="pos-SS"><div class="name" id="name-SS">-</div><div class="num" id="num-SS"></div><div class="position-label">SS</div></div>
+    <div class="pos pos-lf" id="pos-LF"><div class="name" id="name-LF">-</div><div class="num" id="num-LF"></div><div class="position-label">LF</div></div>
+    <div class="pos pos-cf" id="pos-CF"><div class="name" id="name-CF">-</div><div class="num" id="num-CF"></div><div class="position-label">CF</div></div>
+    <div class="pos pos-rf" id="pos-RF"><div class="name" id="name-RF">-</div><div class="num" id="num-RF"></div><div class="position-label">RF</div></div>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const lineupRef=db.ref('lineup');
+
+lineupRef.on('value',snap=>{
+  const d=snap.val();if(!d)return;
+  const overlay=document.getElementById('lineup-overlay');
+  if(d.visible){overlay.classList.add('visible')}else{overlay.classList.remove('visible');return}
+  document.getElementById('lineupTeamName').textContent=d.teamName||'우리팀';
+  const positions=['P','C','1B','2B','3B','SS','LF','CF','RF'];
+  positions.forEach(pos=>{
+    const player=d.players&&d.players[pos];
+    document.getElementById('name-'+pos).textContent=player?player.name:'-';
+    document.getElementById('num-'+pos).textContent=player?('#'+player.number):'';
+  });
+});
+</script>
+</body>
+</html>

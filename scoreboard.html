@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스코어보드</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:flex-end}
+#scoreboard{width:100%;height:52px;display:flex;align-items:center;background:linear-gradient(to right,#1a1a2e,#16213e);border-top:2px solid #e94560;color:#fff;opacity:0;transition:opacity 0.5s}
+#scoreboard.visible{opacity:1}
+.game-info{background:#0f3460;padding:0 14px;height:100%;display:flex;align-items:center;font-size:13px;color:#a0c4ff;white-space:nowrap;max-width:240px;overflow:hidden}
+.team-section{display:flex;align-items:center;height:100%;flex:1;justify-content:center;gap:6px}
+.team{display:flex;align-items:center;gap:6px;padding:0 8px}
+.team-name{font-size:15px;font-weight:700;letter-spacing:1px}
+.team-logo{width:30px;height:30px;border-radius:50%;object-fit:cover;display:none}
+.team-logo.has-logo{display:block}
+.score{font-size:28px;font-weight:900;min-width:32px;text-align:center;color:#ffd700}
+.vs-divider{width:2px;height:30px;background:#e94560;margin:0 4px}
+.count-section{display:flex;align-items:center;gap:10px;padding:0 14px;height:100%;background:#0a1628}
+.inning{font-size:15px;font-weight:700;color:#e94560;min-width:38px;text-align:center}
+.inning-half{font-size:10px}
+.bases{position:relative;width:30px;height:30px}
+.base{position:absolute;width:11px;height:11px;border:1.5px solid #555;background:transparent;transform:rotate(45deg)}
+.base.active{background:#ffd700;border-color:#ffd700}
+.base-1{right:0;top:50%;transform:rotate(45deg) translate(-2px,-2px)}
+.base-2{left:50%;top:0;transform:rotate(45deg) translate(-5px,0)}
+.base-3{left:0;top:50%;transform:rotate(45deg) translate(2px,-6px)}
+.bso{display:flex;gap:8px;font-size:12px;font-weight:700}
+.bso-row{display:flex;align-items:center;gap:3px}
+.bso-label{color:#888;margin-right:2px}
+.dot{width:9px;height:9px;border-radius:50%;border:1.5px solid #555;background:transparent}
+.dot.ball.active{background:#4caf50;border-color:#4caf50}
+.dot.strike.active{background:#ffd700;border-color:#ffd700}
+.dot.out.active{background:#e94560;border-color:#e94560}
+</style>
+</head>
+<body>
+<div id="scoreboard">
+  <div class="game-info" id="gameInfo"></div>
+  <div class="team-section">
+    <div class="team">
+      <img class="team-logo" id="awayLogo" src="" alt="">
+      <span class="team-name" id="awayName">AWAY</span>
+    </div>
+    <span class="score" id="awayScore">0</span>
+    <div class="vs-divider"></div>
+    <span class="score" id="homeScore">0</span>
+    <div class="team">
+      <span class="team-name" id="homeName">HOME</span>
+      <img class="team-logo" id="homeLogo" src="" alt="">
+    </div>
+  </div>
+  <div class="count-section">
+    <div class="inning">
+      <span class="inning-half" id="inningHalf">▲</span>
+      <span id="inningNum">1</span>
+    </div>
+    <div class="bases">
+      <div class="base base-1" id="base1"></div>
+      <div class="base base-2" id="base2"></div>
+      <div class="base base-3" id="base3"></div>
+    </div>
+    <div class="bso">
+      <div class="bso-row"><span class="bso-label">B</span><span class="dot ball" id="b1"></span><span class="dot ball" id="b2"></span><span class="dot ball" id="b3"></span></div>
+      <div class="bso-row"><span class="bso-label">S</span><span class="dot strike" id="s1"></span><span class="dot strike" id="s2"></span></div>
+      <div class="bso-row"><span class="bso-label">O</span><span class="dot out" id="o1"></span><span class="dot out" id="o2"></span></div>
+    </div>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database(),gameRef=db.ref('game');
+gameRef.on('value',snap=>{
+  const d=snap.val();if(!d)return;
+  const board=document.getElementById('scoreboard');
+  if(d.visible){board.classList.add('visible')}else{board.classList.remove('visible');return}
+  document.getElementById('gameInfo').textContent=d.gameTitle||'';
+  document.getElementById('awayName').textContent=d.awayName||'AWAY';
+  document.getElementById('homeName').textContent=d.homeName||'HOME';
+  document.getElementById('awayScore').textContent=d.awayScore||0;
+  document.getElementById('homeScore').textContent=d.homeScore||0;
+  const aL=document.getElementById('awayLogo'),hL=document.getElementById('homeLogo');
+  if(d.awayLogo){aL.src=d.awayLogo;aL.classList.add('has-logo')}else{aL.classList.remove('has-logo')}
+  if(d.homeLogo){hL.src=d.homeLogo;hL.classList.add('has-logo')}else{hL.classList.remove('has-logo')}
+  document.getElementById('inningNum').textContent=d.inning||1;
+  document.getElementById('inningHalf').textContent=d.inningHalf==='bottom'?'▼':'▲';
+  document.getElementById('base1').classList.toggle('active',!!d.base1);
+  document.getElementById('base2').classList.toggle('active',!!d.base2);
+  document.getElementById('base3').classList.toggle('active',!!d.base3);
+  const b=d.balls||0,s=d.strikes||0,o=d.outs||0;
+  for(let i=1;i<=3;i++)document.getElementById('b'+i).classList.toggle('active',i<=b);
+  for(let i=1;i<=2;i++)document.getElementById('s'+i).classList.toggle('active',i<=s);
+  for(let i=1;i<=2;i++)document.getElementById('o'+i).classList.toggle('active',i<=o);
+});
+</script>
+</body>
+</html>
