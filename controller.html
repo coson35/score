@@ -147,8 +147,6 @@ input:focus{outline:none;border-color:#e94560}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
-</body>
-</html>
 <script>
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),configRef=db.ref('config');
@@ -436,3 +434,5 @@ function uploadLogo(team){
   reader.readAsDataURL(file);
 }
 </script>
+</body>
+</html>
