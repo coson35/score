@@ -296,6 +296,9 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>좌우위치</label><input id="ovLinLeft" type="range" min="0" max="100" value="50" oninput="prevOvVal('ovLinLeftV',this.value+'%')"><span id="ovLinLeftV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">50%</span></div>
 <div style="font-size:13px;font-weight:700;color:#0f3460;margin:10px 0 6px">학교 로고</div>
 <div class="form-row"><label>크기</label><input id="ovLogoSize" type="range" min="30" max="120" value="60" oninput="prevOvVal('ovLogoSizeV',this.value+'px')"><span id="ovLogoSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">60px</span></div>
+<div style="font-size:13px;font-weight:700;color:#0f3460;margin:10px 0 6px">수비 포지션 위치</div>
+<div style="font-size:11px;color:#888;margin-bottom:8px">라인업 ON 상태에서 실시간 확인하며 조절하세요</div>
+<div id="posAdjustArea"></div>
 <button class="btn-save" onclick="saveOverlayCfg()" style="margin-top:10px">설정 저장</button>
 <button style="width:100%;padding:12px;font-size:15px;background:#f0f0f0;border:none;border-radius:12px;margin-top:6px;font-weight:700" onclick="resetOverlayCfg()">기본값 초기화</button>
 <div style="font-size:13px;font-weight:700;color:#0f3460;margin:14px 0 6px">테마 저장 / 불러오기</div>
@@ -872,7 +875,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,barBottom:0,linScale:100,linTop:50,linLeft:50,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628'};
+const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,barBottom:0,linScale:100,linTop:50,linLeft:50,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -897,14 +900,14 @@ function fillOverlayInputs(){
     const id='ov'+f.charAt(0).toUpperCase()+f.slice(1);
     if($(id)){$(id).value=ovCfg[f];$(id+'V').textContent=ovCfg[f]}
   });
-  // color input onchange 이벤트
   COLOR_FIELDS.forEach(f=>{
     const id='ov'+f.charAt(0).toUpperCase()+f.slice(1);
     const el=$(id);if(el)el.oninput=function(){$(id+'V').textContent=this.value};
   });
+  buildPosAdjust();
 }
 function gatherOvCfg(){
-  return {
+  const c={
     barH:parseInt(document.getElementById('ovBarH').value),
     barFont:parseInt(document.getElementById('ovBarFont').value),
     infoFont:parseInt(document.getElementById('ovInfoFont').value),
@@ -921,6 +924,25 @@ function gatherOvCfg(){
     colorInfoBg:document.getElementById('ovColorInfoBg').value,
     colorCountBg:document.getElementById('ovColorCountBg').value
   };
+  POS_KEYS.forEach(k=>{
+    const tEl=document.getElementById('pos-t-'+k);
+    const lEl=document.getElementById('pos-l-'+k);
+    if(tEl&&lEl)c['pos'+k]={t:parseInt(tEl.value),l:parseInt(lEl.value)};
+  });
+  return c;
+}
+const POS_KEYS=['P','C','1B','2B','3B','SS','LF','CF','RF'];
+const POS_LABELS={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수'};
+function buildPosAdjust(){
+  const area=document.getElementById('posAdjustArea');if(!area)return;
+  let h='';
+  POS_KEYS.forEach(k=>{
+    const p=ovCfg['pos'+k]||OV_DEFAULTS['pos'+k];
+    h+='<div style="margin-bottom:8px;padding:8px;background:#f8f8f8;border-radius:10px"><div style="font-size:13px;font-weight:700;margin-bottom:4px">'+POS_LABELS[k]+' ('+k+')</div>';
+    h+='<div class="form-row"><label>상하</label><input id="pos-t-'+k+'" type="range" min="5" max="95" value="'+p.t+'" oninput="prevOvVal(\'pos-tv-'+k+'\',this.value+\'%\')"><span id="pos-tv-'+k+'" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">'+p.t+'%</span></div>';
+    h+='<div class="form-row"><label>좌우</label><input id="pos-l-'+k+'" type="range" min="5" max="95" value="'+p.l+'" oninput="prevOvVal(\'pos-lv-'+k+'\',this.value+\'%\')"><span id="pos-lv-'+k+'" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">'+p.l+'%</span></div></div>';
+  });
+  area.innerHTML=h;
 }
 function saveOverlayCfg(){
   configRef.child('overlay').set(gatherOvCfg());alert('오버레이 설정 저장 완료');

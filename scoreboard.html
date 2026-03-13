@@ -179,6 +179,13 @@ overlayRef.on('value',snap=>{
   if(logoImg){logoImg.width=logoSize;logoImg.height=logoSize}
   const biEl=document.getElementById('batterInfo');
   biEl.style.bottom=(barH+barBottom+6)+'px';
+  // 수비 포지션 위치 적용
+  const posMap={P:'p',C:'c','1B':'1b','2B':'2b','3B':'3b',SS:'ss',LF:'lf',CF:'cf',RF:'rf'};
+  const posDef={P:{t:56,l:50},C:{t:82,l:50},'1B':{t:68,l:66},'2B':{t:50,l:60},'3B':{t:68,l:34},SS:{t:50,l:40},LF:{t:28,l:22},CF:{t:18,l:50},RF:{t:28,l:78}};
+  Object.keys(posMap).forEach(k=>{
+    const el=document.querySelector('.pos-'+posMap[k]);
+    if(el){const p=c['pos'+k]||posDef[k];el.style.top=p.t+'%';el.style.left=p.l+'%'}
+  });
 });
 
 // 타자 정보
