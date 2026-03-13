@@ -9,7 +9,7 @@
 body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:flex-end}
 #school-logo{position:fixed;top:16px;left:16px;z-index:10;opacity:0;transition:opacity 0.5s}
 #school-logo.visible{opacity:1}
-#scoreboard{width:100%;height:44px;display:flex;align-items:center;background:linear-gradient(to right,#1a1a2e,#16213e);border-top:2px solid #e94560;color:#fff;opacity:0;transition:opacity 0.5s}
+#scoreboard{width:100%;height:44px;display:flex;align-items:center;background:linear-gradient(to right,#1a1a2e,#16213e);border-top:2px solid #e94560;color:#fff;opacity:0;transition:opacity 0.5s;position:relative;z-index:5}
 #scoreboard.visible{opacity:1}
 .game-info{background:#0f3460;padding:0 10px;height:100%;display:flex;align-items:center;font-size:11px;color:#a0c4ff;white-space:nowrap;max-width:200px;overflow:hidden}
 .team-section{display:flex;align-items:center;height:100%;flex:1;justify-content:center;gap:4px}
@@ -35,7 +35,10 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 .dot.ball.active{background:#4caf50;border-color:#4caf50}
 .dot.strike.active{background:#ffd700;border-color:#ffd700}
 .dot.out.active{background:#e94560;border-color:#e94560}
-#batterInfo{position:fixed;bottom:50px;z-index:5;opacity:0;transition:opacity 0.5s;pointer-events:none}
+</style>
+<style>
+/* 타자 정보 바 */
+#batterInfo{position:fixed;bottom:50px;z-index:6;opacity:0;transition:opacity 0.5s;pointer-events:none}
 #batterInfo.visible{opacity:1}
 #batterInfo.pos-left{left:10px}
 #batterInfo.pos-center{left:50%;transform:translateX(-50%)}
@@ -46,6 +49,26 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 .bi-results{display:flex;gap:6px;align-items:center}
 .bi-result{background:rgba(255,255,255,0.12);padding:2px 7px;border-radius:4px;font-size:12px;font-weight:600}
 .bi-pitch{font-weight:900;color:#ffd700;font-size:15px}
+/* 라인업 오버레이 */
+#lineup-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:580px;height:480px;opacity:0;transition:opacity 0.5s;z-index:3}
+#lineup-overlay.visible{opacity:1}
+.field-bg{width:100%;height:100%;position:relative}
+.field-svg{width:100%;height:100%}
+.team-banner{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;padding:6px 24px;border-radius:6px;font-size:16px;font-weight:700;text-align:center;white-space:nowrap}
+.team-banner .sub{font-size:11px;color:#a0c4ff;font-weight:400}
+.pos{position:absolute;text-align:center;transform:translate(-50%,-50%)}
+.pos .name{background:rgba(0,0,0,0.8);color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700;white-space:nowrap}
+.pos .num{font-size:10px;color:#ffd700;margin-top:1px}
+.pos .position-label{font-size:9px;color:#aaa}
+.pos-p{top:62%;left:50%}.pos-c{top:82%;left:50%}
+.pos-1b{top:62%;left:68%}.pos-2b{top:48%;left:62%}
+.pos-3b{top:62%;left:32%}.pos-ss{top:48%;left:38%}
+.pos-lf{top:28%;left:22%}.pos-cf{top:18%;left:50%}.pos-rf{top:28%;left:78%}
+.bat-item{display:flex;align-items:center;padding:5px 12px;background:rgba(255,255,255,0.08);border-radius:8px}
+.bat-item .order-num{font-size:18px;font-weight:900;color:#e94560;min-width:28px;text-align:center}
+.bat-item .player-name{flex:1;font-size:14px;font-weight:700;color:#fff;padding:0 8px}
+.bat-item .player-num{font-size:13px;color:#ffd700;min-width:34px;text-align:center;font-weight:700}
+.bat-item .player-pos{font-size:11px;color:#a0c4ff;min-width:30px;text-align:center;font-weight:600}
 </style>
 </head>
 <body>
@@ -53,7 +76,47 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 <div id="school-logo">
   <img src="sinwol-logo.png" width="60" height="60" style="object-fit:contain">
 </div>
+<!-- 라인업 오버레이 -->
+<div id="lineup-overlay">
+  <div id="defenseView" class="field-bg">
+    <svg class="field-svg" viewBox="0 0 580 480" xmlns="http://www.w3.org/2000/svg">
+      <rect width="580" height="480" rx="12" fill="#2d8a4e"/>
+      <path d="M290,420 L60,180 Q290,50 520,180 Z" fill="#3da55d"/>
+      <polygon points="290,300 340,350 290,400 240,350" fill="#c4a44a" opacity="0.35"/>
+      <line x1="290" y1="400" x2="240" y2="350" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+      <line x1="290" y1="400" x2="340" y2="350" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+      <line x1="240" y1="350" x2="290" y2="300" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+      <line x1="340" y1="350" x2="290" y2="300" stroke="#fff" stroke-width="1.5" opacity="0.5"/>
+      <circle cx="290" cy="345" r="8" fill="#c4a44a" opacity="0.6"/>
+      <rect x="285" y="395" width="10" height="10" fill="#fff" transform="rotate(45,290,400)"/>
+    </svg>
+    <div class="team-banner">
+      <span id="lineupTeamName">우리팀</span>
+      <div class="sub">수비 포지션</div>
+    </div>
+    <div class="pos pos-p" id="pos-P"><div class="name" id="name-P">-</div><div class="num" id="num-P"></div><div class="position-label">P</div></div>
+    <div class="pos pos-c" id="pos-C"><div class="name" id="name-C">-</div><div class="num" id="num-C"></div><div class="position-label">C</div></div>
+    <div class="pos pos-1b" id="pos-1B"><div class="name" id="name-1B">-</div><div class="num" id="num-1B"></div><div class="position-label">1B</div></div>
+    <div class="pos pos-2b" id="pos-2B"><div class="name" id="name-2B">-</div><div class="num" id="num-2B"></div><div class="position-label">2B</div></div>
+    <div class="pos pos-3b" id="pos-3B"><div class="name" id="name-3B">-</div><div class="num" id="num-3B"></div><div class="position-label">3B</div></div>
+    <div class="pos pos-ss" id="pos-SS"><div class="name" id="name-SS">-</div><div class="num" id="num-SS"></div><div class="position-label">SS</div></div>
+    <div class="pos pos-lf" id="pos-LF"><div class="name" id="name-LF">-</div><div class="num" id="num-LF"></div><div class="position-label">LF</div></div>
+    <div class="pos pos-cf" id="pos-CF"><div class="name" id="name-CF">-</div><div class="num" id="num-CF"></div><div class="position-label">CF</div></div>
+    <div class="pos pos-rf" id="pos-RF"><div class="name" id="name-RF">-</div><div class="num" id="num-RF"></div><div class="position-label">RF</div></div>
+  </div>
+  <div id="battingView" style="display:none;width:100%;height:100%">
+    <div style="width:100%;height:100%;background:rgba(0,0,0,0.85);border-radius:12px;padding:12px;display:flex;flex-direction:column">
+      <div style="text-align:center;padding:8px 0;border-bottom:2px solid #e94560;margin-bottom:8px">
+        <span id="batTeamName" style="color:#fff;font-size:18px;font-weight:900">우리팀</span>
+        <span style="color:#a0c4ff;font-size:12px;display:block">타순</span>
+      </div>
+      <div id="batList" style="flex:1;display:flex;flex-direction:column;gap:3px;overflow:hidden"></div>
+    </div>
+  </div>
+</div>
+<!-- 타자 정보 바 -->
 <div id="batterInfo"><div class="bi-bar"><span class="bi-name" id="biName"></span><span class="bi-sep">|</span><span class="bi-results" id="biResults"></span></div></div>
+<!-- 스코어보드 하단바 -->
 <div id="scoreboard">
   <div class="game-info" id="gameInfo"></div>
   <div class="team-section">
@@ -88,7 +151,9 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 <script src="firebase-config.js"></script>
 <script>
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database(),gameRef=db.ref('game'),batterInfoRef=db.ref('batterInfo');
+const db=firebase.database(),gameRef=db.ref('game'),batterInfoRef=db.ref('batterInfo'),lineupRef=db.ref('lineup');
+
+// 타자 정보
 batterInfoRef.on('value',snap=>{
   const d=snap.val();
   const el=document.getElementById('batterInfo');
@@ -108,6 +173,8 @@ batterInfoRef.on('value',snap=>{
   }
   el.classList.add('visible');
 });
+
+// 스코어보드
 gameRef.on('value',snap=>{
   const d=snap.val();if(!d)return;
   const board=document.getElementById('scoreboard');
@@ -130,6 +197,35 @@ gameRef.on('value',snap=>{
   for(let i=1;i<=3;i++)document.getElementById('b'+i).classList.toggle('active',i<=b);
   for(let i=1;i<=2;i++)document.getElementById('s'+i).classList.toggle('active',i<=s);
   for(let i=1;i<=2;i++)document.getElementById('o'+i).classList.toggle('active',i<=o);
+});
+
+// 라인업
+lineupRef.on('value',snap=>{
+  const d=snap.val();if(!d)return;
+  const overlay=document.getElementById('lineup-overlay');
+  if(d.visible){overlay.classList.add('visible')}else{overlay.classList.remove('visible');return}
+  const mode=d.displayMode||'defense';
+  const defView=document.getElementById('defenseView');
+  const batView=document.getElementById('battingView');
+  if(mode==='batting'){
+    defView.style.display='none';batView.style.display='block';
+    document.getElementById('batTeamName').textContent=d.teamName||'우리팀';
+    const list=document.getElementById('batList');list.innerHTML='';
+    const bo=d.battingOrder||{};
+    for(let i=1;i<=9;i++){
+      const p=bo[i]||{name:'-',number:'',position:''};
+      list.innerHTML+=`<div class="bat-item"><span class="order-num">${i}</span><span class="player-name">${p.name||'-'}</span><span class="player-num">${p.number?'#'+p.number:''}</span><span class="player-pos">${p.position||''}</span></div>`;
+    }
+  }else{
+    defView.style.display='block';batView.style.display='none';
+    document.getElementById('lineupTeamName').textContent=d.teamName||'우리팀';
+    const positions=['P','C','1B','2B','3B','SS','LF','CF','RF'];
+    positions.forEach(pos=>{
+      const player=d.players&&d.players[pos];
+      document.getElementById('name-'+pos).textContent=player?player.name:'-';
+      document.getElementById('num-'+pos).textContent=player?('#'+player.number):'';
+    });
+  }
 });
 </script>
 </body>
