@@ -251,6 +251,7 @@ document.getElementById('tabGame').innerHTML=`
 <div style="font-size:12px;color:#888;margin-bottom:4px">타석 결과</div>
 <div class="bi-atbats" id="biAtBatsList"></div>
 <div class="bi-result-btns"><button class="bi-res-btn" onclick="addAtBat('안타')">안타</button><button class="bi-res-btn" onclick="addAtBat('2루타')">2루타</button><button class="bi-res-btn" onclick="addAtBat('3루타')">3루타</button><button class="bi-res-btn" onclick="addAtBat('홈런')">홈런</button><button class="bi-res-btn" onclick="addAtBat('볼넷')">볼넷</button><button class="bi-res-btn" onclick="addAtBat('삼진')">삼진</button><button class="bi-res-btn" onclick="addAtBat('뜬공')">뜬공</button><button class="bi-res-btn" onclick="addAtBat('땅볼')">땅볼</button><button class="bi-res-btn" onclick="addAtBat('희생번트')">희생번트</button><button class="bi-res-btn" onclick="addAtBat('병살')">병살</button><button class="bi-res-btn" onclick="addAtBat('사구')">사구</button><button class="bi-res-btn" onclick="addAtBat('실책')">실책</button></div>
+<button onclick="clearAllAtBats()" style="width:100%;padding:10px;font-size:13px;background:#f0f0f0;border:1px solid #ddd;border-radius:10px;margin-top:8px;font-weight:700;color:#e94560">전체 타석 기록 초기화</button>
 </div>
 <div id="biPitcherPanel" style="display:none">
 <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><label style="font-size:13px;font-weight:700;min-width:40px">투수</label><select id="biPitcherSel" onchange="onPitcherChange()" style="flex:1;padding:10px;font-size:14px;border-radius:10px;border:1px solid #ddd"></select></div>
@@ -762,31 +763,57 @@ function onBatOrderChange(){
   extendLock();
   const sel=document.getElementById('biBatOrder');
   const order=parseInt(sel.value);if(!order)return;
+  // 현재 타자 결과 저장
+  saveCurBatterResults();
   const bo=ld.battingOrder&&ld.battingOrder[order];
   const name=bo&&bo.name&&bo.name!=='-'?bo.name:'';
   const number=bo&&bo.number?bo.number:'';
-  batterInfoRef.update({batterOrder:order,batterName:name,batterNumber:number,atBats:[]});
+  // 저장된 결과 불러오기
+  const saved=(biData.batterResults&&biData.batterResults[order])||[];
+  batterInfoRef.update({batterOrder:order,batterName:name,batterNumber:number,atBats:saved});
 }
 function nextBatter(){
   extendLock();
+  // 현재 타자 결과 저장
+  saveCurBatterResults();
   const cur=biData.batterOrder||1;
   const next=cur>=9?1:cur+1;
   const bo=ld.battingOrder&&ld.battingOrder[next];
   const name=bo&&bo.name&&bo.name!=='-'?bo.name:'';
   const number=bo&&bo.number?bo.number:'';
-  batterInfoRef.update({batterOrder:next,batterName:name,batterNumber:number,atBats:[]});
+  const saved=(biData.batterResults&&biData.batterResults[next])||[];
+  batterInfoRef.update({batterOrder:next,batterName:name,batterNumber:number,atBats:saved});
+}
+function saveCurBatterResults(){
+  const order=biData.batterOrder;
+  if(!order)return;
+  const abs=biData.atBats||[];
+  const br=biData.batterResults||{};
+  br[order]=abs;
+  batterInfoRef.update({batterResults:br});
 }
 function addAtBat(result){
   extendLock();
   const abs=biData.atBats||[];
   abs.push(result);
-  batterInfoRef.update({atBats:abs});
+  const order=biData.batterOrder;
+  const br=biData.batterResults||{};
+  if(order)br[order]=abs;
+  batterInfoRef.update({atBats:abs,batterResults:br});
 }
 function removeAtBat(idx){
   extendLock();
   const abs=biData.atBats||[];
   abs.splice(idx,1);
-  batterInfoRef.update({atBats:abs});
+  const order=biData.batterOrder;
+  const br=biData.batterResults||{};
+  if(order)br[order]=abs;
+  batterInfoRef.update({atBats:abs,batterResults:br});
+}
+function clearAllAtBats(){
+  if(!confirm('모든 타자의 타석 기록을 초기화할까요?\n(새 경기 시작 시 사용)'))return;
+  extendLock();
+  batterInfoRef.update({atBats:[],batterResults:{}});
 }
 function onPitcherChange(){
   extendLock();
