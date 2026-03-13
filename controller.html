@@ -120,13 +120,34 @@ input:focus,select:focus{outline:none;border-color:#2c6fbb}
 .roster-item .r-pos{color:#888;font-size:13px;min-width:30px}
 .roster-item button{padding:4px 8px;font-size:11px;border-radius:6px}
 .player-select{padding:10px;font-size:14px;border-radius:12px;border:1px solid #ddd;background:#fff;width:100%}
+/* 타자 정보 */
+.bi-section{margin-top:4px}
+.bi-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.bi-toggle button{padding:10px;font-size:14px;border-radius:10px;border:2px solid #ddd;background:#fff;color:#888}
+.bi-toggle button.active{border-color:#0f3460;background:#0f3460;color:#fff}
+.bi-mode-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.bi-mode-btn{padding:10px;font-size:13px;border-radius:10px;border:2px solid #ddd;background:#fff;color:#888}
+.bi-mode-btn.active{border-color:#e94560;background:#e94560;color:#fff}
+.bi-pos-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.bi-pos-btn{padding:8px;font-size:13px;border-radius:10px;border:2px solid #ddd;background:#fff;color:#888;text-align:center}
+.bi-pos-btn.active{border-color:#ff9800;background:#ff9800;color:#fff}
+.bi-result-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.bi-res-btn{padding:10px 4px;font-size:13px;border-radius:10px;border:1px solid #ddd;background:#f8f8f8;text-align:center;font-weight:700}
+.bi-res-btn:active{background:#4caf50;color:#fff}
+.bi-atbats{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0;min-height:28px;padding:8px;background:#f8f8f8;border-radius:10px}
+.bi-ab-tag{background:#0f3460;color:#fff;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px}
+.bi-ab-tag .del{cursor:pointer;color:#ffd700;font-size:14px;font-weight:900}
+.bi-pitch-row{display:flex;align-items:center;gap:10px;justify-content:center;margin:10px 0}
+.bi-pitch-val{font-size:36px;font-weight:900;min-width:60px;text-align:center;color:#0f3460}
+.bi-pitch-btn{width:52px;height:52px;border-radius:50%;font-size:22px;font-weight:900;border:none}
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script>
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),savedLineupsRef=db.ref('savedLineups'),configRef=db.ref('config'),rosterRef=db.ref('roster'),teamsRef=db.ref('teams');
+const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),savedLineupsRef=db.ref('savedLineups'),configRef=db.ref('config'),rosterRef=db.ref('roster'),teamsRef=db.ref('teams'),batterInfoRef=db.ref('batterInfo');
 let isAdmin=false,selectedRole='user',activeGameKey='';
 const DEFAULT_ADMIN_PW='admin1234';
 async function sha256(msg){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
@@ -139,6 +160,7 @@ const PN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:
 const ALLPOS=['P','C','1B','2B','3B','SS','LF','CF','RF','IF','OF','UT'];
 const APN={P:'투수',C:'포수','1B':'1루수','2B':'2루수','3B':'3루수',SS:'유격수',LF:'좌익수',CF:'중견수',RF:'우익수',IF:'내야수',OF:'외야수',UT:'야수'};
 let scoreVisible=false,lineupVisible=false;
+let biData={visible:false,mode:'batter',position:'center',batterOrder:1,batterName:'',batterNumber:'',atBats:[],pitcherName:'',pitcherNumber:'',pitchCount:0};
 
 // 기기 잠금 시스템
 const lockRef=db.ref('controlLock');
@@ -222,7 +244,28 @@ document.getElementById('tabGame').innerHTML=`
 <div class="bso-row"><span class="bso-name">스트라이크</span><div class="dots"><div class="bso-dot" id="sd0" onclick="togBSO('strikes',1)"></div><div class="bso-dot" id="sd1" onclick="togBSO('strikes',2)"></div></div></div>
 <div class="bso-row"><span class="bso-name">아웃</span><div class="dots"><div class="bso-dot" id="od0" onclick="togBSO('outs',1)"></div><div class="bso-dot" id="od1" onclick="togBSO('outs',2)"></div></div></div>
 <button class="bso-reset" onclick="rstCnt()">카운트 초기화</button></div>
-<div class="card"><div class="card-title">베이스</div><div class="base-wrap"><div class="base-b b2" id="cB2" onclick="togB(2)"></div><div class="base-b b3" id="cB3" onclick="togB(3)"></div><div class="base-b b1" id="cB1" onclick="togB(1)"></div></div><button class="base-clear" onclick="clrB()">베이스 클리어</button></div>`}
+<div class="card"><div class="card-title">베이스</div><div class="base-wrap"><div class="base-b b2" id="cB2" onclick="togB(2)"></div><div class="base-b b3" id="cB3" onclick="togB(3)"></div><div class="base-b b1" id="cB1" onclick="togB(1)"></div></div><button class="base-clear" onclick="clrB()">베이스 클리어</button></div>
+<div class="card bi-section"><div class="card-title">타자 / 투수 정보</div>
+<div class="bi-toggle"><button id="biOn" onclick="setBiVisible(true)">표시 ON</button><button id="biOff" onclick="setBiVisible(false)">표시 OFF</button></div>
+<div id="biControls" style="display:none">
+<div class="bi-mode-btns"><button class="bi-mode-btn" id="biModeBatter" onclick="setBiMode('batter')">타자 정보</button><button class="bi-mode-btn" id="biModePitcher" onclick="setBiMode('pitcher')">투수 투구수</button></div>
+<div style="margin-bottom:8px;font-size:12px;color:#888;text-align:center">표시 위치</div>
+<div class="bi-pos-btns"><button class="bi-pos-btn" id="biPosLeft" onclick="setBiPos('left')">좌</button><button class="bi-pos-btn" id="biPosCenter" onclick="setBiPos('center')">가운데</button><button class="bi-pos-btn" id="biPosRight" onclick="setBiPos('right')">우</button></div>
+<div id="biBatterPanel">
+<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><label style="font-size:13px;font-weight:700;min-width:40px">타순</label><select id="biBatOrder" onchange="onBatOrderChange()" style="flex:1;padding:10px;font-size:14px;border-radius:10px;border:1px solid #ddd"></select><button onclick="nextBatter()" style="padding:10px 14px;font-size:13px;background:#0f3460;color:#fff;border:none;border-radius:10px;white-space:nowrap">다음 타자</button></div>
+<div style="text-align:center;font-size:15px;font-weight:700;margin-bottom:8px" id="biBatterDisp">-</div>
+<div style="font-size:12px;color:#888;margin-bottom:4px">타석 결과</div>
+<div class="bi-atbats" id="biAtBatsList"></div>
+<div class="bi-result-btns"><button class="bi-res-btn" onclick="addAtBat('안타')">안타</button><button class="bi-res-btn" onclick="addAtBat('2루타')">2루타</button><button class="bi-res-btn" onclick="addAtBat('3루타')">3루타</button><button class="bi-res-btn" onclick="addAtBat('홈런')">홈런</button><button class="bi-res-btn" onclick="addAtBat('볼넷')">볼넷</button><button class="bi-res-btn" onclick="addAtBat('삼진')">삼진</button><button class="bi-res-btn" onclick="addAtBat('뜬공')">뜬공</button><button class="bi-res-btn" onclick="addAtBat('땅볼')">땅볼</button><button class="bi-res-btn" onclick="addAtBat('희생번트')">희생번트</button><button class="bi-res-btn" onclick="addAtBat('병살')">병살</button><button class="bi-res-btn" onclick="addAtBat('사구')">사구</button><button class="bi-res-btn" onclick="addAtBat('실책')">실책</button></div>
+</div>
+<div id="biPitcherPanel" style="display:none">
+<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><label style="font-size:13px;font-weight:700;min-width:40px">투수</label><select id="biPitcherSel" onchange="onPitcherChange()" style="flex:1;padding:10px;font-size:14px;border-radius:10px;border:1px solid #ddd"></select></div>
+<div style="text-align:center;font-size:15px;font-weight:700;margin-bottom:4px" id="biPitcherDisp">-</div>
+<div class="bi-pitch-row"><button class="bi-pitch-btn" style="background:#e94560;color:#fff" onclick="chPitch(-1)">-1</button><div class="bi-pitch-val" id="biPitchVal">0</div><button class="bi-pitch-btn" style="background:#4caf50;color:#fff" onclick="chPitch(1)">+1</button></div>
+<button onclick="resetPitch()" style="display:block;margin:0 auto;padding:8px 20px;font-size:13px;background:#f0f0f0;border-radius:10px;border:1px solid #ddd">투구수 초기화</button>
+</div>
+</div>
+</div>`}
 
 function buildSetupTab(){
 document.getElementById('tabSetup').innerHTML=`
@@ -386,13 +429,14 @@ function initApp(){
   lineupRef.on('value',s=>{const d=s.val();if(d){ld=d;lineupVisible=!!ld.visible;updOvBtns();
     const dm=d.displayMode||'defense';const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
     if(md)md.className='mode-btn'+(dm==='defense'?' active':'');if(mb)mb.className='mode-btn'+(dm==='batting'?' active':'');
-    fillLineupFields();
+    fillLineupFields();buildBiSelects();
   }});
-  rosterRef.on('value',s=>{rosterList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>rosterList.push({key:k,...v}));rosterList.sort((a,b)=>Number(a.number)-Number(b.number));renderRoster();updateLineupSelects();fillLineupFields()});
+  rosterRef.on('value',s=>{rosterList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>rosterList.push({key:k,...v}));rosterList.sort((a,b)=>Number(a.number)-Number(b.number));renderRoster();updateLineupSelects();fillLineupFields();buildBiSelects()});
   teamsRef.on('value',s=>{teamsList=[];const d=s.val();if(d)Object.entries(d).forEach(([k,v])=>teamsList.push({key:k,...v}));teamsList.sort((a,b)=>(a.name||'').localeCompare(b.name||''))});
   loadGames();
   loadLinPresets();
   initLock();
+  initBatterInfo();
   configRef.child('activeGameKey').on('value',s=>{activeGameKey=s.val()||'';loadGames()});
 }
 function updUI(){
@@ -621,6 +665,127 @@ function updateLockUI(){
     if(gameTab){gameTab.style.opacity='0.4';gameTab.style.pointerEvents='none'}
   }
 }
+
+// === 타자/투수 정보 시스템 ===
+function initBatterInfo(){
+  batterInfoRef.on('value',s=>{
+    const d=s.val();if(d)biData=d;else biData={visible:false,mode:'batter',position:'center',batterOrder:1,batterName:'',batterNumber:'',atBats:[],pitcherName:'',pitcherNumber:'',pitchCount:0};
+    updateBiUI();
+  });
+  buildBiSelects();
+}
+function buildBiSelects(){
+  const batSel=document.getElementById('biBatOrder');
+  const pitSel=document.getElementById('biPitcherSel');
+  if(!batSel)return;
+  // 타순 1-9 (라인업 타순에서 가져오기)
+  let batOpts='<option value="">선택</option>';
+  for(let i=1;i<=9;i++){
+    const bo=ld.battingOrder&&ld.battingOrder[i];
+    const nm=bo&&bo.name&&bo.name!=='-'?bo.name:'';
+    const num=bo&&bo.number?'#'+bo.number+' ':'';
+    batOpts+=`<option value="${i}">${i}번 ${num}${nm||'(미정)'}</option>`;
+  }
+  batSel.innerHTML=batOpts;
+  if(biData.batterOrder)batSel.value=biData.batterOrder;
+  // 투수 선택 (로스터에서 투수만)
+  if(pitSel){
+    let pitOpts='<option value="">선택</option>';
+    rosterList.forEach(r=>{
+      if(r.position==='P')pitOpts+=`<option value="${r.key}">#${r.number} ${r.name}</option>`;
+    });
+    // 투수가 아닌 선수도 선택 가능하도록 전체 추가
+    pitOpts+='<optgroup label="전체 선수">';
+    rosterList.forEach(r=>{
+      if(r.position!=='P')pitOpts+=`<option value="${r.key}">#${r.number} ${r.name}</option>`;
+    });
+    pitOpts+='</optgroup>';
+    pitSel.innerHTML=pitOpts;
+    // 현재 투수 선택 복원
+    if(biData.pitcherKey)pitSel.value=biData.pitcherKey;
+  }
+}
+function updateBiUI(){
+  const $=id=>document.getElementById(id);
+  const onBtn=$('biOn'),offBtn=$('biOff'),ctrl=$('biControls');
+  if(!onBtn)return;
+  onBtn.className=biData.visible?'active':'';
+  offBtn.className=!biData.visible?'active':'';
+  if(ctrl)ctrl.style.display=biData.visible?'block':'none';
+  // 모드
+  const mb=$('biModeBatter'),mp=$('biModePitcher');
+  if(mb)mb.className='bi-mode-btn'+(biData.mode==='batter'?' active':'');
+  if(mp)mp.className='bi-mode-btn'+(biData.mode==='pitcher'?' active':'');
+  if($('biBatterPanel'))$('biBatterPanel').style.display=biData.mode==='batter'?'block':'none';
+  if($('biPitcherPanel'))$('biPitcherPanel').style.display=biData.mode==='pitcher'?'block':'none';
+  // 위치
+  ['left','center','right'].forEach(p=>{const b=$('biPos'+p.charAt(0).toUpperCase()+p.slice(1));if(b)b.className='bi-pos-btn'+(biData.position===p?' active':'')});
+  // 타자 표시
+  const disp=$('biBatterDisp');
+  if(disp){
+    if(biData.batterName)disp.textContent=(biData.batterNumber?'#'+biData.batterNumber+' ':'')+biData.batterName;
+    else disp.textContent='-';
+  }
+  // 타석 결과
+  const abList=$('biAtBatsList');
+  if(abList){
+    const abs=biData.atBats||[];
+    if(abs.length){abList.innerHTML=abs.map((a,i)=>`<span class="bi-ab-tag">${a}<span class="del" onclick="removeAtBat(${i})">×</span></span>`).join('')}
+    else{abList.innerHTML='<span style="color:#aaa;font-size:12px">결과 없음</span>'}
+  }
+  // 투수 표시
+  const pDisp=$('biPitcherDisp');
+  if(pDisp){
+    if(biData.pitcherName)pDisp.textContent=(biData.pitcherNumber?'#'+biData.pitcherNumber+' ':'')+biData.pitcherName;
+    else pDisp.textContent='-';
+  }
+  const pVal=$('biPitchVal');
+  if(pVal)pVal.textContent=biData.pitchCount||0;
+  // 타순 셀렉트 복원
+  const batSel=$('biBatOrder');
+  if(batSel&&biData.batterOrder)batSel.value=biData.batterOrder;
+}
+function setBiVisible(on){extendLock();batterInfoRef.update({visible:on})}
+function setBiMode(mode){extendLock();batterInfoRef.update({mode})}
+function setBiPos(pos){extendLock();batterInfoRef.update({position:pos})}
+function onBatOrderChange(){
+  extendLock();
+  const sel=document.getElementById('biBatOrder');
+  const order=parseInt(sel.value);if(!order)return;
+  const bo=ld.battingOrder&&ld.battingOrder[order];
+  const name=bo&&bo.name&&bo.name!=='-'?bo.name:'';
+  const number=bo&&bo.number?bo.number:'';
+  batterInfoRef.update({batterOrder:order,batterName:name,batterNumber:number,atBats:[]});
+}
+function nextBatter(){
+  extendLock();
+  const cur=biData.batterOrder||1;
+  const next=cur>=9?1:cur+1;
+  const bo=ld.battingOrder&&ld.battingOrder[next];
+  const name=bo&&bo.name&&bo.name!=='-'?bo.name:'';
+  const number=bo&&bo.number?bo.number:'';
+  batterInfoRef.update({batterOrder:next,batterName:name,batterNumber:number,atBats:[]});
+}
+function addAtBat(result){
+  extendLock();
+  const abs=biData.atBats||[];
+  abs.push(result);
+  batterInfoRef.update({atBats:abs});
+}
+function removeAtBat(idx){
+  extendLock();
+  const abs=biData.atBats||[];
+  abs.splice(idx,1);
+  batterInfoRef.update({atBats:abs});
+}
+function onPitcherChange(){
+  extendLock();
+  const sel=document.getElementById('biPitcherSel');
+  const r=rosterList.find(x=>x.key===sel.value);
+  if(r){batterInfoRef.update({pitcherKey:r.key,pitcherName:r.name,pitcherNumber:r.number,pitchCount:0})}
+}
+function chPitch(d){extendLock();batterInfoRef.update({pitchCount:Math.max(0,(biData.pitchCount||0)+d)})}
+function resetPitch(){extendLock();batterInfoRef.update({pitchCount:0})}
 
 checkSessionOnLoad();
 </script>

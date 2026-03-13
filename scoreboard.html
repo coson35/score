@@ -35,6 +35,17 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 .dot.ball.active{background:#4caf50;border-color:#4caf50}
 .dot.strike.active{background:#ffd700;border-color:#ffd700}
 .dot.out.active{background:#e94560;border-color:#e94560}
+#batterInfo{position:fixed;bottom:50px;z-index:5;opacity:0;transition:opacity 0.5s;pointer-events:none}
+#batterInfo.visible{opacity:1}
+#batterInfo.pos-left{left:10px}
+#batterInfo.pos-center{left:50%;transform:translateX(-50%)}
+#batterInfo.pos-right{right:10px}
+.bi-bar{display:inline-flex;align-items:center;gap:8px;background:rgba(15,52,96,0.92);border-radius:8px;padding:4px 14px;color:#fff;font-size:13px;white-space:nowrap;border:1px solid rgba(233,69,96,0.5)}
+.bi-name{font-weight:900;color:#ffd700;font-size:14px}
+.bi-sep{color:#e94560;font-weight:700}
+.bi-results{display:flex;gap:6px;align-items:center}
+.bi-result{background:rgba(255,255,255,0.12);padding:2px 7px;border-radius:4px;font-size:12px;font-weight:600}
+.bi-pitch{font-weight:900;color:#ffd700;font-size:15px}
 </style>
 </head>
 <body>
@@ -42,6 +53,7 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 <div id="school-logo">
   <img src="sinwol-logo.png" width="60" height="60" style="object-fit:contain">
 </div>
+<div id="batterInfo"><div class="bi-bar"><span class="bi-name" id="biName"></span><span class="bi-sep">|</span><span class="bi-results" id="biResults"></span></div></div>
 <div id="scoreboard">
   <div class="game-info" id="gameInfo"></div>
   <div class="team-section">
@@ -76,7 +88,26 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 <script src="firebase-config.js"></script>
 <script>
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database(),gameRef=db.ref('game');
+const db=firebase.database(),gameRef=db.ref('game'),batterInfoRef=db.ref('batterInfo');
+batterInfoRef.on('value',snap=>{
+  const d=snap.val();
+  const el=document.getElementById('batterInfo');
+  if(!d||!d.visible){el.classList.remove('visible');return}
+  el.className='';
+  el.classList.add('pos-'+(d.position||'center'));
+  const nameEl=document.getElementById('biName');
+  const resEl=document.getElementById('biResults');
+  if(d.mode==='pitcher'){
+    nameEl.textContent=d.pitcherName||'투수';
+    resEl.innerHTML='<span class="bi-pitch">'+(d.pitchCount||0)+'구</span>';
+  }else{
+    nameEl.textContent=d.batterName||'타자';
+    const abs=d.atBats||[];
+    if(abs.length){resEl.innerHTML=abs.map(a=>'<span class="bi-result">'+a+'</span>').join('')}
+    else{resEl.innerHTML='<span style="color:#aaa;font-size:12px">첫 타석</span>'}
+  }
+  el.classList.add('visible');
+});
 gameRef.on('value',snap=>{
   const d=snap.val();if(!d)return;
   const board=document.getElementById('scoreboard');
