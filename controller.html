@@ -566,6 +566,7 @@ function lockExpired(){if(!isLocked())return true;if(DEFAULT_LOCK_MIN===0)return
 function canControl(){if(isAdmin)return true;if(!isLocked()||lockExpired())return true;return isMyLock()}
 function toggleLock(){
   if(isMyLock()&&!lockExpired()){lockRef.remove();return}
+  if(isAdmin&&isLocked()&&!isMyLock()){lockRef.remove();return}
   if(isLocked()&&!lockExpired()&&!isAdmin){return}
   lockRef.set({deviceId:deviceId,lockedAt:Date.now()});
 }
