@@ -151,7 +151,32 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 <script src="firebase-config.js"></script>
 <script>
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database(),gameRef=db.ref('game'),batterInfoRef=db.ref('batterInfo'),lineupRef=db.ref('lineup');
+const db=firebase.database(),gameRef=db.ref('game'),batterInfoRef=db.ref('batterInfo'),lineupRef=db.ref('lineup'),overlayRef=db.ref('config/overlay');
+
+// 오버레이 설정 적용
+overlayRef.on('value',snap=>{
+  const c=snap.val()||{};
+  const barH=c.barH||44,barFont=c.barFont||14,barBottom=c.barBottom||0;
+  const linScale=c.linScale||100,linTop=c.linTop||50,linLeft=c.linLeft||50;
+  const logoSize=c.logoSize||60;
+  const board=document.getElementById('scoreboard');
+  board.style.height=barH+'px';
+  board.style.fontSize=barFont+'px';
+  board.style.marginBottom=barBottom+'px';
+  document.body.style.paddingBottom=barBottom+'px';
+  document.querySelectorAll('.team-name').forEach(el=>el.style.fontSize=barFont+'px');
+  document.querySelectorAll('.score').forEach(el=>el.style.fontSize=Math.round(barFont*1.7)+'px');
+  document.querySelector('.inning').style.fontSize=Math.round(barFont*1.35)+'px';
+  const lineup=document.getElementById('lineup-overlay');
+  lineup.style.width=(580*linScale/100)+'px';
+  lineup.style.height=(480*linScale/100)+'px';
+  lineup.style.top=linTop+'%';
+  lineup.style.left=linLeft+'%';
+  const logoImg=document.querySelector('#school-logo img');
+  if(logoImg){logoImg.width=logoSize;logoImg.height=logoSize}
+  const biEl=document.getElementById('batterInfo');
+  biEl.style.bottom=(barH+barBottom+6)+'px';
+});
 
 // 타자 정보
 batterInfoRef.on('value',snap=>{
