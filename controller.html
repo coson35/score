@@ -939,10 +939,23 @@ function buildPosAdjust(){
   POS_KEYS.forEach(k=>{
     const p=ovCfg['pos'+k]||OV_DEFAULTS['pos'+k];
     h+='<div style="margin-bottom:8px;padding:8px;background:#f8f8f8;border-radius:10px"><div style="font-size:13px;font-weight:700;margin-bottom:4px">'+POS_LABELS[k]+' ('+k+')</div>';
-    h+='<div class="form-row"><label>상하</label><input id="pos-t-'+k+'" type="range" min="5" max="95" value="'+p.t+'" oninput="prevOvVal(\'pos-tv-'+k+'\',this.value+\'%\')"><span id="pos-tv-'+k+'" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">'+p.t+'%</span></div>';
-    h+='<div class="form-row"><label>좌우</label><input id="pos-l-'+k+'" type="range" min="5" max="95" value="'+p.l+'" oninput="prevOvVal(\'pos-lv-'+k+'\',this.value+\'%\')"><span id="pos-lv-'+k+'" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">'+p.l+'%</span></div></div>';
+    h+='<div class="form-row"><label>상하</label><input id="pos-t-'+k+'" type="range" min="5" max="95" value="'+p.t+'" oninput="prevOvVal(\'pos-tv-'+k+'\',this.value+\'%\');autoSavePos()"><span id="pos-tv-'+k+'" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">'+p.t+'%</span></div>';
+    h+='<div class="form-row"><label>좌우</label><input id="pos-l-'+k+'" type="range" min="5" max="95" value="'+p.l+'" oninput="prevOvVal(\'pos-lv-'+k+'\',this.value+\'%\');autoSavePos()"><span id="pos-lv-'+k+'" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">'+p.l+'%</span></div></div>';
   });
   area.innerHTML=h;
+}
+let _posSaveTimer=null;
+function autoSavePos(){
+  if(_posSaveTimer)clearTimeout(_posSaveTimer);
+  _posSaveTimer=setTimeout(()=>{
+    const pos={};
+    POS_KEYS.forEach(k=>{
+      const tEl=document.getElementById('pos-t-'+k);
+      const lEl=document.getElementById('pos-l-'+k);
+      if(tEl&&lEl)pos['pos'+k]={t:parseInt(tEl.value),l:parseInt(lEl.value)};
+    });
+    configRef.child('overlay').update(pos);
+  },300);
 }
 function saveOverlayCfg(){
   configRef.child('overlay').set(gatherOvCfg());alert('오버레이 설정 저장 완료');
