@@ -127,7 +127,7 @@ input:focus,select:focus{outline:none;border-color:#2c6fbb}
 <script>
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database(),gameRef=db.ref('game'),lineupRef=db.ref('lineup'),savedGamesRef=db.ref('savedGames'),savedLineupsRef=db.ref('savedLineups'),configRef=db.ref('config'),rosterRef=db.ref('roster'),teamsRef=db.ref('teams');
-let isAdmin=false,selectedRole='user',activeGameKey=localStorage.getItem('activeGameKey')||'';
+let isAdmin=false,selectedRole='user',activeGameKey='';
 const DEFAULT_ADMIN_PW='admin1234';
 async function sha256(msg){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
 const DEFAULT_ADMIN_HASH=sha256(DEFAULT_ADMIN_PW);
@@ -392,6 +392,7 @@ function initApp(){
   loadGames();
   loadLinPresets();
   initLock();
+  configRef.child('activeGameKey').on('value',s=>{activeGameKey=s.val()||'';loadGames()});
 }
 function updUI(){
   const $=id=>document.getElementById(id);
@@ -438,8 +439,8 @@ function clearSetupFields(){['inTitle','inAway','inHome','inALogo','inHLogo'].fo
 function applyG(){const aN=document.getElementById('inAway').value||'AWAY',hN=document.getElementById('inHome').value||'HOME',aL=document.getElementById('inALogo').value,hL=document.getElementById('inHLogo').value;gameRef.update({gameTitle:document.getElementById('inTitle').value,awayName:aN,homeName:hN,awayLogo:aL,homeLogo:hL,awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});saveTeamLogo(aN,aL);saveTeamLogo(hN,hL);alert('적용 완료')}
 function loadGames(){savedGamesRef.on('value',s=>{const el=document.getElementById('gList');if(!el)return;el.innerHTML='';const d=s.val();if(!d)return;const entries=Object.entries(d);entries.sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));entries.forEach(([k,g])=>{
 el.innerHTML+=`<div class="game-item${k===activeGameKey?' active-game':''}" id="gi-${k}"><div class="info"><div class="sub">${g.gameTitle||'제목없음'}</div>${g.awayName||'?'} vs ${g.homeName||'?'}</div><div class="btns"><button style="background:#ff9800;color:#fff;border:none" onclick="editG('${k}')">수정</button><button style="background:#4caf50;color:#fff;border:none" onclick="loadG('${k}')">적용</button><button style="background:#e94560;color:#fff;border:none" onclick="delG('${k}')">삭제</button></div></div>`})})}
-function loadG(k){activeGameKey=k;localStorage.setItem('activeGameKey',k);savedGamesRef.child(k).once('value',s=>{const g=s.val();if(!g)return;gameRef.update({gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});loadGames()})}
-function delG(k){if(confirm('삭제?')){if(k===activeGameKey){activeGameKey='';localStorage.removeItem('activeGameKey')}savedGamesRef.child(k).remove()}}
+function loadG(k){activeGameKey=k;configRef.child('activeGameKey').set(k);savedGamesRef.child(k).once('value',s=>{const g=s.val();if(!g)return;gameRef.update({gameTitle:g.gameTitle||'',awayName:g.awayName||'AWAY',homeName:g.homeName||'HOME',awayLogo:g.awayLogo||'',homeLogo:g.homeLogo||'',awayScore:0,homeScore:0,inning:1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false});loadGames()})}
+function delG(k){if(confirm('삭제?')){if(k===activeGameKey){activeGameKey='';configRef.child('activeGameKey').remove()}savedGamesRef.child(k).remove()}}
 </script>
 <script>
 function editG(k){
