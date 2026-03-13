@@ -7,16 +7,18 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:flex-end}
+#school-logo{position:fixed;top:16px;left:16px;z-index:10;opacity:0;transition:opacity 0.5s}
+#school-logo.visible{opacity:1}
 #scoreboard{width:100%;height:44px;display:flex;align-items:center;background:linear-gradient(to right,#1a1a2e,#16213e);border-top:2px solid #e94560;color:#fff;opacity:0;transition:opacity 0.5s}
 #scoreboard.visible{opacity:1}
 .game-info{background:#0f3460;padding:0 10px;height:100%;display:flex;align-items:center;font-size:11px;color:#a0c4ff;white-space:nowrap;max-width:200px;overflow:hidden}
 .team-section{display:flex;align-items:center;height:100%;flex:1;justify-content:center;gap:4px}
-.team{display:flex;align-items:center;gap:5px;padding:0 6px}
+.team{display:flex;align-items:center;gap:8px;padding:0 6px}
 .team-name{font-size:14px;font-weight:700;letter-spacing:1px}
 .team-logo{width:30px;height:30px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 8px rgba(255,255,255,0.25);flex-shrink:0}
 .team-logo.has-logo{display:block}
-.score{font-size:24px;font-weight:900;min-width:26px;text-align:center;color:#ffd700}
-.vs-divider{width:2px;height:24px;background:#e94560;margin:0 3px}
+.score{font-size:24px;font-weight:900;min-width:30px;text-align:center;color:#ffd700;padding:0 6px}
+.vs-divider{width:2px;height:24px;background:#e94560;margin:0 6px}
 .count-section{display:flex;align-items:center;gap:16px;padding:0 16px;height:100%;background:#0a1628}
 .inning{font-size:19px;font-weight:900;color:#e94560;min-width:46px;text-align:center;letter-spacing:1px}
 .inning-half{font-size:13px}
@@ -37,6 +39,14 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 </head>
 <body>
 <script>!function(){var h=location.hostname;if(h&&h!=='coson35.github.io'&&h!=='localhost'&&h!=='127.0.0.1'){document.documentElement.innerHTML=''}}()</script>
+<div id="school-logo">
+  <svg viewBox="0 0 120 100" width="72" height="60">
+    <rect x="4" y="4" width="112" height="92" rx="16" fill="#2563eb" stroke="#b0b0b0" stroke-width="5"/>
+    <line x1="12" y1="88" x2="108" y2="12" stroke="#ef4444" stroke-width="12" stroke-linecap="round"/>
+    <text x="28" y="42" font-size="32" font-weight="900" fill="#fff" font-family="'Noto Sans KR',sans-serif">신</text>
+    <text x="64" y="82" font-size="32" font-weight="900" fill="#fff" font-family="'Noto Sans KR',sans-serif">월</text>
+  </svg>
+</div>
 <div id="scoreboard">
   <div class="game-info" id="gameInfo"></div>
   <div class="team-section">
@@ -75,7 +85,8 @@ const db=firebase.database(),gameRef=db.ref('game');
 gameRef.on('value',snap=>{
   const d=snap.val();if(!d)return;
   const board=document.getElementById('scoreboard');
-  if(d.visible){board.classList.add('visible')}else{board.classList.remove('visible');return}
+  const logo=document.getElementById('school-logo');
+  if(d.visible){board.classList.add('visible');logo.classList.add('visible')}else{board.classList.remove('visible');logo.classList.remove('visible');return}
   document.getElementById('gameInfo').textContent=d.gameTitle||'';
   document.getElementById('awayName').textContent=d.awayName||'AWAY';
   document.getElementById('homeName').textContent=d.homeName||'HOME';
