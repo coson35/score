@@ -813,16 +813,41 @@ function removeAtBat(idx){
 function clearAllAtBats(){
   if(!confirm('모든 타자의 타석 기록을 초기화할까요?\n(새 경기 시작 시 사용)'))return;
   extendLock();
-  batterInfoRef.update({atBats:[],batterResults:{}});
+  batterInfoRef.update({atBats:[],batterResults:{},pitchCount:0,pitcherCounts:{}});
 }
 function onPitcherChange(){
   extendLock();
+  // 현재 투수 투구수 저장
+  saveCurPitchCount();
   const sel=document.getElementById('biPitcherSel');
   const r=rosterList.find(x=>x.key===sel.value);
-  if(r){batterInfoRef.update({pitcherKey:r.key,pitcherName:r.name,pitcherNumber:r.number,pitchCount:0})}
+  if(r){
+    const saved=(biData.pitcherCounts&&biData.pitcherCounts[r.key])||0;
+    batterInfoRef.update({pitcherKey:r.key,pitcherName:r.name,pitcherNumber:r.number,pitchCount:saved});
+  }
 }
-function chPitch(d){extendLock();batterInfoRef.update({pitchCount:Math.max(0,(biData.pitchCount||0)+d)})}
-function resetPitch(){extendLock();batterInfoRef.update({pitchCount:0})}
+function saveCurPitchCount(){
+  const key=biData.pitcherKey;
+  if(!key)return;
+  const pc=biData.pitcherCounts||{};
+  pc[key]=biData.pitchCount||0;
+  batterInfoRef.update({pitcherCounts:pc});
+}
+function chPitch(d){
+  extendLock();
+  const val=Math.max(0,(biData.pitchCount||0)+d);
+  const key=biData.pitcherKey;
+  const pc=biData.pitcherCounts||{};
+  if(key)pc[key]=val;
+  batterInfoRef.update({pitchCount:val,pitcherCounts:pc});
+}
+function resetPitch(){
+  extendLock();
+  const key=biData.pitcherKey;
+  const pc=biData.pitcherCounts||{};
+  if(key)pc[key]=0;
+  batterInfoRef.update({pitchCount:0,pitcherCounts:pc});
+}
 
 // === 오버레이 화면 설정 ===
 const OV_DEFAULTS={barH:44,barFont:14,barBottom:0,linScale:100,linTop:50,linLeft:50,logoSize:60};
