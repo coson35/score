@@ -183,7 +183,8 @@ function doLogin(){
 }
 document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 function doLogout(){localStorage.removeItem('scoreSession');location.reload()}
-function enterApp(){document.getElementById('loginScreen').style.display='none';const m=document.getElementById('mainApp');m.style.display='block';m.style.padding='12px';m.style.paddingBottom='70px';buildUI();initApp()}
+function enterApp(){document.getElementById('loginScreen').style.display='none';const m=document.getElementById('mainApp');m.style.display='block';m.style.padding='12px';m.style.paddingBottom='70px';buildUI();initApp();restoreTab()}
+function restoreTab(){const id=localStorage.getItem('activeTab');if(!id||id==='tabGame')return;const content=document.getElementById(id);if(!content)return;document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');document.querySelectorAll('.tab').forEach(t=>{t.classList.remove('active');if(t.getAttribute('onclick')&&t.getAttribute('onclick').indexOf(id)!==-1)t.classList.add('active')});content.style.display='block'}
 </script>
 <script>
 function buildUI(){
@@ -428,7 +429,7 @@ function togBSO(t,v){extendLock();gameRef.update({[t]:(gd[t]||0)>=v?v-1:v})}
 function rstCnt(){extendLock();gameRef.update({balls:0,strikes:0,outs:0})}
 function togB(n){extendLock();gameRef.update({['base'+n]:!gd['base'+n]})}
 function clrB(){extendLock();gameRef.update({base1:false,base2:false,base3:false})}
-function switchTab(id,el){document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).style.display='block';el.classList.add('active')}
+function switchTab(id,el){document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).style.display='block';el.classList.add('active');localStorage.setItem('activeTab',id)}
 </script>
 <script>
 function chAdmPw(){const p=document.getElementById('nAdmPw').value;if(!p||p.length<4){alert('4자 이상');return}sha256(p).then(h=>{configRef.child('adminPassword').set(h);alert('변경 완료');document.getElementById('nAdmPw').value=''})}
