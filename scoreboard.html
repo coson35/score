@@ -149,6 +149,9 @@ const db=firebase.database(),gameRef=db.ref('game'),batterInfoRef=db.ref('batter
 overlayRef.on('value',snap=>{
   const c=snap.val()||{};
   const barH=c.barH||44,barFont=c.barFont||14,infoFont=c.infoFont||11,barBottom=c.barBottom||0;
+  const infoPad=c.infoPad!=null?c.infoPad:10,teamGap=c.teamGap!=null?c.teamGap:4,scorePad=c.scorePad!=null?c.scorePad:6;
+  const dividerMargin=c.dividerMargin!=null?c.dividerMargin:6,countPad=c.countPad!=null?c.countPad:16;
+  const bsoGap=c.bsoGap!=null?c.bsoGap:11,inningFont=c.inningFont||19,baseSize=c.baseSize||42;
   const linScale=c.linScale||100,linTop=c.linTop||50,linLeft=c.linLeft||50;
   const logoSize=c.logoSize||60;
   const cBg=c.colorBg||'#1a1a2e',cBorder=c.colorBorder||'#e94560',cTeam=c.colorTeam||'#ffffff';
@@ -161,15 +164,21 @@ overlayRef.on('value',snap=>{
   board.style.marginBottom=barBottom+'px';
   document.body.style.paddingBottom=barBottom+'px';
   document.querySelectorAll('.team-name').forEach(el=>{el.style.fontSize=barFont+'px';el.style.color=cTeam});
-  document.querySelectorAll('.score').forEach(el=>{el.style.fontSize=Math.round(barFont*1.7)+'px';el.style.color=cScore});
+  document.querySelectorAll('.score').forEach(el=>{el.style.fontSize=Math.round(barFont*1.7)+'px';el.style.color=cScore;el.style.padding='0 '+scorePad+'px'});
   const inn=document.querySelector('.inning');
-  if(inn){inn.style.fontSize=Math.round(barFont*1.35)+'px';inn.style.color=cInning}
+  if(inn){inn.style.fontSize=inningFont+'px';inn.style.color=cInning}
   const gi=document.querySelector('.game-info');
-  if(gi){gi.style.fontSize=infoFont+'px';gi.style.background=cInfoBg}
+  if(gi){gi.style.fontSize=infoFont+'px';gi.style.background=cInfoBg;gi.style.padding='0 '+infoPad+'px'}
   const cs=document.querySelector('.count-section');
-  if(cs)cs.style.background=cCountBg;
+  if(cs){cs.style.background=cCountBg;cs.style.padding='0 '+countPad+'px'}
+  const ts=document.querySelector('.team-section');
+  if(ts)ts.style.gap=teamGap+'px';
   const vd=document.querySelector('.vs-divider');
-  if(vd)vd.style.background=cBorder;
+  if(vd){vd.style.background=cBorder;vd.style.margin='0 '+dividerMargin+'px'}
+  const basesEl=document.querySelector('.bases');
+  if(basesEl){basesEl.style.width=baseSize+'px';basesEl.style.height=baseSize+'px'}
+  const bsoEl=document.querySelector('.bso');
+  if(bsoEl)bsoEl.style.gap=bsoGap+'px';
   const lineup=document.getElementById('lineup-overlay');
   lineup.style.width=(580*linScale/100)+'px';
   lineup.style.height=(480*linScale/100)+'px';
