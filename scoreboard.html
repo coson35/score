@@ -64,11 +64,11 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 .pos-1b{top:68%;left:66%}.pos-2b{top:50%;left:60%}
 .pos-3b{top:68%;left:34%}.pos-ss{top:50%;left:40%}
 .pos-lf{top:28%;left:22%}.pos-cf{top:18%;left:50%}.pos-rf{top:28%;left:78%}
-.bat-item{display:flex;align-items:center;padding:5px 12px;background:rgba(255,255,255,0.08);border-radius:8px}
-.bat-item .order-num{font-size:18px;font-weight:900;color:#e94560;min-width:28px;text-align:center}
-.bat-item .player-name{flex:1;font-size:14px;font-weight:700;color:#fff;padding:0 8px}
-.bat-item .player-num{font-size:13px;color:#ffd700;min-width:34px;text-align:center;font-weight:700}
-.bat-item .player-pos{font-size:11px;color:#a0c4ff;min-width:30px;text-align:center;font-weight:600}
+.bat-item{display:flex;align-items:center;padding:3px 12px;background:rgba(255,255,255,0.08);border-radius:6px}
+.bat-item .order-num{font-size:16px;font-weight:900;color:#e94560;min-width:24px;text-align:center}
+.bat-item .player-name{flex:1;font-size:13px;font-weight:700;color:#fff;padding:0 8px}
+.bat-item .player-num{font-size:12px;color:#ffd700;min-width:34px;text-align:center;font-weight:700}
+.bat-item .player-pos{font-size:10px;color:#a0c4ff;min-width:28px;text-align:center;font-weight:600}
 </style>
 </head>
 <body>
@@ -97,12 +97,12 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
     <div class="pos pos-rf" id="pos-RF"><div class="name" id="name-RF">-</div><div class="num" id="num-RF"></div><div class="position-label">RF</div></div>
   </div>
   <div id="battingView" style="display:none;width:100%;height:100%">
-    <div style="width:100%;height:100%;background:rgba(0,0,0,0.85);border-radius:12px;padding:12px;display:flex;flex-direction:column">
-      <div style="text-align:center;padding:8px 0;border-bottom:2px solid #e94560;margin-bottom:8px">
-        <span id="batTeamName" style="color:#fff;font-size:18px;font-weight:900">우리팀</span>
-        <span style="color:#a0c4ff;font-size:12px;display:block">타순</span>
+    <div style="width:100%;height:100%;background:rgba(0,0,0,0.85);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column">
+      <div style="text-align:center;padding:4px 0;border-bottom:2px solid #e94560;margin-bottom:4px">
+        <span id="batTeamName" style="color:#fff;font-size:16px;font-weight:900">우리팀</span>
+        <span style="color:#a0c4ff;font-size:11px;display:block">타순</span>
       </div>
-      <div id="batList" style="flex:1;display:flex;flex-direction:column;gap:3px;overflow:hidden"></div>
+      <div id="batList" style="flex:1;display:flex;flex-direction:column;gap:2px;justify-content:space-evenly;overflow:hidden"></div>
     </div>
   </div>
 </div>
