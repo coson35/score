@@ -1239,11 +1239,12 @@ function renderStatsTable(elId,view,editable){
       const b=p.bat,avg=b.AB>0?(b.H/b.AB).toFixed(3):'.000';
       const obp=(b.AB+b.BB+b.HBP)>0?((b.H+b.BB+b.HBP)/(b.AB+b.BB+b.HBP)).toFixed(3):'.000';
       const click=editable?' onclick="showPlayerGames(\''+p.key+'\',\'batting\')"':'';
-      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa;')+(editable?'cursor:pointer':'')+'">';
+      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa;')+(editable?'cursor:pointer;-webkit-tap-highlight-color:rgba(37,99,235,0.2)':'')+'">';
       h+='<td style="padding:10px 6px;font-size:13px;color:#888">'+(i+1)+'</td>';
       h+='<td style="padding:10px 4px"><div style="font-size:13px;font-weight:700">'+p.name+'</div><div style="font-size:10px;color:#888">#'+p.number+'</div></td>';
       h+='<td style="text-align:center;font-weight:900;color:#2563eb;font-size:14px">'+avg+'</td>';
       h+='<td style="text-align:center">'+b.G+'</td><td style="text-align:center">'+b.AB+'</td><td style="text-align:center;font-weight:700">'+b.H+'</td><td style="text-align:center;font-weight:700;color:#e94560">'+b.HR+'</td><td style="text-align:center">'+b['2B']+'</td><td style="text-align:center">'+b['3B']+'</td><td style="text-align:center">'+b.RBI+'</td><td style="text-align:center">'+b.R+'</td><td style="text-align:center">'+b.SB+'</td><td style="text-align:center">'+b.BB+'</td><td style="text-align:center">'+b.HBP+'</td><td style="text-align:center">'+b.SO+'</td><td style="text-align:center">'+obp+'</td>';
+      if(editable)h+='<td style="text-align:center"><span style="font-size:11px;color:#2563eb">수정</span></td>';
       h+='</tr>';
     });
     h+='</tbody></table></div>';el.innerHTML=h;
@@ -1256,11 +1257,12 @@ function renderStatsTable(elId,view,editable){
     pitchers.forEach((p,i)=>{
       const t=p.pit,era=t.IP>0?(t.ERA_R*7/t.IP).toFixed(2):'0.00';
       const click=editable?' onclick="showPlayerGames(\''+p.key+'\',\'pitching\')"':'';
-      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa;')+(editable?'cursor:pointer':'')+'">';
+      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa;')+(editable?'cursor:pointer;-webkit-tap-highlight-color:rgba(37,99,235,0.2)':'')+'">';
       h+='<td style="padding:10px 6px;font-size:13px;color:#888">'+(i+1)+'</td>';
       h+='<td style="padding:10px 4px"><div style="font-size:13px;font-weight:700">'+p.name+'</div><div style="font-size:10px;color:#888">#'+p.number+'</div></td>';
       h+='<td style="text-align:center;font-weight:900;color:#2563eb;font-size:14px">'+era+'</td>';
       h+='<td style="text-align:center">'+t.G+'</td><td style="text-align:center">'+t.W+'</td><td style="text-align:center">'+t.L+'</td><td style="text-align:center">'+t.IP.toFixed(1)+'</td><td style="text-align:center;font-weight:700">'+t.PSO+'</td><td style="text-align:center">'+t.HA+'</td><td style="text-align:center">'+t.ER+'</td><td style="text-align:center">'+t.ERA_R+'</td><td style="text-align:center">'+t.PBB+'</td><td style="text-align:center">'+t.PC+'</td>';
+      if(editable)h+='<td style="text-align:center"><span style="font-size:11px;color:#2563eb">수정</span></td>';
       h+='</tr>';
     });
     h+='</tbody></table></div>';el.innerHTML=h;
