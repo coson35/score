@@ -1238,8 +1238,8 @@ function renderStatsTable(elId,view,editable){
     arr.forEach((p,i)=>{
       const b=p.bat,avg=b.AB>0?(b.H/b.AB).toFixed(3):'.000';
       const obp=(b.AB+b.BB+b.HBP)>0?((b.H+b.BB+b.HBP)/(b.AB+b.BB+b.HBP)).toFixed(3):'.000';
-      const click=editable?' onclick="showPlayerGames(\''+p.key+'\',\'batting\')" style="cursor:pointer"':'';
-      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa')+'">';
+      const click=editable?' onclick="showPlayerGames(\''+p.key+'\',\'batting\')"':'';
+      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa;')+(editable?'cursor:pointer':'')+'">';
       h+='<td style="padding:10px 6px;font-size:13px;color:#888">'+(i+1)+'</td>';
       h+='<td style="padding:10px 4px"><div style="font-size:13px;font-weight:700">'+p.name+'</div><div style="font-size:10px;color:#888">#'+p.number+'</div></td>';
       h+='<td style="text-align:center;font-weight:900;color:#2563eb;font-size:14px">'+avg+'</td>';
@@ -1255,8 +1255,8 @@ function renderStatsTable(elId,view,editable){
     h+='<thead><tr style="background:#f5f5f5;border-bottom:2px solid #ddd;position:sticky;top:0"><th style="padding:8px 6px;text-align:left;font-size:11px;color:#888;min-width:40px">순위</th><th style="text-align:left;font-size:11px;color:#888;min-width:80px">선수</th><th style="font-size:11px;color:#2563eb;font-weight:700;min-width:50px">평균자책</th><th style="font-size:11px;color:#888">경기</th><th style="font-size:11px;color:#888">승</th><th style="font-size:11px;color:#888">패</th><th style="font-size:11px;color:#888">이닝</th><th style="font-size:11px;color:#888">탈삼진</th><th style="font-size:11px;color:#888">피안타</th><th style="font-size:11px;color:#888">실점</th><th style="font-size:11px;color:#888">자책점</th><th style="font-size:11px;color:#888">볼넷</th><th style="font-size:11px;color:#888">투구수</th></tr></thead><tbody>';
     pitchers.forEach((p,i)=>{
       const t=p.pit,era=t.IP>0?(t.ERA_R*7/t.IP).toFixed(2):'0.00';
-      const click=editable?' onclick="showPlayerGames(\''+p.key+'\',\'pitching\')" style="cursor:pointer"':'';
-      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa')+'">';
+      const click=editable?' onclick="showPlayerGames(\''+p.key+'\',\'pitching\')"':'';
+      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa;')+(editable?'cursor:pointer':'')+'">';
       h+='<td style="padding:10px 6px;font-size:13px;color:#888">'+(i+1)+'</td>';
       h+='<td style="padding:10px 4px"><div style="font-size:13px;font-weight:700">'+p.name+'</div><div style="font-size:10px;color:#888">#'+p.number+'</div></td>';
       h+='<td style="text-align:center;font-weight:900;color:#2563eb;font-size:14px">'+era+'</td>';
