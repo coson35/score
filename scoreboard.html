@@ -153,6 +153,7 @@ overlayRef.on('value',snap=>{
   const dividerMargin=c.dividerMargin!=null?c.dividerMargin:6,countPad=c.countPad!=null?c.countPad:16;
   const bsoGap=c.bsoGap!=null?c.bsoGap:11,inningFont=c.inningFont||19,baseSize=c.baseSize||42;
   const linScale=c.linScale||100,linTop=c.linTop||50,linLeft=c.linLeft||50;
+  const linDefAlpha=c.linDefAlpha!=null?c.linDefAlpha:100,linBatAlpha=c.linBatAlpha!=null?c.linBatAlpha:85;
   const logoSize=c.logoSize||60;
   const cBg=c.colorBg||'#1a1a2e',cBorder=c.colorBorder||'#e94560',cTeam=c.colorTeam||'#ffffff';
   const cScore=c.colorScore||'#ffd700',cInning=c.colorInning||'#e94560';
@@ -184,6 +185,10 @@ overlayRef.on('value',snap=>{
   lineup.style.height=(480*linScale/100)+'px';
   lineup.style.top=linTop+'%';
   lineup.style.left=linLeft+'%';
+  const defView=document.getElementById('defenseView');
+  if(defView)defView.style.opacity=linDefAlpha/100;
+  const batBg=document.querySelector('#battingView > div');
+  if(batBg)batBg.style.background='rgba(0,0,0,'+(linBatAlpha/100)+')';
   const logoImg=document.querySelector('#school-logo img');
   if(logoImg){logoImg.width=logoSize;logoImg.height=logoSize}
   const biEl=document.getElementById('batterInfo');

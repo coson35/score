@@ -304,6 +304,8 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>크기(%)</label><input id="ovLinScale" type="range" min="50" max="150" value="100" oninput="prevOvVal('ovLinScaleV',this.value+'%');autoSaveOv()"><span id="ovLinScaleV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">100%</span></div>
 <div class="form-row"><label>상하위치</label><input id="ovLinTop" type="range" min="0" max="100" value="50" oninput="prevOvVal('ovLinTopV',this.value+'%');autoSaveOv()"><span id="ovLinTopV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">50%</span></div>
 <div class="form-row"><label>좌우위치</label><input id="ovLinLeft" type="range" min="0" max="100" value="50" oninput="prevOvVal('ovLinLeftV',this.value+'%');autoSaveOv()"><span id="ovLinLeftV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">50%</span></div>
+<div class="form-row"><label>수비 투명도</label><input id="ovLinDefAlpha" type="range" min="0" max="100" value="100" oninput="prevOvVal('ovLinDefAlphaV',this.value+'%');autoSaveOv()"><span id="ovLinDefAlphaV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">100%</span></div>
+<div class="form-row"><label>타순 투명도</label><input id="ovLinBatAlpha" type="range" min="0" max="100" value="85" oninput="prevOvVal('ovLinBatAlphaV',this.value+'%');autoSaveOv()"><span id="ovLinBatAlphaV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">85%</span></div>
 <div style="font-size:13px;font-weight:700;color:#0f3460;margin:10px 0 6px">학교 로고</div>
 <div class="form-row"><label>크기</label><input id="ovLogoSize" type="range" min="30" max="120" value="60" oninput="prevOvVal('ovLogoSizeV',this.value+'px');autoSaveOv()"><span id="ovLogoSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">60px</span></div>
 <div style="font-size:13px;font-weight:700;color:#0f3460;margin:10px 0 6px">수비 포지션 위치</div>
@@ -898,7 +900,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,linScale:100,linTop:50,linLeft:50,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
+const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -931,6 +933,8 @@ function fillOverlayInputs(){
   if($('ovLinScale')){$('ovLinScale').value=ovCfg.linScale;$('ovLinScaleV').textContent=ovCfg.linScale+'%'}
   if($('ovLinTop')){$('ovLinTop').value=ovCfg.linTop;$('ovLinTopV').textContent=ovCfg.linTop+'%'}
   if($('ovLinLeft')){$('ovLinLeft').value=ovCfg.linLeft;$('ovLinLeftV').textContent=ovCfg.linLeft+'%'}
+  if($('ovLinDefAlpha')){$('ovLinDefAlpha').value=ovCfg.linDefAlpha;$('ovLinDefAlphaV').textContent=ovCfg.linDefAlpha+'%'}
+  if($('ovLinBatAlpha')){$('ovLinBatAlpha').value=ovCfg.linBatAlpha;$('ovLinBatAlphaV').textContent=ovCfg.linBatAlpha+'%'}
   if($('ovLogoSize')){$('ovLogoSize').value=ovCfg.logoSize;$('ovLogoSizeV').textContent=ovCfg.logoSize+'px'}
   COLOR_FIELDS.forEach(f=>{
     const id='ov'+f.charAt(0).toUpperCase()+f.slice(1);
@@ -959,6 +963,8 @@ function gatherOvCfg(){
     linScale:parseInt(document.getElementById('ovLinScale').value),
     linTop:parseInt(document.getElementById('ovLinTop').value),
     linLeft:parseInt(document.getElementById('ovLinLeft').value),
+    linDefAlpha:parseInt(document.getElementById('ovLinDefAlpha').value),
+    linBatAlpha:parseInt(document.getElementById('ovLinBatAlpha').value),
     logoSize:parseInt(document.getElementById('ovLogoSize').value),
     colorBg:document.getElementById('ovColorBg').value,
     colorBorder:document.getElementById('ovColorBorder').value,
