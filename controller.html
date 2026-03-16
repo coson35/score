@@ -490,6 +490,7 @@ document.getElementById('tabAdmin').innerHTML=`
 <div class="form-row"><label>볼넷</label><input id="stBB" type="number" min="0" value="0" style="flex:1"></div>
 <div class="form-row"><label>삼진</label><input id="stSO" type="number" min="0" value="0" style="flex:1"></div>
 <div class="form-row"><label>도루</label><input id="stSB" type="number" min="0" value="0" style="flex:1"></div>
+<div class="form-row"><label>사구</label><input id="stHBP" type="number" min="0" value="0" style="flex:1"></div>
 </div>
 <div id="statPitFields" style="display:none">
 <div style="font-size:12px;font-weight:700;color:#0f3460;margin:8px 0 4px">투구</div>
@@ -500,6 +501,8 @@ document.getElementById('tabAdmin').innerHTML=`
 <div class="form-row"><label>자책점</label><input id="stERA_R" type="number" min="0" value="0" style="flex:1"></div>
 <div class="form-row"><label>삼진</label><input id="stPSO" type="number" min="0" value="0" style="flex:1"></div>
 <div class="form-row"><label>볼넷</label><input id="stPBB" type="number" min="0" value="0" style="flex:1"></div>
+<div class="form-row"><label>승</label><input id="stW" type="number" min="0" value="0" style="flex:1"></div>
+<div class="form-row"><label>패</label><input id="stL" type="number" min="0" value="0" style="flex:1"></div>
 </div>
 <div style="display:flex;gap:6px;margin-top:8px"><button class="btn-save" onclick="saveStat()">저장</button><button style="flex:1;padding:12px;font-size:13px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700" onclick="document.getElementById('statFormArea').style.display='none'">취소</button></div>
 </div>
@@ -1157,7 +1160,7 @@ function autoRecordBatStat(result){
   const gameKey=today+'_'+opp;
   const ref=statsRef.child(gameKey).child(pKey.key);
   ref.once('value',s=>{
-    const cur=s.val()||{name:name,number:num,opponent:opp,AB:0,H:0,'2B':0,'3B':0,HR:0,RBI:0,R:0,BB:0,SO:0,SB:0};
+    const cur=s.val()||{name:name,number:num,opponent:opp,AB:0,H:0,'2B':0,'3B':0,HR:0,RBI:0,R:0,BB:0,SO:0,SB:0,HBP:0};
     const isAB=['안타','2루타','3루타','홈런','삼진','땅볼','뜬공','병살','실책'].includes(result);
     const isHit=['안타','2루타','3루타','홈런'].includes(result);
     if(isAB)cur.AB=(cur.AB||0)+1;
@@ -1165,7 +1168,8 @@ function autoRecordBatStat(result){
     if(result==='2루타')cur['2B']=(cur['2B']||0)+1;
     if(result==='3루타')cur['3B']=(cur['3B']||0)+1;
     if(result==='홈런'){cur.HR=(cur.HR||0)+1;cur.RBI=(cur.RBI||0)+1;cur.R=(cur.R||0)+1}
-    if(result==='볼넷'||result==='사구')cur.BB=(cur.BB||0)+1;
+    if(result==='볼넷')cur.BB=(cur.BB||0)+1;
+    if(result==='사구')cur.HBP=(cur.HBP||0)+1;
     if(result==='삼진')cur.SO=(cur.SO||0)+1;
     ref.set(cur);
   });
@@ -1178,7 +1182,7 @@ function autoRecordPitchStat(){
   const gameKey=today+'_'+opp;
   const ref=statsRef.child(gameKey).child(key);
   ref.once('value',s=>{
-    const cur=s.val()||{name:name,number:num,opponent:opp,IP:0,PC:0,HA:0,ER:0,ERA_R:0,PSO:0,PBB:0};
+    const cur=s.val()||{name:name,number:num,opponent:opp,IP:0,PC:0,HA:0,ER:0,ERA_R:0,PSO:0,PBB:0,W:0,L:0};
     cur.PC=(biData.pitcherCounts&&biData.pitcherCounts[key])||biData.pitchCount||0;
     ref.set(cur);
   });
@@ -1207,57 +1211,153 @@ function switchStatsView(v){
   if(pb)pb.style.cssText=v==='pitching'?'flex:1;font-size:13px;padding:12px;background:#0f3460;color:#fff;border:none;border-radius:12px;font-weight:700':'flex:1;padding:12px;font-size:13px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700';
   renderStats();
 }
-function renderStats(){
-  const el=document.getElementById('statsContent');if(!el)return;
+function renderStats(){renderStatsTable('statsContent',statsView,true)}
+function renderUserStats(){renderStatsTable('userStatsContent',userStatsView,false)}
+function gatherStatsPlayers(){
   const players={};
-  Object.values(statsData).forEach(g=>{
+  Object.entries(statsData).forEach(([gk,g])=>{
     Object.entries(g).forEach(([pk,s])=>{
       if(pk==='meta')return;
-      if(!players[pk])players[pk]={name:s.name||pk,number:s.number||'',bat:{AB:0,H:0,'2B':0,'3B':0,HR:0,RBI:0,R:0,BB:0,SO:0,SB:0,G:0},pit:{IP:0,PC:0,HA:0,ER:0,ERA_R:0,PSO:0,PBB:0,G:0}};
+      if(!players[pk])players[pk]={key:pk,name:s.name||pk,number:s.number||'',bat:{AB:0,H:0,'2B':0,'3B':0,HR:0,RBI:0,R:0,BB:0,SO:0,SB:0,HBP:0,G:0},pit:{IP:0,PC:0,HA:0,ER:0,ERA_R:0,PSO:0,PBB:0,G:0,W:0,L:0},games:[]};
       const p=players[pk];
-      if(s.AB!=null){p.bat.AB+=s.AB||0;p.bat.H+=s.H||0;p.bat['2B']+=s['2B']||0;p.bat['3B']+=s['3B']||0;p.bat.HR+=s.HR||0;p.bat.RBI+=s.RBI||0;p.bat.R+=s.R||0;p.bat.BB+=s.BB||0;p.bat.SO+=s.SO||0;p.bat.SB+=s.SB||0;p.bat.G++}
-      if(s.IP!=null&&s.IP>0){p.pit.IP+=s.IP||0;p.pit.PC+=s.PC||0;p.pit.HA+=s.HA||0;p.pit.ER+=s.ER||0;p.pit.ERA_R+=s.ERA_R||0;p.pit.PSO+=s.PSO||0;p.pit.PBB+=s.PBB||0;p.pit.G++}
+      if(s.AB!=null){p.bat.AB+=s.AB||0;p.bat.H+=s.H||0;p.bat['2B']+=s['2B']||0;p.bat['3B']+=s['3B']||0;p.bat.HR+=s.HR||0;p.bat.RBI+=s.RBI||0;p.bat.R+=s.R||0;p.bat.BB+=s.BB||0;p.bat.SO+=s.SO||0;p.bat.SB+=s.SB||0;p.bat.HBP+=s.HBP||0;p.bat.G++}
+      if(s.IP!=null&&s.IP>0){p.pit.IP+=s.IP||0;p.pit.PC+=s.PC||0;p.pit.HA+=s.HA||0;p.pit.ER+=s.ER||0;p.pit.ERA_R+=s.ERA_R||0;p.pit.PSO+=s.PSO||0;p.pit.PBB+=s.PBB||0;p.pit.W+=s.W||0;p.pit.L+=s.L||0;p.pit.G++}
+      p.games.push({gameKey:gk,...s});
     });
   });
-  const arr=Object.values(players);
-  if(!arr.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:16px;font-size:13px">등록된 성적이 없습니다</div>';return}
-  if(statsView==='batting'){
-    arr.sort((a,b)=>b.bat.H-a.bat.H);
-    let h='<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse;white-space:nowrap">';
-    h+='<tr style="background:#0f3460;color:#fff"><th style="padding:6px 4px">선수</th><th>경기</th><th>타수</th><th>안타</th><th>타율</th><th>2B</th><th>3B</th><th>HR</th><th>타점</th><th>득점</th><th>BB</th><th>SO</th><th>SB</th><th>출루</th></tr>';
-    arr.forEach(p=>{
+  return Object.values(players);
+}
+function renderStatsTable(elId,view,editable){
+  const el=document.getElementById(elId);if(!el)return;
+  const arr=gatherStatsPlayers();
+  if(!arr.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:20px;font-size:13px">등록된 성적이 없습니다</div>';return}
+  if(view==='batting'){
+    arr.sort((a,b)=>{const aa=a.bat.AB>0?a.bat.H/a.bat.AB:0,bb=b.bat.AB>0?b.bat.H/b.bat.AB:0;return bb-aa});
+    let h='<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="width:100%;font-size:12px;border-collapse:collapse;white-space:nowrap">';
+    h+='<thead><tr style="background:#f5f5f5;border-bottom:2px solid #ddd;position:sticky;top:0"><th style="padding:8px 6px;text-align:left;font-size:11px;color:#888;min-width:40px">순위</th><th style="text-align:left;font-size:11px;color:#888;min-width:80px">선수</th><th style="font-size:11px;color:#2563eb;font-weight:700;min-width:44px">타율</th><th style="font-size:11px;color:#888">경기</th><th style="font-size:11px;color:#888">타수</th><th style="font-size:11px;color:#888">안타</th><th style="font-size:11px;color:#888">홈런</th><th style="font-size:11px;color:#888">2루타</th><th style="font-size:11px;color:#888">3루타</th><th style="font-size:11px;color:#888">타점</th><th style="font-size:11px;color:#888">득점</th><th style="font-size:11px;color:#888">도루</th><th style="font-size:11px;color:#888">볼넷</th><th style="font-size:11px;color:#888">사구</th><th style="font-size:11px;color:#888">삼진</th><th style="font-size:11px;color:#888">출루율</th></tr></thead><tbody>';
+    arr.forEach((p,i)=>{
       const b=p.bat,avg=b.AB>0?(b.H/b.AB).toFixed(3):'.000';
-      const obp=(b.AB+b.BB)>0?((b.H+b.BB)/(b.AB+b.BB)).toFixed(3):'.000';
-      h+='<tr style="border-bottom:1px solid #eee"><td style="padding:5px 4px;font-weight:700">#'+p.number+' '+p.name+'</td><td style="text-align:center">'+b.G+'</td><td style="text-align:center">'+b.AB+'</td><td style="text-align:center;font-weight:700;color:#0f3460">'+b.H+'</td><td style="text-align:center;font-weight:900;color:#e94560">'+avg+'</td><td style="text-align:center">'+b['2B']+'</td><td style="text-align:center">'+b['3B']+'</td><td style="text-align:center;font-weight:700;color:#ffd700">'+b.HR+'</td><td style="text-align:center">'+b.RBI+'</td><td style="text-align:center">'+b.R+'</td><td style="text-align:center">'+b.BB+'</td><td style="text-align:center">'+b.SO+'</td><td style="text-align:center">'+b.SB+'</td><td style="text-align:center">'+obp+'</td></tr>';
+      const obp=(b.AB+b.BB+b.HBP)>0?((b.H+b.BB+b.HBP)/(b.AB+b.BB+b.HBP)).toFixed(3):'.000';
+      const click=editable?' onclick="showPlayerGames(\''+p.key+'\',\'batting\')" style="cursor:pointer"':'';
+      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa')+'">';
+      h+='<td style="padding:10px 6px;font-size:13px;color:#888">'+(i+1)+'</td>';
+      h+='<td style="padding:10px 4px"><div style="font-size:13px;font-weight:700">'+p.name+'</div><div style="font-size:10px;color:#888">#'+p.number+'</div></td>';
+      h+='<td style="text-align:center;font-weight:900;color:#2563eb;font-size:14px">'+avg+'</td>';
+      h+='<td style="text-align:center">'+b.G+'</td><td style="text-align:center">'+b.AB+'</td><td style="text-align:center;font-weight:700">'+b.H+'</td><td style="text-align:center;font-weight:700;color:#e94560">'+b.HR+'</td><td style="text-align:center">'+b['2B']+'</td><td style="text-align:center">'+b['3B']+'</td><td style="text-align:center">'+b.RBI+'</td><td style="text-align:center">'+b.R+'</td><td style="text-align:center">'+b.SB+'</td><td style="text-align:center">'+b.BB+'</td><td style="text-align:center">'+b.HBP+'</td><td style="text-align:center">'+b.SO+'</td><td style="text-align:center">'+obp+'</td>';
+      h+='</tr>';
     });
-    h+='</table></div>';el.innerHTML=h;
+    h+='</tbody></table></div>';el.innerHTML=h;
   }else{
     const pitchers=arr.filter(p=>p.pit.G>0);
-    if(!pitchers.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:16px;font-size:13px">투구 기록이 없습니다</div>';return}
-    pitchers.sort((a,b)=>b.pit.IP-a.pit.IP);
-    let h='<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse;white-space:nowrap">';
-    h+='<tr style="background:#0f3460;color:#fff"><th style="padding:6px 4px">선수</th><th>경기</th><th>이닝</th><th>투구</th><th>피안</th><th>실점</th><th>자책</th><th>방어율</th><th>삼진</th><th>BB</th></tr>';
-    pitchers.forEach(p=>{
+    if(!pitchers.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:20px;font-size:13px">투구 기록이 없습니다</div>';return}
+    pitchers.sort((a,b)=>{const ea=a.pit.IP>0?a.pit.ERA_R*7/a.pit.IP:999,eb=b.pit.IP>0?b.pit.ERA_R*7/b.pit.IP:999;return ea-eb});
+    let h='<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="width:100%;font-size:12px;border-collapse:collapse;white-space:nowrap">';
+    h+='<thead><tr style="background:#f5f5f5;border-bottom:2px solid #ddd;position:sticky;top:0"><th style="padding:8px 6px;text-align:left;font-size:11px;color:#888;min-width:40px">순위</th><th style="text-align:left;font-size:11px;color:#888;min-width:80px">선수</th><th style="font-size:11px;color:#2563eb;font-weight:700;min-width:50px">평균자책</th><th style="font-size:11px;color:#888">경기</th><th style="font-size:11px;color:#888">승</th><th style="font-size:11px;color:#888">패</th><th style="font-size:11px;color:#888">이닝</th><th style="font-size:11px;color:#888">탈삼진</th><th style="font-size:11px;color:#888">피안타</th><th style="font-size:11px;color:#888">실점</th><th style="font-size:11px;color:#888">자책점</th><th style="font-size:11px;color:#888">볼넷</th><th style="font-size:11px;color:#888">투구수</th></tr></thead><tbody>';
+    pitchers.forEach((p,i)=>{
       const t=p.pit,era=t.IP>0?(t.ERA_R*7/t.IP).toFixed(2):'0.00';
-      h+='<tr style="border-bottom:1px solid #eee"><td style="padding:5px 4px;font-weight:700">#'+p.number+' '+p.name+'</td><td style="text-align:center">'+t.G+'</td><td style="text-align:center">'+t.IP.toFixed(1)+'</td><td style="text-align:center">'+t.PC+'</td><td style="text-align:center">'+t.HA+'</td><td style="text-align:center">'+t.ER+'</td><td style="text-align:center">'+t.ERA_R+'</td><td style="text-align:center;font-weight:900;color:#e94560">'+era+'</td><td style="text-align:center;font-weight:700;color:#0f3460">'+t.PSO+'</td><td style="text-align:center">'+t.PBB+'</td></tr>';
+      const click=editable?' onclick="showPlayerGames(\''+p.key+'\',\'pitching\')" style="cursor:pointer"':'';
+      h+='<tr'+click+' style="border-bottom:1px solid #f0f0f0;'+(i%2===0?'':'background:#fafafa')+'">';
+      h+='<td style="padding:10px 6px;font-size:13px;color:#888">'+(i+1)+'</td>';
+      h+='<td style="padding:10px 4px"><div style="font-size:13px;font-weight:700">'+p.name+'</div><div style="font-size:10px;color:#888">#'+p.number+'</div></td>';
+      h+='<td style="text-align:center;font-weight:900;color:#2563eb;font-size:14px">'+era+'</td>';
+      h+='<td style="text-align:center">'+t.G+'</td><td style="text-align:center">'+t.W+'</td><td style="text-align:center">'+t.L+'</td><td style="text-align:center">'+t.IP.toFixed(1)+'</td><td style="text-align:center;font-weight:700">'+t.PSO+'</td><td style="text-align:center">'+t.HA+'</td><td style="text-align:center">'+t.ER+'</td><td style="text-align:center">'+t.ERA_R+'</td><td style="text-align:center">'+t.PBB+'</td><td style="text-align:center">'+t.PC+'</td>';
+      h+='</tr>';
     });
-    h+='</table></div>';el.innerHTML=h;
+    h+='</tbody></table></div>';el.innerHTML=h;
   }
 }
+function showPlayerGames(playerKey,mode){
+  const games=[];
+  Object.entries(statsData).forEach(([gk,g])=>{
+    if(g[playerKey])games.push({gameKey:gk,...g[playerKey]});
+  });
+  if(!games.length){alert('경기별 기록이 없습니다');return}
+  let h='<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)this.remove()">';
+  h+='<div style="background:#fff;border-radius:16px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;padding:16px">';
+  h+='<div style="font-size:16px;font-weight:900;margin-bottom:12px">#'+(games[0].number||'')+' '+(games[0].name||playerKey)+' 경기별 기록</div>';
+  games.forEach(g=>{
+    const dt=g.gameKey.replace(/(\d{4})(\d{2})(\d{2})_.*/,'$1-$2-$3');
+    h+='<div style="padding:10px;margin-bottom:8px;background:#f8f8f8;border-radius:10px;border:1px solid #eee">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:13px;font-weight:700">'+dt+'</span><span style="font-size:11px;color:#888">'+(g.opponent||'')+'</span>';
+    h+='<button onclick="editGameStat(\''+g.gameKey+'\',\''+playerKey+'\')" style="padding:4px 10px;font-size:11px;background:#0f3460;color:#fff;border:none;border-radius:6px">수정</button></div>';
+    if(mode==='batting'&&g.AB!=null){
+      const avg=g.AB>0?(g.H/g.AB).toFixed(3):'.000';
+      h+='<div style="font-size:12px;color:#555">'+g.AB+'타수 '+g.H+'안타 ('+avg+') HR:'+(g.HR||0)+' RBI:'+(g.RBI||0)+' BB:'+(g.BB||0)+' HBP:'+(g.HBP||0)+' SO:'+(g.SO||0)+'</div>';
+    }
+    if(mode==='pitching'&&g.IP>0){
+      const era=g.IP>0?((g.ERA_R||0)*7/g.IP).toFixed(2):'0.00';
+      const wl=(g.W?g.W+'승':'')+(g.L?g.L+'패':'');
+      h+='<div style="font-size:12px;color:#555">'+(wl?wl+' ':'')+g.IP.toFixed(1)+'이닝 자책:'+(g.ERA_R||0)+' ('+era+') K:'+(g.PSO||0)+' BB:'+(g.PBB||0)+' 투구:'+(g.PC||0)+'</div>';
+    }
+    h+='</div>';
+  });
+  h+='<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="width:100%;padding:12px;font-size:14px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700;margin-top:4px">닫기</button>';
+  h+='</div></div>';
+  document.body.insertAdjacentHTML('beforeend',h);
+}
 function showAddStatForm(){
-  const area=document.getElementById('statFormArea');area.style.display='block';
+  const area=document.getElementById('statFormArea');if(!area)return;
+  area.style.display='block';
   const sel=document.getElementById('statPlayer');
-  sel.innerHTML='<option value="">선수 선택</option>'+rosterList.map(r=>'<option value="'+r.key+'" data-name="'+r.name+'" data-num="'+r.number+'">'+('#'+r.number+' '+r.name+' ('+r.position+')')+'</option>').join('');
+  sel.innerHTML='<option value="">선수 선택</option>'+rosterList.map(r=>'<option value="'+r.key+'" data-name="'+r.name+'" data-num="'+r.number+'">#'+r.number+' '+r.name+' ('+r.position+')</option>').join('');
+  sel.value='';
   document.getElementById('statDate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('statOpponent').value='';
   switchStatFields('batting');
+  ['stAB','stH','st2B','st3B','stHR','stRBI','stR','stBB','stSO','stSB','stHBP','stIP','stPC','stHA','stER','stERA_R','stPSO','stPBB','stW','stL'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='0'});
+  area.scrollIntoView({behavior:'smooth'});
 }
 function onStatPlayerChange(){}
 function switchStatFields(mode){
-  document.getElementById('statBatFields').style.display=mode==='batting'?'block':'none';
-  document.getElementById('statPitFields').style.display=mode==='pitching'?'block':'none';
-  const bb=document.getElementById('stModeBat'),pb=document.getElementById('stModePit');
-  if(bb)bb.style.cssText=mode==='batting'?'flex:1;font-size:12px;padding:10px;background:#0f3460;color:#fff;border:none;border-radius:12px;font-weight:700':'flex:1;padding:10px;font-size:12px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700';
-  if(pb)pb.style.cssText=mode==='pitching'?'flex:1;font-size:12px;padding:10px;background:#0f3460;color:#fff;border:none;border-radius:12px;font-weight:700':'flex:1;padding:10px;font-size:12px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700';
+  const batEl=document.getElementById('statBatFields'),pitEl=document.getElementById('statPitFields');
+  const batBtn=document.getElementById('stModeBat'),pitBtn=document.getElementById('stModePit');
+  if(mode==='batting'){
+    if(batEl)batEl.style.display='block';if(pitEl)pitEl.style.display='none';
+    if(batBtn)batBtn.style.cssText='flex:1;font-size:12px;padding:10px;background:#0f3460;color:#fff;border:none;border-radius:12px;font-weight:700';
+    if(pitBtn)pitBtn.style.cssText='flex:1;padding:10px;font-size:12px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700';
+  }else{
+    if(batEl)batEl.style.display='none';if(pitEl)pitEl.style.display='block';
+    if(batBtn)batBtn.style.cssText='flex:1;padding:10px;font-size:12px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700';
+    if(pitBtn)pitBtn.style.cssText='flex:1;font-size:12px;padding:10px;background:#0f3460;color:#fff;border:none;border-radius:12px;font-weight:700';
+  }
+}
+function editGameStat(gameKey,playerKey){
+  document.querySelectorAll('div[style*="position:fixed"][style*="z-index:100"]').forEach(e=>e.remove());
+  const s=statsData[gameKey]&&statsData[gameKey][playerKey];if(!s)return;
+  const area=document.getElementById('statFormArea');area.style.display='block';
+  const sel=document.getElementById('statPlayer');
+  sel.innerHTML='<option value="">선수 선택</option>'+rosterList.map(r=>'<option value="'+r.key+'" data-name="'+r.name+'" data-num="'+r.number+'">'+('#'+r.number+' '+r.name+' ('+r.position+')')+'</option>').join('');
+  sel.value=playerKey;
+  const dt=gameKey.replace(/(\d{4})(\d{2})(\d{2})_.*/,'$1-$2-$3');
+  document.getElementById('statDate').value=dt;
+  document.getElementById('statOpponent').value=s.opponent||'';
+  if(s.AB!=null){
+    switchStatFields('batting');
+    document.getElementById('stAB').value=s.AB||0;
+    document.getElementById('stH').value=s.H||0;
+    document.getElementById('st2B').value=s['2B']||0;
+    document.getElementById('st3B').value=s['3B']||0;
+    document.getElementById('stHR').value=s.HR||0;
+    document.getElementById('stRBI').value=s.RBI||0;
+    document.getElementById('stR').value=s.R||0;
+    document.getElementById('stBB').value=s.BB||0;
+    document.getElementById('stSO').value=s.SO||0;
+    document.getElementById('stSB').value=s.SB||0;
+    document.getElementById('stHBP').value=s.HBP||0;
+  }
+  if(s.IP!=null&&s.IP>0){
+    switchStatFields('pitching');
+    document.getElementById('stIP').value=s.IP||0;
+    document.getElementById('stPC').value=s.PC||0;
+    document.getElementById('stHA').value=s.HA||0;
+    document.getElementById('stER').value=s.ER||0;
+    document.getElementById('stERA_R').value=s.ERA_R||0;
+    document.getElementById('stPSO').value=s.PSO||0;
+    document.getElementById('stPBB').value=s.PBB||0;
+    document.getElementById('stW').value=s.W||0;
+    document.getElementById('stL').value=s.L||0;
+  }
+  area.scrollIntoView({behavior:'smooth'});
 }
 function saveStat(){
   const sel=document.getElementById('statPlayer');
@@ -1282,6 +1382,7 @@ function saveStat(){
     record.BB=parseInt(document.getElementById('stBB').value)||0;
     record.SO=parseInt(document.getElementById('stSO').value)||0;
     record.SB=parseInt(document.getElementById('stSB').value)||0;
+    record.HBP=parseInt(document.getElementById('stHBP').value)||0;
   }
   if(pitShow){
     record.IP=parseFloat(document.getElementById('stIP').value)||0;
@@ -1291,11 +1392,13 @@ function saveStat(){
     record.ERA_R=parseInt(document.getElementById('stERA_R').value)||0;
     record.PSO=parseInt(document.getElementById('stPSO').value)||0;
     record.PBB=parseInt(document.getElementById('stPBB').value)||0;
+    record.W=parseInt(document.getElementById('stW').value)||0;
+    record.L=parseInt(document.getElementById('stL').value)||0;
   }
   statsRef.child(gameKey).child(sel.value).set(record).then(()=>{
     alert('성적 저장 완료');
     document.getElementById('statFormArea').style.display='none';
-    ['stAB','stH','st2B','st3B','stHR','stRBI','stR','stBB','stSO','stSB','stIP','stPC','stHA','stER','stERA_R','stPSO','stPBB'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='0'});
+    ['stAB','stH','st2B','st3B','stHR','stRBI','stR','stBB','stSO','stSB','stHBP','stIP','stPC','stHA','stER','stERA_R','stPSO','stPBB','stW','stL'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='0'});
   }).catch(e=>alert('저장 실패: '+e.message));
 }
 function buildStatsTab(){
@@ -1311,43 +1414,6 @@ function switchUserStatsView(v){
   if(bb)bb.style.cssText=v==='batting'?'flex:1;font-size:13px;padding:12px;background:#0f3460;color:#fff;border:none;border-radius:12px;font-weight:700':'flex:1;padding:12px;font-size:13px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700';
   if(pb)pb.style.cssText=v==='pitching'?'flex:1;font-size:13px;padding:12px;background:#0f3460;color:#fff;border:none;border-radius:12px;font-weight:700':'flex:1;padding:12px;font-size:13px;background:#f0f0f0;border:none;border-radius:12px;font-weight:700';
   renderUserStats();
-}
-function renderUserStats(){
-  const el=document.getElementById('userStatsContent');if(!el)return;
-  const players={};
-  Object.values(statsData).forEach(g=>{
-    Object.entries(g).forEach(([pk,s])=>{
-      if(pk==='meta')return;
-      if(!players[pk])players[pk]={name:s.name||pk,number:s.number||'',bat:{AB:0,H:0,'2B':0,'3B':0,HR:0,RBI:0,R:0,BB:0,SO:0,SB:0,G:0},pit:{IP:0,PC:0,HA:0,ER:0,ERA_R:0,PSO:0,PBB:0,G:0}};
-      const p=players[pk];
-      if(s.AB!=null){p.bat.AB+=s.AB||0;p.bat.H+=s.H||0;p.bat['2B']+=s['2B']||0;p.bat['3B']+=s['3B']||0;p.bat.HR+=s.HR||0;p.bat.RBI+=s.RBI||0;p.bat.R+=s.R||0;p.bat.BB+=s.BB||0;p.bat.SO+=s.SO||0;p.bat.SB+=s.SB||0;p.bat.G++}
-      if(s.IP!=null&&s.IP>0){p.pit.IP+=s.IP||0;p.pit.PC+=s.PC||0;p.pit.HA+=s.HA||0;p.pit.ER+=s.ER||0;p.pit.ERA_R+=s.ERA_R||0;p.pit.PSO+=s.PSO||0;p.pit.PBB+=s.PBB||0;p.pit.G++}
-    });
-  });
-  const arr=Object.values(players);
-  if(!arr.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:16px;font-size:13px">등록된 성적이 없습니다</div>';return}
-  if(userStatsView==='batting'){
-    arr.sort((a,b)=>b.bat.H-a.bat.H);
-    let h='<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse;white-space:nowrap">';
-    h+='<tr style="background:#0f3460;color:#fff"><th style="padding:6px 4px">선수</th><th>경기</th><th>타수</th><th>안타</th><th>타율</th><th>2B</th><th>3B</th><th>HR</th><th>타점</th><th>득점</th><th>BB</th><th>SO</th><th>SB</th><th>출루</th></tr>';
-    arr.forEach(p=>{
-      const b=p.bat,avg=b.AB>0?(b.H/b.AB).toFixed(3):'.000';
-      const obp=(b.AB+b.BB)>0?((b.H+b.BB)/(b.AB+b.BB)).toFixed(3):'.000';
-      h+='<tr style="border-bottom:1px solid #eee"><td style="padding:5px 4px;font-weight:700">#'+p.number+' '+p.name+'</td><td style="text-align:center">'+b.G+'</td><td style="text-align:center">'+b.AB+'</td><td style="text-align:center;font-weight:700;color:#0f3460">'+b.H+'</td><td style="text-align:center;font-weight:900;color:#e94560">'+avg+'</td><td style="text-align:center">'+b['2B']+'</td><td style="text-align:center">'+b['3B']+'</td><td style="text-align:center;font-weight:700;color:#ffd700">'+b.HR+'</td><td style="text-align:center">'+b.RBI+'</td><td style="text-align:center">'+b.R+'</td><td style="text-align:center">'+b.BB+'</td><td style="text-align:center">'+b.SO+'</td><td style="text-align:center">'+b.SB+'</td><td style="text-align:center">'+obp+'</td></tr>';
-    });
-    h+='</table></div>';el.innerHTML=h;
-  }else{
-    const pitchers=arr.filter(p=>p.pit.G>0);
-    if(!pitchers.length){el.innerHTML='<div style="text-align:center;color:#aaa;padding:16px;font-size:13px">투구 기록이 없습니다</div>';return}
-    pitchers.sort((a,b)=>b.pit.IP-a.pit.IP);
-    let h='<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse;white-space:nowrap">';
-    h+='<tr style="background:#0f3460;color:#fff"><th style="padding:6px 4px">선수</th><th>경기</th><th>이닝</th><th>투구</th><th>피안</th><th>실점</th><th>자책</th><th>방어율</th><th>삼진</th><th>BB</th></tr>';
-    pitchers.forEach(p=>{
-      const t=p.pit,era=t.IP>0?(t.ERA_R*7/t.IP).toFixed(2):'0.00';
-      h+='<tr style="border-bottom:1px solid #eee"><td style="padding:5px 4px;font-weight:700">#'+p.number+' '+p.name+'</td><td style="text-align:center">'+t.G+'</td><td style="text-align:center">'+t.IP.toFixed(1)+'</td><td style="text-align:center">'+t.PC+'</td><td style="text-align:center">'+t.HA+'</td><td style="text-align:center">'+t.ER+'</td><td style="text-align:center">'+t.ERA_R+'</td><td style="text-align:center;font-weight:900;color:#e94560">'+era+'</td><td style="text-align:center;font-weight:700;color:#0f3460">'+t.PSO+'</td><td style="text-align:center">'+t.PBB+'</td></tr>';
-    });
-    h+='</table></div>';el.innerHTML=h;
-  }
 }
 function exportStats(){
   if(!Object.keys(statsData).length){alert('성적 데이터가 없습니다');return}
