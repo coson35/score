@@ -206,7 +206,7 @@ function restoreTab(){const id=localStorage.getItem('activeTab');if(!id||id==='t
 function buildUI(){
 const m=document.getElementById('mainApp');
 let h=`<div class="top-bar"><span class="title">⚾ 스코어보드</span><div style="display:flex;align-items:center;gap:10px"><label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#888;cursor:pointer"><span>로고</span><div id="logoToggle" onclick="toggleLogo()" style="width:44px;height:24px;border-radius:12px;background:#ddd;position:relative;transition:background 0.2s;cursor:pointer"><div id="logoToggleKnob" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></div></div></label><button class="logout-btn" onclick="doLogout()">로그아웃</button></div></div>`;
-h+=`<div class="overlay-section"><button class="ov-btn" id="ovScoreOn" onclick="setOv('score',true)">스코어 ON</button><button class="ov-btn" id="ovScoreOff" onclick="setOv('score',false)">스코어 OFF</button><button class="ov-btn" id="ovLineupOn" onclick="setOv('lineup',true)">라인업 ON</button><button class="ov-btn" id="ovLineupOff" onclick="setOv('lineup',false)">라인업 OFF</button></div>`;
+h+=`<div class="overlay-section"><button class="ov-btn" id="ovScoreOn" onclick="setOv('score',true)">스코어 ON</button><button class="ov-btn" id="ovScoreOff" onclick="setOv('score',false)">스코어 OFF</button></div>`;
 h+=`<div id="linModeQuick" style="display:none;margin-bottom:14px"><div class="lineup-mode-section"><button class="mode-btn" id="qModeDefense" onclick="setLineupMode('defense')"><svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:middle;margin-right:3px"><path d="M12 2L3 9l2 11h14l2-11L12 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2" fill="currentColor"/></svg>수비 위치</button><button class="mode-btn" id="qModeBatting" onclick="setLineupMode('batting')"><svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:middle;margin-right:3px"><line x1="8" y1="6" x2="18" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="10" x2="18" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="14" x2="18" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="4.5" cy="6" r="1.5" fill="currentColor"/><circle cx="4.5" cy="10" r="1.5" fill="currentColor"/><circle cx="4.5" cy="14" r="1.5" fill="currentColor"/></svg>타순</button></div></div>`;
 h+=`<div id="lockBar" style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05)"><div id="lockStatus" style="flex:1;font-size:13px;font-weight:600;color:#888">잠금 없음</div><span id="lockTime" style="font-size:13px;font-weight:700;color:#e94560;min-width:40px;text-align:center"></span><button id="lockBtn" onclick="toggleLock()" style="padding:8px 14px;font-size:13px;border-radius:10px;border:none;background:#0f3460;color:#fff;font-weight:700;white-space:nowrap">조작 잠금</button></div>`;
 h+=`<div id="lockDesc" style="font-size:11px;color:#aaa;margin:-8px 0 10px 2px">잠금을 누르면 이 기기에서만 조작 가능합니다. 다른 기기는 조작이 차단됩니다.</div>`;
@@ -347,10 +347,12 @@ function fillBatFromRoster(i){
   if(r){const posEl=document.getElementById('bat-pos-'+i);if(r.position)posEl.value=r.position}
 }
 function setLineupMode(mode){
-  lineupRef.update({displayMode:mode,visible:true});lineupVisible=true;
+  const cur=ld.displayMode||'defense';
+  if(lineupVisible&&cur===mode){lineupRef.update({visible:false});lineupVisible=false}
+  else{lineupRef.update({displayMode:mode,visible:true});lineupVisible=true}
   const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
-  if(md)md.className='mode-btn'+(mode==='defense'?' active':'');
-  if(mb)mb.className='mode-btn'+(mode==='batting'?' active':'');
+  if(md)md.className='mode-btn'+(lineupVisible&&(ld.displayMode||mode)==='defense'?' active':'');
+  if(mb)mb.className='mode-btn'+(lineupVisible&&(ld.displayMode||mode)==='batting'?' active':'');
   updQuickMode();updOvBtns();
 }
 function updateLineupSelects(){
@@ -542,8 +544,6 @@ function updOvBtns(){
   const $=id=>document.getElementById(id);
   if($('ovScoreOn'))$('ovScoreOn').className='ov-btn'+(scoreVisible?' on':'');
   if($('ovScoreOff'))$('ovScoreOff').className='ov-btn'+(!scoreVisible?' off-active':'');
-  if($('ovLineupOn'))$('ovLineupOn').className='ov-btn'+(lineupVisible?' on':'');
-  if($('ovLineupOff'))$('ovLineupOff').className='ov-btn'+(!lineupVisible?' off-active':'');
   if($('ovLogoOn'))$('ovLogoOn').className='ov-btn'+(logoVisible?' on':'');
   if($('ovLogoOff'))$('ovLogoOff').className='ov-btn'+(!logoVisible?' off-active':'');
   const lt=$('logoToggle'),lk=$('logoToggleKnob');
@@ -555,8 +555,8 @@ function updOvBtns(){
 function updQuickMode(){
   const dm=ld.displayMode||'defense';
   const qd=document.getElementById('qModeDefense'),qb=document.getElementById('qModeBatting');
-  if(qd)qd.className='mode-btn'+(dm==='defense'?' active':'');
-  if(qb)qb.className='mode-btn'+(dm==='batting'?' active':'');
+  if(qd)qd.className='mode-btn'+(lineupVisible&&dm==='defense'?' active':'');
+  if(qb)qb.className='mode-btn'+(lineupVisible&&dm==='batting'?' active':'');
 }
 function setOv(t,on){if(t==='score'){gameRef.update({visible:on});scoreVisible=on}else if(t==='logo'){gameRef.update({logoVisible:on});logoVisible=on}else{lineupRef.update({visible:on});lineupVisible=on}updOvBtns()}
 function toggleLogo(){logoVisible=!logoVisible;gameRef.update({logoVisible:logoVisible});updOvBtns()}
