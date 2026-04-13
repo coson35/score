@@ -561,8 +561,8 @@ function setOv(t,on){if(t==='score'){gameRef.update({visible:on});scoreVisible=o
 function toggleLogo(){logoVisible=!logoVisible;gameRef.update({logoVisible:logoVisible});updOvBtns()}
 function chScore(t,d){extendLock();const k=t==='away'?'awayScore':'homeScore';gameRef.update({[k]:Math.max(0,(gd[k]||0)+d)})}
 function swapHA(){extendLock();gameRef.update({awayName:gd.homeName,homeName:gd.awayName,awayScore:gd.homeScore,homeScore:gd.awayScore,awayLogo:gd.homeLogo||'',homeLogo:gd.awayLogo||''})}
-function chInn(d){extendLock();const inn=gd.inning||1;const half=gd.inningHalf||'top';if(d>0){if(half==='top'){gameRef.update({inningHalf:'bottom'})}else{gameRef.update({inning:inn+1,inningHalf:'top'})}}else{if(half==='bottom'){gameRef.update({inningHalf:'top'})}else if(inn>1){gameRef.update({inning:inn-1,inningHalf:'bottom'})}}}
-function togHalf(){extendLock();gameRef.update({inningHalf:gd.inningHalf==='top'?'bottom':'top'})}
+function chInn(d){extendLock();const inn=gd.inning||1;const half=gd.inningHalf||'top';if(d>0){if(half==='top'){gameRef.update({inningHalf:'bottom',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false})}else{gameRef.update({inning:inn+1,inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false})}}else{if(half==='bottom'){gameRef.update({inningHalf:'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false})}else if(inn>1){gameRef.update({inning:inn-1,inningHalf:'bottom',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false})}}}
+function togHalf(){extendLock();gameRef.update({inningHalf:gd.inningHalf==='top'?'bottom':'top',balls:0,strikes:0,outs:0,base1:false,base2:false,base3:false})}
 function togBSO(t,v){extendLock();gameRef.update({[t]:(gd[t]||0)>=v?v-1:v})}
 function rstCnt(){extendLock();gameRef.update({balls:0,strikes:0,outs:0})}
 function togB(n){extendLock();gameRef.update({['base'+n]:!gd['base'+n]})}
