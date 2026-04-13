@@ -816,7 +816,7 @@ function updateBiUI(){
   if(!onBtn)return;
   onBtn.className=biData.visible?'active':'';
   offBtn.className=!biData.visible?'active':'';
-  if(ctrl)ctrl.style.display=biData.visible?'block':'none';
+  if(ctrl)ctrl.style.display='block';
   // 모드
   const mb=$('biModeBatter'),mp=$('biModePitcher');
   if(mb)mb.className='bi-mode-btn'+(biData.mode==='batter'?' active':'');
