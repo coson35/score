@@ -324,7 +324,7 @@ function rosterOptions(){return rosterList.map(r=>`<option value="${r.key}">#${r
 
 function buildLineupTab(){
 let opts=rosterOptions();
-let h=`<div class="card"><div class="card-title">우리팀 선발 라인업</div><div class="form-row"><label>팀명</label><input id="linTeam" placeholder="우리팀 이름"></div><div style="margin-top:8px">`;
+let h=`<div class="card"><div class="card-title">수비 라인업</div><div class="form-row"><label>팀명</label><input id="linTeam" placeholder="우리팀 이름"></div><div style="margin-top:8px">`;
 POS.forEach(p=>{h+=`<div class="lin-row"><span class="pos">${p}</span><select class="player-select" id="ln-sel-${p}" onchange="fillFromRoster('${p}')"><option value="">선수 선택</option>${opts}</select><input id="ln-${p}" placeholder="${PN[p]}" style="max-width:90px"><input class="num" id="ln-n-${p}" placeholder="#" type="number" style="max-width:50px"></div>`});
 h+=`</div><div style="margin-top:12px"><div class="card-title">타순 설정</div>`;
 for(let i=1;i<=9;i++){h+=`<div class="bat-row"><span class="order">${i}</span><select class="player-select" id="bat-sel-${i}" onchange="fillBatFromRoster(${i})"><option value="">선수 선택</option>${opts}</select><select class="pos-sel" id="bat-pos-${i}"><option value="">포지션</option>`;POS.forEach(p=>{h+=`<option value="${p}">${p}</option>`});h+=`<option value="DH">DH</option></select></div>`}
