@@ -347,11 +347,11 @@ function fillBatFromRoster(i){
   if(r){const posEl=document.getElementById('bat-pos-'+i);if(r.position)posEl.value=r.position}
 }
 function setLineupMode(mode){
-  lineupRef.update({displayMode:mode});
+  lineupRef.update({displayMode:mode,visible:true});lineupVisible=true;
   const md=document.getElementById('modeDefense'),mb=document.getElementById('modeBatting');
   if(md)md.className='mode-btn'+(mode==='defense'?' active':'');
   if(mb)mb.className='mode-btn'+(mode==='batting'?' active':'');
-  updQuickMode();
+  updQuickMode();updOvBtns();
 }
 function updateLineupSelects(){
   const opts=rosterOptions();
@@ -549,7 +549,7 @@ function updOvBtns(){
   const lt=$('logoToggle'),lk=$('logoToggleKnob');
   if(lt){lt.style.background=logoVisible?'#4caf50':'#ddd'}
   if(lk){lk.style.left=logoVisible?'22px':'2px'}
-  const qp=$('linModeQuick');if(qp)qp.style.display=lineupVisible?'block':'none';
+  const qp=$('linModeQuick');if(qp)qp.style.display='block';
   updQuickMode();
 }
 function updQuickMode(){
