@@ -152,6 +152,7 @@ overlayRef.on('value',snap=>{
   const infoPad=c.infoPad!=null?c.infoPad:10,teamGap=c.teamGap!=null?c.teamGap:4,scorePad=c.scorePad!=null?c.scorePad:6;
   const dividerMargin=c.dividerMargin!=null?c.dividerMargin:6,countPad=c.countPad!=null?c.countPad:16;
   const bsoGap=c.bsoGap!=null?c.bsoGap:11,inningFont=c.inningFont||19,baseSize=c.baseSize||42;
+  const infoY=c.infoY||0,teamY=c.teamY||0,scoreY=c.scoreY||0,logoY=c.logoY||0,inningY=c.inningY||0;
   const linScale=c.linScale||100,linTop=c.linTop||50,linLeft=c.linLeft||50;
   const linDefAlpha=c.linDefAlpha!=null?c.linDefAlpha:100,linBatAlpha=c.linBatAlpha!=null?c.linBatAlpha:85;
   const logoSize=c.logoSize||60;
@@ -164,16 +165,17 @@ overlayRef.on('value',snap=>{
   board.style.borderTopColor=cBorder;
   board.style.marginBottom=barBottom+'px';
   document.body.style.paddingBottom=barBottom+'px';
-  document.querySelectorAll('.team-name').forEach(el=>{el.style.fontSize=barFont+'px';el.style.color=cTeam});
-  document.querySelectorAll('.score').forEach(el=>{el.style.fontSize=Math.round(barFont*1.7)+'px';el.style.color=cScore;el.style.padding='0 '+scorePad+'px'});
+  document.querySelectorAll('.team-name').forEach(el=>{el.style.fontSize=barFont+'px';el.style.color=cTeam;el.style.transform='translateY('+teamY+'px)'});
+  document.querySelectorAll('.score').forEach(el=>{el.style.fontSize=Math.round(barFont*1.7)+'px';el.style.color=cScore;el.style.padding='0 '+scorePad+'px';el.style.transform='translateY('+scoreY+'px)'});
   const inn=document.querySelector('.inning');
-  if(inn){inn.style.fontSize=inningFont+'px';inn.style.color=cInning}
+  if(inn){inn.style.fontSize=inningFont+'px';inn.style.color=cInning;inn.style.transform='translateY('+inningY+'px)'}
   const gi=document.querySelector('.game-info');
-  if(gi){gi.style.fontSize=infoFont+'px';gi.style.background=cInfoBg;gi.style.padding='0 '+infoPad+'px'}
+  if(gi){gi.style.fontSize=infoFont+'px';gi.style.background=cInfoBg;gi.style.padding='0 '+infoPad+'px';gi.style.transform='translateY('+infoY+'px)'}
   const cs=document.querySelector('.count-section');
   if(cs){cs.style.background=cCountBg;cs.style.padding='0 '+countPad+'px'}
   const ts=document.querySelector('.team-section');
   if(ts)ts.style.gap=teamGap+'px';
+  document.querySelectorAll('.team-logo').forEach(el=>{el.style.transform='translateY('+logoY+'px)'});
   const vd=document.querySelector('.vs-divider');
   if(vd){vd.style.background=cBorder;vd.style.margin='0 '+dividerMargin+'px'}
   const basesEl=document.querySelector('.bases');

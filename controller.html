@@ -293,6 +293,13 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>BSO 간격</label><input id="ovBsoGap" type="range" min="2" max="24" value="11" oninput="prevOvVal('ovBsoGapV',this.value+'px');autoSaveOv()"><span id="ovBsoGapV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">11px</span></div>
 <div class="form-row"><label>이닝 폰트</label><input id="ovInningFont" type="range" min="10" max="30" value="19" oninput="prevOvVal('ovInningFontV',this.value+'px');autoSaveOv()"><span id="ovInningFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">19px</span></div>
 <div class="form-row"><label>베이스 크기</label><input id="ovBaseSize" type="range" min="20" max="60" value="42" oninput="prevOvVal('ovBaseSizeV',this.value+'px');autoSaveOv()"><span id="ovBaseSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">42px</span></div>
+<div style="font-size:13px;font-weight:700;color:#0f3460;margin:10px 0 6px">항목 상하 위치</div>
+<div style="font-size:11px;color:#888;margin-bottom:8px">각 항목의 수직 위치를 미세 조정합니다 (- 위로, + 아래로)</div>
+<div class="form-row"><label>경기명 상하</label><input id="ovInfoY" type="range" min="-10" max="10" value="0" oninput="prevOvVal('ovInfoYV',this.value+'px');autoSaveOv()"><span id="ovInfoYV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
+<div class="form-row"><label>팀명 상하</label><input id="ovTeamY" type="range" min="-10" max="10" value="0" oninput="prevOvVal('ovTeamYV',this.value+'px');autoSaveOv()"><span id="ovTeamYV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
+<div class="form-row"><label>점수 상하</label><input id="ovScoreY" type="range" min="-10" max="10" value="0" oninput="prevOvVal('ovScoreYV',this.value+'px');autoSaveOv()"><span id="ovScoreYV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
+<div class="form-row"><label>로고 상하</label><input id="ovLogoY" type="range" min="-10" max="10" value="0" oninput="prevOvVal('ovLogoYV',this.value+'px');autoSaveOv()"><span id="ovLogoYV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
+<div class="form-row"><label>이닝 상하</label><input id="ovInningY" type="range" min="-10" max="10" value="0" oninput="prevOvVal('ovInningYV',this.value+'px');autoSaveOv()"><span id="ovInningYV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
 <div style="font-size:13px;font-weight:700;color:#0f3460;margin:10px 0 6px">색상 테마</div>
 <div class="form-row"><label>바 배경</label><input id="ovColorBg" type="color" value="#1a1a2e" style="flex:1;height:36px;padding:2px;border-radius:8px"><span id="ovColorBgV" style="min-width:62px;text-align:right;font-size:12px;color:#888">#1a1a2e</span></div>
 <div class="form-row"><label>상단선</label><input id="ovColorBorder" type="color" value="#e94560" style="flex:1;height:36px;padding:2px;border-radius:8px"><span id="ovColorBorderV" style="min-width:62px;text-align:right;font-size:12px;color:#888">#e94560</span></div>
@@ -954,7 +961,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
+const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -984,6 +991,11 @@ function fillOverlayInputs(){
   if($('ovBsoGap')){$('ovBsoGap').value=ovCfg.bsoGap;$('ovBsoGapV').textContent=ovCfg.bsoGap+'px'}
   if($('ovInningFont')){$('ovInningFont').value=ovCfg.inningFont;$('ovInningFontV').textContent=ovCfg.inningFont+'px'}
   if($('ovBaseSize')){$('ovBaseSize').value=ovCfg.baseSize;$('ovBaseSizeV').textContent=ovCfg.baseSize+'px'}
+  if($('ovInfoY')){$('ovInfoY').value=ovCfg.infoY;$('ovInfoYV').textContent=ovCfg.infoY+'px'}
+  if($('ovTeamY')){$('ovTeamY').value=ovCfg.teamY;$('ovTeamYV').textContent=ovCfg.teamY+'px'}
+  if($('ovScoreY')){$('ovScoreY').value=ovCfg.scoreY;$('ovScoreYV').textContent=ovCfg.scoreY+'px'}
+  if($('ovLogoY')){$('ovLogoY').value=ovCfg.logoY;$('ovLogoYV').textContent=ovCfg.logoY+'px'}
+  if($('ovInningY')){$('ovInningY').value=ovCfg.inningY;$('ovInningYV').textContent=ovCfg.inningY+'px'}
   if($('ovLinScale')){$('ovLinScale').value=ovCfg.linScale;$('ovLinScaleV').textContent=ovCfg.linScale+'%'}
   if($('ovLinTop')){$('ovLinTop').value=ovCfg.linTop;$('ovLinTopV').textContent=ovCfg.linTop+'%'}
   if($('ovLinLeft')){$('ovLinLeft').value=ovCfg.linLeft;$('ovLinLeftV').textContent=ovCfg.linLeft+'%'}
@@ -1014,6 +1026,11 @@ function gatherOvCfg(){
     bsoGap:parseInt(document.getElementById('ovBsoGap').value),
     inningFont:parseInt(document.getElementById('ovInningFont').value),
     baseSize:parseInt(document.getElementById('ovBaseSize').value),
+    infoY:parseInt(document.getElementById('ovInfoY').value),
+    teamY:parseInt(document.getElementById('ovTeamY').value),
+    scoreY:parseInt(document.getElementById('ovScoreY').value),
+    logoY:parseInt(document.getElementById('ovLogoY').value),
+    inningY:parseInt(document.getElementById('ovInningY').value),
     linScale:parseInt(document.getElementById('ovLinScale').value),
     linTop:parseInt(document.getElementById('ovLinTop').value),
     linLeft:parseInt(document.getElementById('ovLinLeft').value),
