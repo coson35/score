@@ -149,6 +149,7 @@ const db=firebase.database(),gameRef=db.ref('game'),batterInfoRef=db.ref('batter
 overlayRef.on('value',snap=>{
   const c=snap.val()||{};
   const barH=c.barH||44,barFont=c.barFont||14,infoFont=c.infoFont||11,barBottom=c.barBottom||0;
+  const infoMaxW=c.infoMaxW||200;
   const infoPad=c.infoPad!=null?c.infoPad:10,teamGap=c.teamGap!=null?c.teamGap:4,scorePad=c.scorePad!=null?c.scorePad:6;
   const dividerMargin=c.dividerMargin!=null?c.dividerMargin:6,countPad=c.countPad!=null?c.countPad:16;
   const bsoGap=c.bsoGap!=null?c.bsoGap:11,inningFont=c.inningFont||19,baseSize=c.baseSize||42;
@@ -170,7 +171,7 @@ overlayRef.on('value',snap=>{
   const inn=document.querySelector('.inning');
   if(inn){inn.style.fontSize=inningFont+'px';inn.style.color=cInning;inn.style.transform='translateY('+inningY+'px)'}
   const gi=document.querySelector('.game-info');
-  if(gi){gi.style.fontSize=infoFont+'px';gi.style.background=cInfoBg;gi.style.padding='0 '+infoPad+'px';gi.style.transform='translateY('+infoY+'px)'}
+  if(gi){gi.style.fontSize=infoFont+'px';gi.style.background=cInfoBg;gi.style.padding='0 '+infoPad+'px';gi.style.transform='translateY('+infoY+'px)';gi.style.maxWidth=infoMaxW+'px'}
   const cs=document.querySelector('.count-section');
   if(cs){cs.style.background=cCountBg;cs.style.padding='0 '+countPad+'px'}
   const ts=document.querySelector('.team-section');

@@ -288,6 +288,7 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>바 높이</label><input id="ovBarH" type="range" min="30" max="70" value="44" oninput="prevOvVal('ovBarHV',this.value+'px');autoSaveOv()"><span id="ovBarHV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">44px</span></div>
 <div class="form-row"><label>팀명 폰트</label><input id="ovBarFont" type="range" min="10" max="22" value="14" oninput="prevOvVal('ovBarFontV',this.value+'px');autoSaveOv()"><span id="ovBarFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">14px</span></div>
 <div class="form-row"><label>경기명 폰트</label><input id="ovInfoFont" type="range" min="8" max="18" value="11" oninput="prevOvVal('ovInfoFontV',this.value+'px');autoSaveOv()"><span id="ovInfoFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">11px</span></div>
+<div class="form-row"><label>경기명 너비</label><input id="ovInfoMaxW" type="range" min="100" max="400" value="200" oninput="prevOvVal('ovInfoMaxWV',this.value+'px');autoSaveOv()"><span id="ovInfoMaxWV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">200px</span></div>
 <div class="form-row"><label>하단여백</label><input id="ovBarBottom" type="range" min="0" max="50" value="0" oninput="prevOvVal('ovBarBottomV',this.value+'px');autoSaveOv()"><span id="ovBarBottomV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('bar')">이 섹션 초기화</button>
 </div>
@@ -987,7 +988,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
+const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -1008,6 +1009,7 @@ function fillOverlayInputs(){
   if($('ovBarH')){$('ovBarH').value=ovCfg.barH;$('ovBarHV').textContent=ovCfg.barH+'px'}
   if($('ovBarFont')){$('ovBarFont').value=ovCfg.barFont;$('ovBarFontV').textContent=ovCfg.barFont+'px'}
   if($('ovInfoFont')){$('ovInfoFont').value=ovCfg.infoFont;$('ovInfoFontV').textContent=ovCfg.infoFont+'px'}
+  if($('ovInfoMaxW')){$('ovInfoMaxW').value=ovCfg.infoMaxW;$('ovInfoMaxWV').textContent=ovCfg.infoMaxW+'px'}
   if($('ovBarBottom')){$('ovBarBottom').value=ovCfg.barBottom;$('ovBarBottomV').textContent=ovCfg.barBottom+'px'}
   if($('ovInfoPad')){$('ovInfoPad').value=ovCfg.infoPad;$('ovInfoPadV').textContent=ovCfg.infoPad+'px'}
   if($('ovTeamGap')){$('ovTeamGap').value=ovCfg.teamGap;$('ovTeamGapV').textContent=ovCfg.teamGap+'px'}
@@ -1043,6 +1045,7 @@ function gatherOvCfg(){
     barH:parseInt(document.getElementById('ovBarH').value),
     barFont:parseInt(document.getElementById('ovBarFont').value),
     infoFont:parseInt(document.getElementById('ovInfoFont').value),
+    infoMaxW:parseInt(document.getElementById('ovInfoMaxW').value),
     barBottom:parseInt(document.getElementById('ovBarBottom').value),
     infoPad:parseInt(document.getElementById('ovInfoPad').value),
     teamGap:parseInt(document.getElementById('ovTeamGap').value),
@@ -1112,7 +1115,7 @@ function resetOverlayCfg(){
   configRef.child('overlay').set(OV_DEFAULTS);alert('기본값으로 초기화 완료');
 }
 const OV_SECTIONS={
-  bar:['barH','barFont','infoFont','barBottom'],
+  bar:['barH','barFont','infoFont','infoMaxW','barBottom'],
   spacing:['infoPad','teamGap','scorePad','dividerMargin','countPad','bsoGap','inningFont','baseSize'],
   ypos:['infoY','teamY','scoreY','logoY','inningY'],
   color:['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'],
