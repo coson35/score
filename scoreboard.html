@@ -15,7 +15,7 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 .team-section{display:flex;align-items:center;height:100%;flex:1;justify-content:center;gap:4px}
 .team{display:flex;align-items:center;gap:8px;padding:0 6px}
 .team-name{font-size:14px;font-weight:700;letter-spacing:1px}
-.team-logo{width:30px;height:30px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 8px rgba(255,255,255,0.25);flex-shrink:0}
+.team-logo{width:30px;height:30px;border-radius:50%;object-fit:cover;display:none;border:1.5px solid rgba(255,255,255,0.7);box-shadow:0 1px 3px rgba(0,0,0,0.4);flex-shrink:0}
 .team-logo.has-logo{display:block}
 .score{font-size:24px;font-weight:900;min-width:30px;text-align:center;color:#ffd700;padding:0 6px}
 .vs-divider{width:2px;height:24px;background:#e94560;margin:0 6px}
@@ -159,6 +159,7 @@ overlayRef.on('value',snap=>{
   const linScale=c.linScale||100,linTop=c.linTop||50,linLeft=c.linLeft||50;
   const linDefAlpha=c.linDefAlpha!=null?c.linDefAlpha:100,linBatAlpha=c.linBatAlpha!=null?c.linBatAlpha:85;
   const logoSize=c.logoSize||60;
+  const barLogo=c.barLogo||30;
   const cBg=c.colorBg||'#1a1a2e',cBorder=c.colorBorder||'#e94560',cTeam=c.colorTeam||'#ffffff';
   const cScore=c.colorScore||'#ffd700',cInning=c.colorInning||'#e94560';
   const cInfoBg=c.colorInfoBg||'#0f3460',cCountBg=c.colorCountBg||'#0a1628';
@@ -178,7 +179,7 @@ overlayRef.on('value',snap=>{
   if(cs){cs.style.background=cCountBg;cs.style.padding='0 '+countPad+'px'}
   const ts=document.querySelector('.team-section');
   if(ts)ts.style.gap=teamGap+'px';
-  document.querySelectorAll('.team-logo').forEach(el=>{el.style.transform='translateY('+logoY+'px)'});
+  document.querySelectorAll('.team-logo').forEach(el=>{el.style.transform='translateY('+logoY+'px)';el.style.width=barLogo+'px';el.style.height=barLogo+'px'});
   const vd=document.querySelector('.vs-divider');
   if(vd){vd.style.background=cBorder;vd.style.margin='0 '+dividerMargin+'px'}
   const basesEl=document.querySelector('.bases');
