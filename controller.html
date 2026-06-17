@@ -285,23 +285,30 @@ document.getElementById('tabSetup').innerHTML=`
 <div style="font-size:12px;color:#888;margin-bottom:10px">스마트폰 화면에 맞게 오버레이 크기와 위치를 조절합니다</div>
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 스코어보드 하단바</div>
 <div class="ov-acc-body" style="display:none">
+<div style="font-size:11px;color:#888;margin-bottom:8px">하단바 전체 크기와 위치를 설정합니다</div>
 <div class="form-row"><label>바 높이</label><input id="ovBarH" type="range" min="30" max="70" value="44" oninput="prevOvVal('ovBarHV',this.value+'px');autoSaveOv()"><span id="ovBarHV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">44px</span></div>
-<div class="form-row"><label>팀명 폰트</label><input id="ovBarFont" type="range" min="10" max="22" value="14" oninput="prevOvVal('ovBarFontV',this.value+'px');autoSaveOv()"><span id="ovBarFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">14px</span></div>
-<div class="form-row"><label>경기명 폰트</label><input id="ovInfoFont" type="range" min="8" max="18" value="11" oninput="prevOvVal('ovInfoFontV',this.value+'px');autoSaveOv()"><span id="ovInfoFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">11px</span></div>
-<div class="form-row"><label>경기명 너비</label><input id="ovInfoMaxW" type="range" min="100" max="400" value="200" oninput="prevOvVal('ovInfoMaxWV',this.value+'px');autoSaveOv()"><span id="ovInfoMaxWV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">200px</span></div>
 <div class="form-row"><label>하단여백</label><input id="ovBarBottom" type="range" min="0" max="50" value="0" oninput="prevOvVal('ovBarBottomV',this.value+'px');autoSaveOv()"><span id="ovBarBottomV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('bar')">이 섹션 초기화</button>
+</div>
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 글자 크기</div>
+<div class="ov-acc-body" style="display:none">
+<div style="font-size:11px;color:#888;margin-bottom:8px">각 글자의 폰트 크기를 개별 조정합니다</div>
+<div class="form-row"><label>팀명 폰트</label><input id="ovBarFont" type="range" min="10" max="22" value="14" oninput="prevOvVal('ovBarFontV',this.value+'px');autoSaveOv()"><span id="ovBarFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">14px</span></div>
+<div class="form-row"><label>점수 폰트</label><input id="ovScoreFont" type="range" min="14" max="44" value="24" oninput="prevOvVal('ovScoreFontV',this.value+'px');autoSaveOv()"><span id="ovScoreFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">24px</span></div>
+<div class="form-row"><label>경기명 폰트</label><input id="ovInfoFont" type="range" min="8" max="18" value="11" oninput="prevOvVal('ovInfoFontV',this.value+'px');autoSaveOv()"><span id="ovInfoFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">11px</span></div>
+<div class="form-row"><label>이닝 폰트</label><input id="ovInningFont" type="range" min="10" max="30" value="19" oninput="prevOvVal('ovInningFontV',this.value+'px');autoSaveOv()"><span id="ovInningFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">19px</span></div>
+<button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('font')">이 섹션 초기화</button>
 </div>
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 항목 간격 / 크기</div>
 <div class="ov-acc-body" style="display:none">
 <div style="font-size:11px;color:#888;margin-bottom:8px">각 항목의 간격과 크기를 개별 조정합니다</div>
+<div class="form-row"><label>경기명 너비</label><input id="ovInfoMaxW" type="range" min="100" max="400" value="200" oninput="prevOvVal('ovInfoMaxWV',this.value+'px');autoSaveOv()"><span id="ovInfoMaxWV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">200px</span></div>
 <div class="form-row"><label>경기정보 패딩</label><input id="ovInfoPad" type="range" min="0" max="30" value="10" oninput="prevOvVal('ovInfoPadV',this.value+'px');autoSaveOv()"><span id="ovInfoPadV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">10px</span></div>
 <div class="form-row"><label>팀 섹션 간격</label><input id="ovTeamGap" type="range" min="0" max="20" value="4" oninput="prevOvVal('ovTeamGapV',this.value+'px');autoSaveOv()"><span id="ovTeamGapV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">4px</span></div>
 <div class="form-row"><label>점수 좌우</label><input id="ovScorePad" type="range" min="0" max="20" value="6" oninput="prevOvVal('ovScorePadV',this.value+'px');autoSaveOv()"><span id="ovScorePadV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">6px</span></div>
 <div class="form-row"><label>구분선 간격</label><input id="ovDividerMargin" type="range" min="0" max="20" value="6" oninput="prevOvVal('ovDividerMarginV',this.value+'px');autoSaveOv()"><span id="ovDividerMarginV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">6px</span></div>
 <div class="form-row"><label>카운트 패딩</label><input id="ovCountPad" type="range" min="0" max="30" value="16" oninput="prevOvVal('ovCountPadV',this.value+'px');autoSaveOv()"><span id="ovCountPadV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">16px</span></div>
 <div class="form-row"><label>BSO 간격</label><input id="ovBsoGap" type="range" min="2" max="24" value="11" oninput="prevOvVal('ovBsoGapV',this.value+'px');autoSaveOv()"><span id="ovBsoGapV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">11px</span></div>
-<div class="form-row"><label>이닝 폰트</label><input id="ovInningFont" type="range" min="10" max="30" value="19" oninput="prevOvVal('ovInningFontV',this.value+'px');autoSaveOv()"><span id="ovInningFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">19px</span></div>
 <div class="form-row"><label>베이스 크기</label><input id="ovBaseSize" type="range" min="20" max="60" value="42" oninput="prevOvVal('ovBaseSizeV',this.value+'px');autoSaveOv()"><span id="ovBaseSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">42px</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('spacing')">이 섹션 초기화</button>
 </div>
@@ -988,7 +995,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={barH:44,barFont:14,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
+const OV_DEFAULTS={barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -1008,6 +1015,7 @@ function fillOverlayInputs(){
   const $=id=>document.getElementById(id);
   if($('ovBarH')){$('ovBarH').value=ovCfg.barH;$('ovBarHV').textContent=ovCfg.barH+'px'}
   if($('ovBarFont')){$('ovBarFont').value=ovCfg.barFont;$('ovBarFontV').textContent=ovCfg.barFont+'px'}
+  if($('ovScoreFont')){$('ovScoreFont').value=ovCfg.scoreFont;$('ovScoreFontV').textContent=ovCfg.scoreFont+'px'}
   if($('ovInfoFont')){$('ovInfoFont').value=ovCfg.infoFont;$('ovInfoFontV').textContent=ovCfg.infoFont+'px'}
   if($('ovInfoMaxW')){$('ovInfoMaxW').value=ovCfg.infoMaxW;$('ovInfoMaxWV').textContent=ovCfg.infoMaxW+'px'}
   if($('ovBarBottom')){$('ovBarBottom').value=ovCfg.barBottom;$('ovBarBottomV').textContent=ovCfg.barBottom+'px'}
@@ -1044,6 +1052,7 @@ function gatherOvCfg(){
   const c={
     barH:parseInt(document.getElementById('ovBarH').value),
     barFont:parseInt(document.getElementById('ovBarFont').value),
+    scoreFont:parseInt(document.getElementById('ovScoreFont').value),
     infoFont:parseInt(document.getElementById('ovInfoFont').value),
     infoMaxW:parseInt(document.getElementById('ovInfoMaxW').value),
     barBottom:parseInt(document.getElementById('ovBarBottom').value),
@@ -1115,8 +1124,9 @@ function resetOverlayCfg(){
   configRef.child('overlay').set(OV_DEFAULTS);alert('기본값으로 초기화 완료');
 }
 const OV_SECTIONS={
-  bar:['barH','barFont','infoFont','infoMaxW','barBottom'],
-  spacing:['infoPad','teamGap','scorePad','dividerMargin','countPad','bsoGap','inningFont','baseSize'],
+  bar:['barH','barBottom'],
+  font:['barFont','scoreFont','infoFont','inningFont'],
+  spacing:['infoMaxW','infoPad','teamGap','scorePad','dividerMargin','countPad','bsoGap','baseSize'],
   ypos:['infoY','teamY','scoreY','logoY','inningY'],
   color:['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'],
   lineup:['linScale','linTop','linLeft','linDefAlpha','linBatAlpha']
