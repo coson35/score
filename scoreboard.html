@@ -159,6 +159,7 @@ overlayRef.on('value',snap=>{
   const linScale=c.linScale||100,linTop=c.linTop||50,linLeft=c.linLeft||50;
   const linDefAlpha=c.linDefAlpha!=null?c.linDefAlpha:100,linBatAlpha=c.linBatAlpha!=null?c.linBatAlpha:85;
   const linNameSize=c.linNameSize||12;
+  window._linNameSize=linNameSize;
   const logoSize=c.logoSize||60;
   const barLogo=c.barLogo||30;
   const cBg=c.colorBg||'#1a1a2e',cBorder=c.colorBorder||'#e94560',cTeam=c.colorTeam||'#ffffff';
@@ -195,9 +196,7 @@ overlayRef.on('value',snap=>{
   lineup.style.left=linLeft+'%';
   const defView=document.getElementById('defenseView');
   if(defView)defView.style.opacity=linDefAlpha/100;
-  document.querySelectorAll('.pos .name').forEach(el=>{el.style.fontSize=linNameSize+'px'});
-  document.querySelectorAll('.pos .num').forEach(el=>{el.style.fontSize=Math.round(linNameSize*0.83)+'px'});
-  document.querySelectorAll('.pos .position-label').forEach(el=>{el.style.fontSize=Math.round(linNameSize*0.75)+'px'});
+  applyLinNameSize();
   const batBg=document.querySelector('#battingView > div');
   if(batBg)batBg.style.background='rgba(0,0,0,'+(linBatAlpha/100)+')';
   const logoImg=document.querySelector('#school-logo img');
@@ -262,6 +261,16 @@ gameRef.on('value',snap=>{
 });
 
 // 라인업
+function applyLinNameSize(){
+  const n=window._linNameSize||12;
+  document.querySelectorAll('.pos .name').forEach(el=>{el.style.fontSize=n+'px'});
+  document.querySelectorAll('.pos .num').forEach(el=>{el.style.fontSize=Math.round(n*0.83)+'px'});
+  document.querySelectorAll('.pos .position-label').forEach(el=>{el.style.fontSize=Math.round(n*0.75)+'px'});
+  document.querySelectorAll('.bat-item .player-name').forEach(el=>{el.style.fontSize=(n+1)+'px'});
+  document.querySelectorAll('.bat-item .order-num').forEach(el=>{el.style.fontSize=Math.round(n*1.33)+'px'});
+  document.querySelectorAll('.bat-item .player-num').forEach(el=>{el.style.fontSize=n+'px'});
+  document.querySelectorAll('.bat-item .player-pos').forEach(el=>{el.style.fontSize=Math.round(n*0.83)+'px'});
+}
 lineupRef.on('value',snap=>{
   const d=snap.val();if(!d)return;
   const overlay=document.getElementById('lineup-overlay');
@@ -288,6 +297,7 @@ lineupRef.on('value',snap=>{
       document.getElementById('num-'+pos).textContent=player?('#'+player.number):'';
     });
   }
+  applyLinNameSize();
 });
 </script>
 </body>
