@@ -338,7 +338,8 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 라인업 위치 / 크기</div>
 <div class="ov-acc-body" style="display:none">
 <div class="form-row"><label>크기(%)</label><input id="ovLinScale" type="range" min="50" max="150" value="100" oninput="prevOvVal('ovLinScaleV',this.value+'%');autoSaveOv()"><span id="ovLinScaleV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">100%</span></div>
-<div class="form-row"><label>선수 글자 크기</label><input id="ovLinNameSize" type="range" min="8" max="28" value="12" oninput="prevOvVal('ovLinNameSizeV',this.value+'px');autoSaveOv()"><span id="ovLinNameSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">12px</span></div>
+<div class="form-row"><label>수비 글자 크기</label><input id="ovLinNameSize" type="range" min="8" max="28" value="12" oninput="prevOvVal('ovLinNameSizeV',this.value+'px');autoSaveOv()"><span id="ovLinNameSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">12px</span></div>
+<div class="form-row"><label>타순 글자 크기</label><input id="ovLinBatSize" type="range" min="8" max="32" value="14" oninput="prevOvVal('ovLinBatSizeV',this.value+'px');autoSaveOv()"><span id="ovLinBatSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">14px</span></div>
 <div class="form-row"><label>상하위치</label><input id="ovLinTop" type="range" min="0" max="100" value="50" oninput="prevOvVal('ovLinTopV',this.value+'%');autoSaveOv()"><span id="ovLinTopV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">50%</span></div>
 <div class="form-row"><label>좌우위치</label><input id="ovLinLeft" type="range" min="0" max="100" value="50" oninput="prevOvVal('ovLinLeftV',this.value+'%');autoSaveOv()"><span id="ovLinLeftV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">50%</span></div>
 <div class="form-row"><label>수비 투명도</label><input id="ovLinDefAlpha" type="range" min="0" max="100" value="100" oninput="prevOvVal('ovLinDefAlphaV',this.value+'%');autoSaveOv()"><span id="ovLinDefAlphaV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">100%</span></div>
@@ -998,7 +999,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,bsoDot:12,barLogo:30,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,linNameSize:12,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
+const OV_DEFAULTS={barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,bsoDot:12,barLogo:30,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,linNameSize:12,linBatSize:14,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -1039,6 +1040,7 @@ function fillOverlayInputs(){
   if($('ovInningY')){$('ovInningY').value=ovCfg.inningY;$('ovInningYV').textContent=ovCfg.inningY+'px'}
   if($('ovLinScale')){$('ovLinScale').value=ovCfg.linScale;$('ovLinScaleV').textContent=ovCfg.linScale+'%'}
   if($('ovLinNameSize')){$('ovLinNameSize').value=ovCfg.linNameSize;$('ovLinNameSizeV').textContent=ovCfg.linNameSize+'px'}
+  if($('ovLinBatSize')){$('ovLinBatSize').value=ovCfg.linBatSize;$('ovLinBatSizeV').textContent=ovCfg.linBatSize+'px'}
   if($('ovLinTop')){$('ovLinTop').value=ovCfg.linTop;$('ovLinTopV').textContent=ovCfg.linTop+'%'}
   if($('ovLinLeft')){$('ovLinLeft').value=ovCfg.linLeft;$('ovLinLeftV').textContent=ovCfg.linLeft+'%'}
   if($('ovLinDefAlpha')){$('ovLinDefAlpha').value=ovCfg.linDefAlpha;$('ovLinDefAlphaV').textContent=ovCfg.linDefAlpha+'%'}
@@ -1079,6 +1081,7 @@ function gatherOvCfg(){
     inningY:parseInt(document.getElementById('ovInningY').value),
     linScale:parseInt(document.getElementById('ovLinScale').value),
     linNameSize:parseInt(document.getElementById('ovLinNameSize').value),
+    linBatSize:parseInt(document.getElementById('ovLinBatSize').value),
     linTop:parseInt(document.getElementById('ovLinTop').value),
     linLeft:parseInt(document.getElementById('ovLinLeft').value),
     linDefAlpha:parseInt(document.getElementById('ovLinDefAlpha').value),
@@ -1138,7 +1141,7 @@ const OV_SECTIONS={
   spacing:['infoMaxW','infoPad','teamGap','scorePad','dividerMargin','countPad','bsoGap','bsoDot','baseSize','barLogo'],
   ypos:['infoY','teamY','scoreY','logoY','inningY'],
   color:['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'],
-  lineup:['linScale','linNameSize','linTop','linLeft','linDefAlpha','linBatAlpha']
+  lineup:['linScale','linNameSize','linBatSize','linTop','linLeft','linDefAlpha','linBatAlpha']
 };
 function resetOvSection(sec){
   const keys=OV_SECTIONS[sec];if(!keys)return;

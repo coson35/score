@@ -160,6 +160,7 @@ overlayRef.on('value',snap=>{
   const linDefAlpha=c.linDefAlpha!=null?c.linDefAlpha:100,linBatAlpha=c.linBatAlpha!=null?c.linBatAlpha:85;
   const linNameSize=c.linNameSize||12;
   window._linNameSize=linNameSize;
+  window._linBatSize=c.linBatSize||14;
   const logoSize=c.logoSize||60;
   const barLogo=c.barLogo||30;
   const cBg=c.colorBg||'#1a1a2e',cBorder=c.colorBorder||'#e94560',cTeam=c.colorTeam||'#ffffff';
@@ -263,13 +264,14 @@ gameRef.on('value',snap=>{
 // 라인업
 function applyLinNameSize(){
   const n=window._linNameSize||12;
+  const b=window._linBatSize||14;
   document.querySelectorAll('.pos .name').forEach(el=>{el.style.fontSize=n+'px'});
   document.querySelectorAll('.pos .num').forEach(el=>{el.style.fontSize=Math.round(n*0.83)+'px'});
   document.querySelectorAll('.pos .position-label').forEach(el=>{el.style.fontSize=Math.round(n*0.75)+'px'});
-  document.querySelectorAll('.bat-item .player-name').forEach(el=>{el.style.fontSize=(n+1)+'px'});
-  document.querySelectorAll('.bat-item .order-num').forEach(el=>{el.style.fontSize=Math.round(n*1.33)+'px'});
-  document.querySelectorAll('.bat-item .player-num').forEach(el=>{el.style.fontSize=n+'px'});
-  document.querySelectorAll('.bat-item .player-pos').forEach(el=>{el.style.fontSize=Math.round(n*0.83)+'px'});
+  document.querySelectorAll('.bat-item .player-name').forEach(el=>{el.style.fontSize=b+'px'});
+  document.querySelectorAll('.bat-item .order-num').forEach(el=>{el.style.fontSize=Math.round(b*1.23)+'px'});
+  document.querySelectorAll('.bat-item .player-num').forEach(el=>{el.style.fontSize=Math.round(b*0.92)+'px'});
+  document.querySelectorAll('.bat-item .player-pos').forEach(el=>{el.style.fontSize=Math.round(b*0.77)+'px'});
 }
 lineupRef.on('value',snap=>{
   const d=snap.val();if(!d)return;
