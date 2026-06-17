@@ -309,6 +309,7 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>구분선 간격</label><input id="ovDividerMargin" type="range" min="0" max="20" value="6" oninput="prevOvVal('ovDividerMarginV',this.value+'px');autoSaveOv()"><span id="ovDividerMarginV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">6px</span></div>
 <div class="form-row"><label>카운트 패딩</label><input id="ovCountPad" type="range" min="0" max="30" value="16" oninput="prevOvVal('ovCountPadV',this.value+'px');autoSaveOv()"><span id="ovCountPadV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">16px</span></div>
 <div class="form-row"><label>BSO 간격</label><input id="ovBsoGap" type="range" min="2" max="24" value="11" oninput="prevOvVal('ovBsoGapV',this.value+'px');autoSaveOv()"><span id="ovBsoGapV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">11px</span></div>
+<div class="form-row"><label>BSO 점 크기</label><input id="ovBsoDot" type="range" min="6" max="24" value="12" oninput="prevOvVal('ovBsoDotV',this.value+'px');autoSaveOv()"><span id="ovBsoDotV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">12px</span></div>
 <div class="form-row"><label>베이스 크기</label><input id="ovBaseSize" type="range" min="20" max="60" value="42" oninput="prevOvVal('ovBaseSizeV',this.value+'px');autoSaveOv()"><span id="ovBaseSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">42px</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('spacing')">이 섹션 초기화</button>
 </div>
@@ -995,7 +996,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
+const OV_DEFAULTS={barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,bsoDot:12,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -1025,6 +1026,7 @@ function fillOverlayInputs(){
   if($('ovDividerMargin')){$('ovDividerMargin').value=ovCfg.dividerMargin;$('ovDividerMarginV').textContent=ovCfg.dividerMargin+'px'}
   if($('ovCountPad')){$('ovCountPad').value=ovCfg.countPad;$('ovCountPadV').textContent=ovCfg.countPad+'px'}
   if($('ovBsoGap')){$('ovBsoGap').value=ovCfg.bsoGap;$('ovBsoGapV').textContent=ovCfg.bsoGap+'px'}
+  if($('ovBsoDot')){$('ovBsoDot').value=ovCfg.bsoDot;$('ovBsoDotV').textContent=ovCfg.bsoDot+'px'}
   if($('ovInningFont')){$('ovInningFont').value=ovCfg.inningFont;$('ovInningFontV').textContent=ovCfg.inningFont+'px'}
   if($('ovBaseSize')){$('ovBaseSize').value=ovCfg.baseSize;$('ovBaseSizeV').textContent=ovCfg.baseSize+'px'}
   if($('ovInfoY')){$('ovInfoY').value=ovCfg.infoY;$('ovInfoYV').textContent=ovCfg.infoY+'px'}
@@ -1062,6 +1064,7 @@ function gatherOvCfg(){
     dividerMargin:parseInt(document.getElementById('ovDividerMargin').value),
     countPad:parseInt(document.getElementById('ovCountPad').value),
     bsoGap:parseInt(document.getElementById('ovBsoGap').value),
+    bsoDot:parseInt(document.getElementById('ovBsoDot').value),
     inningFont:parseInt(document.getElementById('ovInningFont').value),
     baseSize:parseInt(document.getElementById('ovBaseSize').value),
     infoY:parseInt(document.getElementById('ovInfoY').value),
@@ -1126,7 +1129,7 @@ function resetOverlayCfg(){
 const OV_SECTIONS={
   bar:['barH','barBottom'],
   font:['barFont','scoreFont','infoFont','inningFont'],
-  spacing:['infoMaxW','infoPad','teamGap','scorePad','dividerMargin','countPad','bsoGap','baseSize'],
+  spacing:['infoMaxW','infoPad','teamGap','scorePad','dividerMargin','countPad','bsoGap','bsoDot','baseSize'],
   ypos:['infoY','teamY','scoreY','logoY','inningY'],
   color:['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'],
   lineup:['linScale','linTop','linLeft','linDefAlpha','linBatAlpha']

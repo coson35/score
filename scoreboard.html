@@ -154,6 +154,7 @@ overlayRef.on('value',snap=>{
   const infoPad=c.infoPad!=null?c.infoPad:10,teamGap=c.teamGap!=null?c.teamGap:4,scorePad=c.scorePad!=null?c.scorePad:6;
   const dividerMargin=c.dividerMargin!=null?c.dividerMargin:6,countPad=c.countPad!=null?c.countPad:16;
   const bsoGap=c.bsoGap!=null?c.bsoGap:11,inningFont=c.inningFont||19,baseSize=c.baseSize||42;
+  const bsoDot=c.bsoDot||12;
   const infoY=c.infoY||0,teamY=c.teamY||0,scoreY=c.scoreY||0,logoY=c.logoY||0,inningY=c.inningY||0;
   const linScale=c.linScale||100,linTop=c.linTop||50,linLeft=c.linLeft||50;
   const linDefAlpha=c.linDefAlpha!=null?c.linDefAlpha:100,linBatAlpha=c.linBatAlpha!=null?c.linBatAlpha:85;
@@ -184,6 +185,7 @@ overlayRef.on('value',snap=>{
   if(basesEl){basesEl.style.width=baseSize+'px';basesEl.style.height=baseSize+'px'}
   const bsoEl=document.querySelector('.bso');
   if(bsoEl)bsoEl.style.gap=bsoGap+'px';
+  document.querySelectorAll('.dot').forEach(el=>{el.style.width=bsoDot+'px';el.style.height=bsoDot+'px'});
   const lineup=document.getElementById('lineup-overlay');
   lineup.style.width=(580*linScale/100)+'px';
   lineup.style.height=(480*linScale/100)+'px';
