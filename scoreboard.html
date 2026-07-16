@@ -145,6 +145,16 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database(),gameRef=db.ref('game'),batterInfoRef=db.ref('batterInfo'),lineupRef=db.ref('lineup'),overlayRef=db.ref('config/overlay');
 
+// 색상 밝기 조절 헬퍼 (스킨용)
+function adjustColor(hex,amt){
+  if(!hex)return '#1a1a2e';
+  hex=hex.replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  let r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+  r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
 // 오버레이 설정 적용
 overlayRef.on('value',snap=>{
   const c=snap.val()||{};
@@ -202,8 +212,42 @@ overlayRef.on('value',snap=>{
   if(batBg)batBg.style.background='rgba(0,0,0,'+(linBatAlpha/100)+')';
   const logoImg=document.querySelector('#school-logo img');
   if(logoImg){logoImg.width=logoSize;logoImg.height=logoSize}
+
+  // === 오버레이 디자인(스킨) 적용 ===
+  const skin=c.skin||'classic';
+  document.body.setAttribute('data-skin',skin);
+  let biExtra=0;
+  // 스킨 초기화 (클래식 기준으로 리셋)
+  board.style.borderRadius='0';
+  board.style.width='100%';
+  board.style.marginLeft='0';
+  board.style.boxShadow='none';
+  board.style.overflow='visible';
+  board.style.borderTopStyle='solid';
+  document.querySelectorAll('.team-name,.score,.inning,.game-info,.bso-label,.bso-row').forEach(el=>el.style.textShadow='none');
+  if(skin==='rounded'){
+    board.style.borderRadius='16px';
+    board.style.width='calc(100% - 40px)';
+    board.style.marginLeft='20px';
+    board.style.marginBottom=(barBottom+16)+'px';
+    board.style.overflow='hidden';
+    board.style.boxShadow='0 4px 18px rgba(0,0,0,0.55)';
+    board.style.borderTopStyle='none';
+    biExtra=16;
+  }else if(skin==='minimal'){
+    board.style.background='transparent';
+    board.style.borderTopStyle='none';
+    if(gi)gi.style.background='transparent';
+    if(cs)cs.style.background='transparent';
+    const sh='0 1px 3px rgba(0,0,0,0.95),0 0 8px rgba(0,0,0,0.8)';
+    document.querySelectorAll('.team-name,.score,.inning,.game-info,.bso-label').forEach(el=>el.style.textShadow=sh);
+  }else if(skin==='gradient'){
+    board.style.background='linear-gradient(180deg,'+adjustColor(cBg,28)+' 0%,'+cBg+' 55%,'+adjustColor(cBg,-30)+' 100%)';
+    board.style.boxShadow='inset 0 1px 0 rgba(255,255,255,0.18)';
+  }
+
   const biEl=document.getElementById('batterInfo');
-  biEl.style.bottom=(barH+barBottom+6)+'px';
+  biEl.style.bottom=(barH+barBottom+6+biExtra)+'px';
   // 수비 포지션 위치 적용
   const posMap={P:'p',C:'c','1B':'1b','2B':'2b','3B':'3b',SS:'ss',LF:'lf',CF:'cf',RF:'rf'};
   const posDef={P:{t:56,l:50},C:{t:82,l:50},'1B':{t:68,l:66},'2B':{t:50,l:60},'3B':{t:68,l:34},SS:{t:50,l:40},LF:{t:28,l:22},CF:{t:18,l:50},RF:{t:28,l:78}};
