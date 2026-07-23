@@ -69,6 +69,33 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 .bat-item .player-name{flex:1;font-size:13px;font-weight:700;color:#fff;padding:0 8px}
 .bat-item .player-num{font-size:12px;color:#ffd700;min-width:34px;text-align:center;font-weight:700}
 .bat-item .player-pos{font-size:10px;color:#a0c4ff;min-width:28px;text-align:center;font-weight:600}
+/* 방송형 스코어보드 */
+#scoreboard-bc{position:fixed;bottom:24px;left:24px;z-index:5;opacity:0;transition:opacity 0.5s;display:none;color:#fff;border-radius:10px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.5)}
+#scoreboard-bc.visible{opacity:1}
+.bc-main{display:flex;align-items:stretch}
+.bc-teams{display:flex;flex-direction:column;justify-content:center;background:#1a1a2e}
+.bc-team-row{display:flex;align-items:center;gap:8px;padding:6px 12px;min-width:160px}
+.bc-team-row+.bc-team-row{border-top:1px solid rgba(255,255,255,0.15)}
+.bc-logo{width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;display:none;border:1.5px solid rgba(255,255,255,0.7)}
+.bc-logo.has-logo{display:block}
+.bc-name{flex:1;font-size:15px;font-weight:700;white-space:nowrap;letter-spacing:0.5px}
+.bc-score{font-size:17px;font-weight:900;min-width:28px;text-align:center;color:#ffd700;background:rgba(0,0,0,0.35);border-radius:5px;padding:1px 8px}
+.bc-right{display:flex;align-items:center;gap:12px;padding:0 16px;background:#0a1628}
+.bc-bases{position:relative;width:32px;height:32px;flex-shrink:0}
+.bc-base{position:absolute;width:12px;height:12px;border:1.5px solid #666;background:transparent;transform:rotate(45deg)}
+.bc-base.active{background:#ffd700;border-color:#ffd700}
+.bc-base-2{left:50%;top:2px;margin-left:-6px}
+.bc-base-3{left:2px;top:50%;margin-top:-6px}
+.bc-base-1{right:2px;top:50%;margin-top:-6px}
+.bc-inning{font-size:16px;font-weight:900;color:#e94560;min-width:34px;text-align:center;letter-spacing:1px}
+.bc-bso{display:flex;flex-direction:column;gap:2px}
+.bc-bso-row{display:flex;align-items:center;gap:3px}
+.bc-bso-label{font-size:10px;font-weight:900;color:#999;width:11px}
+.bc-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid #666;background:transparent}
+.bc-dot.ball.active{background:#4caf50;border-color:#4caf50}
+.bc-dot.strike.active{background:#ffd700;border-color:#ffd700}
+.bc-dot.out.active{background:#e94560;border-color:#e94560}
+.bc-title{background:#0f3460;font-size:11px;color:#a0c4ff;padding:3px 12px;text-align:center;white-space:nowrap;overflow:hidden}
 </style>
 </head>
 <body>
@@ -138,6 +165,38 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
     </div>
   </div>
 </div>
+
+<!-- 방송형 스코어보드 (스킨: 클래식 외) -->
+<div id="scoreboard-bc">
+  <div class="bc-main">
+    <div class="bc-teams">
+      <div class="bc-team-row">
+        <img class="bc-logo" id="bcAwayLogo" src="" alt="">
+        <span class="bc-name" id="bcAwayName">AWAY</span>
+        <span class="bc-score" id="bcAwayScore">0</span>
+      </div>
+      <div class="bc-team-row">
+        <img class="bc-logo" id="bcHomeLogo" src="" alt="">
+        <span class="bc-name" id="bcHomeName">HOME</span>
+        <span class="bc-score" id="bcHomeScore">0</span>
+      </div>
+    </div>
+    <div class="bc-right">
+      <div class="bc-bases">
+        <div class="bc-base bc-base-2" id="bcBase2"></div>
+        <div class="bc-base bc-base-3" id="bcBase3"></div>
+        <div class="bc-base bc-base-1" id="bcBase1"></div>
+      </div>
+      <div class="bc-inning" id="bcInning">1▲</div>
+      <div class="bc-bso">
+        <div class="bc-bso-row"><span class="bc-bso-label">B</span><span class="bc-dot ball" id="bcb1"></span><span class="bc-dot ball" id="bcb2"></span><span class="bc-dot ball" id="bcb3"></span></div>
+        <div class="bc-bso-row"><span class="bc-bso-label">S</span><span class="bc-dot strike" id="bcs1"></span><span class="bc-dot strike" id="bcs2"></span></div>
+        <div class="bc-bso-row"><span class="bc-bso-label">O</span><span class="bc-dot out" id="bco1"></span><span class="bc-dot out" id="bco2"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="bc-title" id="bcTitle"></div>
+</div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
@@ -153,6 +212,61 @@ function adjustColor(hex,amt){
   let r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
   r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));
   return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function hexToRgba(hex,a){
+  hex=(hex||'#000000').replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+// 방송형 스코어보드 스타일 적용
+function styleBroadcast(skin,o){
+  const bc=document.getElementById('scoreboard-bc');
+  if(!bc)return;
+  const teams=bc.querySelector('.bc-teams'),right=bc.querySelector('.bc-right'),title=bc.querySelector('.bc-title');
+  bc.querySelectorAll('.bc-name').forEach(el=>{el.style.fontSize=o.barFont+'px';el.style.color=o.cTeam});
+  bc.querySelectorAll('.bc-score').forEach(el=>{el.style.fontSize=Math.round(o.scoreFont*0.7)+'px';el.style.color=o.cScore});
+  const innEl=bc.querySelector('.bc-inning');if(innEl){innEl.style.fontSize=Math.round(o.inningFont*0.82)+'px';innEl.style.color=o.cInning}
+  bc.querySelectorAll('.bc-logo').forEach(el=>{const s=Math.round(o.barLogo*0.72);el.style.width=s+'px';el.style.height=s+'px'});
+  bc.querySelectorAll('.bc-dot').forEach(el=>{const s=Math.round(o.bsoDot*0.72);el.style.width=s+'px';el.style.height=s+'px'});
+  if(title)title.style.fontSize=o.infoFont+'px';
+  bc.style.bottom=(24+(o.barBottom||0))+'px';
+  bc.style.borderRadius='10px';
+  bc.style.boxShadow='0 4px 20px rgba(0,0,0,0.5)';
+  if(skin==='rounded'){
+    bc.style.borderRadius='16px';
+    if(teams)teams.style.background=o.cBg;
+    if(right)right.style.background=o.cCountBg;
+    if(title)title.style.background=o.cInfoBg;
+  }else if(skin==='minimal'){
+    bc.style.borderRadius='8px';bc.style.boxShadow='0 2px 12px rgba(0,0,0,0.4)';
+    if(teams)teams.style.background=hexToRgba(o.cBg,0.72);
+    if(right)right.style.background=hexToRgba(o.cCountBg,0.72);
+    if(title)title.style.background=hexToRgba(o.cInfoBg,0.72);
+  }else if(skin==='gradient'){
+    bc.style.borderRadius='10px';
+    if(teams)teams.style.background='linear-gradient(180deg,'+adjustColor(o.cBg,30)+' 0%,'+adjustColor(o.cBg,-28)+' 100%)';
+    if(right)right.style.background='linear-gradient(180deg,'+adjustColor(o.cCountBg,26)+' 0%,'+adjustColor(o.cCountBg,-22)+' 100%)';
+    if(title)title.style.background=o.cInfoBg;
+  }else{
+    if(teams)teams.style.background=o.cBg;
+    if(right)right.style.background=o.cCountBg;
+    if(title)title.style.background=o.cInfoBg;
+  }
+  if(title)title.style.color=adjustColor(o.cTeam,-45);
+}
+// 스킨에 따라 클래식/방송형 표시 전환
+function updateBoardVisibility(vis){
+  window._lastVisible=vis;
+  const skin=window._skin||'classic';
+  const cl=document.getElementById('scoreboard'),bc=document.getElementById('scoreboard-bc');
+  if(skin==='classic'){
+    if(bc){bc.style.display='none';bc.classList.remove('visible')}
+    if(cl){cl.style.display='flex';cl.classList.toggle('visible',!!vis)}
+  }else{
+    if(cl){cl.style.display='none';cl.classList.remove('visible')}
+    if(bc){bc.style.display='block';bc.classList.toggle('visible',!!vis)}
+  }
 }
 
 // 오버레이 설정 적용
@@ -215,39 +329,15 @@ overlayRef.on('value',snap=>{
 
   // === 오버레이 디자인(스킨) 적용 ===
   const skin=c.skin||'classic';
+  window._skin=skin;
   document.body.setAttribute('data-skin',skin);
-  let biExtra=0;
-  // 스킨 초기화 (클래식 기준으로 리셋)
-  board.style.borderRadius='0';
-  board.style.width='100%';
-  board.style.marginLeft='0';
-  board.style.boxShadow='none';
-  board.style.overflow='visible';
-  board.style.borderTopStyle='solid';
-  document.querySelectorAll('.team-name,.score,.inning,.game-info,.bso-label,.bso-row').forEach(el=>el.style.textShadow='none');
-  if(skin==='rounded'){
-    board.style.borderRadius='16px';
-    board.style.width='calc(100% - 40px)';
-    board.style.marginLeft='20px';
-    board.style.marginBottom=(barBottom+16)+'px';
-    board.style.overflow='hidden';
-    board.style.boxShadow='0 4px 18px rgba(0,0,0,0.55)';
-    board.style.borderTopStyle='none';
-    biExtra=16;
-  }else if(skin==='minimal'){
-    board.style.background='transparent';
-    board.style.borderTopStyle='none';
-    if(gi)gi.style.background='transparent';
-    if(cs)cs.style.background='transparent';
-    const sh='0 1px 3px rgba(0,0,0,0.95),0 0 8px rgba(0,0,0,0.8)';
-    document.querySelectorAll('.team-name,.score,.inning,.game-info,.bso-label').forEach(el=>el.style.textShadow=sh);
-  }else if(skin==='gradient'){
-    board.style.background='linear-gradient(180deg,'+adjustColor(cBg,28)+' 0%,'+cBg+' 55%,'+adjustColor(cBg,-30)+' 100%)';
-    board.style.boxShadow='inset 0 1px 0 rgba(255,255,255,0.18)';
-  }
+  // 클래식 하단바는 위에서 적용된 원본 스타일 그대로 유지
+  // 방송형 스킨 스타일링 (색상/폰트는 기존 설정값 연동)
+  styleBroadcast(skin,{cBg,cCountBg,cInfoBg,cTeam,cScore,cInning,barFont,scoreFont,infoFont,inningFont,barLogo,bsoDot,barBottom});
+  updateBoardVisibility(window._lastVisible);
 
   const biEl=document.getElementById('batterInfo');
-  biEl.style.bottom=(barH+barBottom+6+biExtra)+'px';
+  biEl.style.bottom=(barH+barBottom+6)+'px';
   // 수비 포지션 위치 적용
   const posMap={P:'p',C:'c','1B':'1b','2B':'2b','3B':'3b',SS:'ss',LF:'lf',CF:'cf',RF:'rf'};
   const posDef={P:{t:56,l:50},C:{t:82,l:50},'1B':{t:68,l:66},'2B':{t:50,l:60},'3B':{t:68,l:34},SS:{t:50,l:40},LF:{t:28,l:22},CF:{t:18,l:50},RF:{t:28,l:78}};
@@ -283,7 +373,7 @@ gameRef.on('value',snap=>{
   const d=snap.val();if(!d)return;
   const board=document.getElementById('scoreboard');
   const logo=document.getElementById('school-logo');
-  if(d.visible){board.classList.add('visible')}else{board.classList.remove('visible')}
+  updateBoardVisibility(!!d.visible);
   if(d.logoVisible){logo.classList.add('visible')}else{logo.classList.remove('visible')}
   if(!d.visible)return;
   document.getElementById('gameInfo').textContent=d.gameTitle||'';
@@ -303,6 +393,24 @@ gameRef.on('value',snap=>{
   for(let i=1;i<=3;i++)document.getElementById('b'+i).classList.toggle('active',i<=b);
   for(let i=1;i<=2;i++)document.getElementById('s'+i).classList.toggle('active',i<=s);
   for(let i=1;i<=2;i++)document.getElementById('o'+i).classList.toggle('active',i<=o);
+
+  // 방송형 스코어보드 데이터 반영
+  document.getElementById('bcAwayName').textContent=d.awayName||'AWAY';
+  document.getElementById('bcHomeName').textContent=d.homeName||'HOME';
+  document.getElementById('bcAwayScore').textContent=d.awayScore||0;
+  document.getElementById('bcHomeScore').textContent=d.homeScore||0;
+  const baL=document.getElementById('bcAwayLogo'),bhL=document.getElementById('bcHomeLogo');
+  if(d.awayLogo){baL.src=d.awayLogo;baL.classList.add('has-logo')}else{baL.classList.remove('has-logo')}
+  if(d.homeLogo){bhL.src=d.homeLogo;bhL.classList.add('has-logo')}else{bhL.classList.remove('has-logo')}
+  document.getElementById('bcInning').textContent=(d.inning||1)+(d.inningHalf==='bottom'?'▼':'▲');
+  document.getElementById('bcBase1').classList.toggle('active',!!d.base1);
+  document.getElementById('bcBase2').classList.toggle('active',!!d.base2);
+  document.getElementById('bcBase3').classList.toggle('active',!!d.base3);
+  for(let i=1;i<=3;i++)document.getElementById('bcb'+i).classList.toggle('active',i<=b);
+  for(let i=1;i<=2;i++)document.getElementById('bcs'+i).classList.toggle('active',i<=s);
+  for(let i=1;i<=2;i++)document.getElementById('bco'+i).classList.toggle('active',i<=o);
+  const bcTitle=document.getElementById('bcTitle');
+  if(bcTitle){bcTitle.textContent=d.gameTitle||'';bcTitle.style.display=d.gameTitle?'block':'none'}
 });
 
 // 라인업
