@@ -295,6 +295,31 @@ document.getElementById('tabSetup').innerHTML=`
 <button class="skin-btn" id="skin-gradient" onclick="setSkin('gradient')">방송형 그라데이션</button>
 </div>
 </div>
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 방송형 세부설정</div>
+<div class="ov-acc-body" style="display:none">
+<div style="font-size:11px;color:#888;margin-bottom:8px">방송형 스킨(클래식 제외)에만 적용됩니다. 색상은 아래 "색상 테마"를 공유합니다.</div>
+<div style="font-size:12px;font-weight:700;margin:4px 0 6px">위치 기준(코너)</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+<button class="skin-btn" id="bcanc-tl" onclick="setBcAnchor('tl')">좌상단</button>
+<button class="skin-btn" id="bcanc-tr" onclick="setBcAnchor('tr')">우상단</button>
+<button class="skin-btn" id="bcanc-bl" onclick="setBcAnchor('bl')">좌하단</button>
+<button class="skin-btn" id="bcanc-br" onclick="setBcAnchor('br')">우하단</button>
+</div>
+<div class="form-row"><label>가로 위치</label><input id="ovBcX" type="range" min="0" max="500" value="24" oninput="prevOvVal('ovBcXV',this.value+'px');autoSaveOv()"><span id="ovBcXV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">24px</span></div>
+<div class="form-row"><label>세로 위치</label><input id="ovBcY" type="range" min="0" max="500" value="24" oninput="prevOvVal('ovBcYV',this.value+'px');autoSaveOv()"><span id="ovBcYV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">24px</span></div>
+<div class="form-row"><label>전체 크기</label><input id="ovBcScale" type="range" min="60" max="220" value="100" oninput="prevOvVal('ovBcScaleV',this.value+'%');autoSaveOv()"><span id="ovBcScaleV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">100%</span></div>
+<div class="form-row"><label>팀 영역 너비</label><input id="ovBcTeamW" type="range" min="100" max="320" value="160" oninput="prevOvVal('ovBcTeamWV',this.value+'px');autoSaveOv()"><span id="ovBcTeamWV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">160px</span></div>
+<div class="form-row"><label>팀 줄 여백</label><input id="ovBcRowPad" type="range" min="2" max="18" value="6" oninput="prevOvVal('ovBcRowPadV',this.value+'px');autoSaveOv()"><span id="ovBcRowPadV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">6px</span></div>
+<div class="form-row"><label>모서리 둥글기</label><input id="ovBcRadius" type="range" min="0" max="26" value="10" oninput="prevOvVal('ovBcRadiusV',this.value+'px');autoSaveOv()"><span id="ovBcRadiusV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">10px</span></div>
+<div class="form-row"><label>팀명 폰트</label><input id="ovBcNameFont" type="range" min="10" max="28" value="15" oninput="prevOvVal('ovBcNameFontV',this.value+'px');autoSaveOv()"><span id="ovBcNameFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">15px</span></div>
+<div class="form-row"><label>점수 폰트</label><input id="ovBcScoreFont" type="range" min="10" max="34" value="17" oninput="prevOvVal('ovBcScoreFontV',this.value+'px');autoSaveOv()"><span id="ovBcScoreFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">17px</span></div>
+<div class="form-row"><label>이닝 폰트</label><input id="ovBcInningFont" type="range" min="10" max="30" value="16" oninput="prevOvVal('ovBcInningFontV',this.value+'px');autoSaveOv()"><span id="ovBcInningFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">16px</span></div>
+<div class="form-row"><label>로고 크기</label><input id="ovBcLogoSize" type="range" min="14" max="46" value="22" oninput="prevOvVal('ovBcLogoSizeV',this.value+'px');autoSaveOv()"><span id="ovBcLogoSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">22px</span></div>
+<div class="form-row"><label>BSO 점 크기</label><input id="ovBcDotSize" type="range" min="5" max="18" value="9" oninput="prevOvVal('ovBcDotSizeV',this.value+'px');autoSaveOv()"><span id="ovBcDotSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">9px</span></div>
+<div class="form-row"><label>경기명 폰트</label><input id="ovBcTitleFont" type="range" min="8" max="22" value="11" oninput="prevOvVal('ovBcTitleFontV',this.value+'px');autoSaveOv()"><span id="ovBcTitleFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">11px</span></div>
+<button class="skin-btn active" id="bcTitleBtn" onclick="toggleBcTitle()" style="width:100%;margin-top:4px">경기명 바: 표시</button>
+<button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('broadcast')">이 섹션 초기화</button>
+</div>
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 스코어보드 하단바</div>
 <div class="ov-acc-body" style="display:none">
 <div style="font-size:11px;color:#888;margin-bottom:8px">하단바 전체 크기와 위치를 설정합니다</div>
@@ -1011,7 +1036,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={skin:'classic',barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,bsoDot:12,barLogo:30,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,linNameSize:12,linBatSize:14,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
+const OV_DEFAULTS={skin:'classic',bcAnchor:'bl',bcX:24,bcY:24,bcScale:100,bcTeamW:160,bcRowPad:6,bcRadius:10,bcNameFont:15,bcScoreFont:17,bcInningFont:16,bcLogoSize:22,bcDotSize:9,bcTitleFont:11,bcTitleShow:true,barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,bsoDot:12,barLogo:30,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,linNameSize:12,linBatSize:14,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -1026,6 +1051,19 @@ function updSkinBtns(){
   const cur=window._ovSkin||'classic';
   SKIN_LIST.forEach(s=>{const b=document.getElementById('skin-'+s);if(b)b.className='skin-btn'+(s===cur?' active':'')});
 }
+function setBcAnchor(a){window._bcAnchor=a;updBcAnchorBtns();autoSaveOv()}
+function updBcAnchorBtns(){
+  const cur=window._bcAnchor||'bl';
+  ['tl','tr','bl','br'].forEach(a=>{const b=document.getElementById('bcanc-'+a);if(b)b.className='skin-btn'+(a===cur?' active':'')});
+}
+function toggleBcTitle(){window._bcTitleShow=(window._bcTitleShow===false);updBcTitleBtn();autoSaveOv()}
+function updBcTitleBtn(){
+  const b=document.getElementById('bcTitleBtn');if(!b)return;
+  const on=window._bcTitleShow!==false;
+  b.textContent='경기명 바: '+(on?'표시':'숨김');
+  b.className='skin-btn'+(on?' active':'');
+  b.style.width='100%';b.style.marginTop='4px';
+}
 function initOverlayCfg(){
   configRef.child('overlay').on('value',s=>{
     const d=s.val();ovCfg=d?{...OV_DEFAULTS,...d}:{...OV_DEFAULTS};
@@ -1036,6 +1074,20 @@ function initOverlayCfg(){
 function fillOverlayInputs(){
   const $=id=>document.getElementById(id);
   window._ovSkin=ovCfg.skin||'classic';updSkinBtns();
+  window._bcAnchor=ovCfg.bcAnchor||'bl';updBcAnchorBtns();
+  window._bcTitleShow=ovCfg.bcTitleShow!==false;updBcTitleBtn();
+  if($('ovBcX')){$('ovBcX').value=ovCfg.bcX;$('ovBcXV').textContent=ovCfg.bcX+'px'}
+  if($('ovBcY')){$('ovBcY').value=ovCfg.bcY;$('ovBcYV').textContent=ovCfg.bcY+'px'}
+  if($('ovBcScale')){$('ovBcScale').value=ovCfg.bcScale;$('ovBcScaleV').textContent=ovCfg.bcScale+'%'}
+  if($('ovBcTeamW')){$('ovBcTeamW').value=ovCfg.bcTeamW;$('ovBcTeamWV').textContent=ovCfg.bcTeamW+'px'}
+  if($('ovBcRowPad')){$('ovBcRowPad').value=ovCfg.bcRowPad;$('ovBcRowPadV').textContent=ovCfg.bcRowPad+'px'}
+  if($('ovBcRadius')){$('ovBcRadius').value=ovCfg.bcRadius;$('ovBcRadiusV').textContent=ovCfg.bcRadius+'px'}
+  if($('ovBcNameFont')){$('ovBcNameFont').value=ovCfg.bcNameFont;$('ovBcNameFontV').textContent=ovCfg.bcNameFont+'px'}
+  if($('ovBcScoreFont')){$('ovBcScoreFont').value=ovCfg.bcScoreFont;$('ovBcScoreFontV').textContent=ovCfg.bcScoreFont+'px'}
+  if($('ovBcInningFont')){$('ovBcInningFont').value=ovCfg.bcInningFont;$('ovBcInningFontV').textContent=ovCfg.bcInningFont+'px'}
+  if($('ovBcLogoSize')){$('ovBcLogoSize').value=ovCfg.bcLogoSize;$('ovBcLogoSizeV').textContent=ovCfg.bcLogoSize+'px'}
+  if($('ovBcDotSize')){$('ovBcDotSize').value=ovCfg.bcDotSize;$('ovBcDotSizeV').textContent=ovCfg.bcDotSize+'px'}
+  if($('ovBcTitleFont')){$('ovBcTitleFont').value=ovCfg.bcTitleFont;$('ovBcTitleFontV').textContent=ovCfg.bcTitleFont+'px'}
   if($('ovBarH')){$('ovBarH').value=ovCfg.barH;$('ovBarHV').textContent=ovCfg.barH+'px'}
   if($('ovBarFont')){$('ovBarFont').value=ovCfg.barFont;$('ovBarFontV').textContent=ovCfg.barFont+'px'}
   if($('ovScoreFont')){$('ovScoreFont').value=ovCfg.scoreFont;$('ovScoreFontV').textContent=ovCfg.scoreFont+'px'}
@@ -1078,6 +1130,20 @@ function fillOverlayInputs(){
 function gatherOvCfg(){
   const c={
     skin:window._ovSkin||'classic',
+    bcAnchor:window._bcAnchor||'bl',
+    bcTitleShow:window._bcTitleShow!==false,
+    bcX:parseInt(document.getElementById('ovBcX').value),
+    bcY:parseInt(document.getElementById('ovBcY').value),
+    bcScale:parseInt(document.getElementById('ovBcScale').value),
+    bcTeamW:parseInt(document.getElementById('ovBcTeamW').value),
+    bcRowPad:parseInt(document.getElementById('ovBcRowPad').value),
+    bcRadius:parseInt(document.getElementById('ovBcRadius').value),
+    bcNameFont:parseInt(document.getElementById('ovBcNameFont').value),
+    bcScoreFont:parseInt(document.getElementById('ovBcScoreFont').value),
+    bcInningFont:parseInt(document.getElementById('ovBcInningFont').value),
+    bcLogoSize:parseInt(document.getElementById('ovBcLogoSize').value),
+    bcDotSize:parseInt(document.getElementById('ovBcDotSize').value),
+    bcTitleFont:parseInt(document.getElementById('ovBcTitleFont').value),
     barH:parseInt(document.getElementById('ovBarH').value),
     barFont:parseInt(document.getElementById('ovBarFont').value),
     scoreFont:parseInt(document.getElementById('ovScoreFont').value),
@@ -1156,6 +1222,7 @@ function resetOverlayCfg(){
   configRef.child('overlay').set(OV_DEFAULTS);alert('기본값으로 초기화 완료');
 }
 const OV_SECTIONS={
+  broadcast:['bcAnchor','bcX','bcY','bcScale','bcTeamW','bcRowPad','bcRadius','bcNameFont','bcScoreFont','bcInningFont','bcLogoSize','bcDotSize','bcTitleFont','bcTitleShow'],
   bar:['barH','barBottom'],
   font:['barFont','scoreFont','infoFont','inningFont'],
   spacing:['infoMaxW','infoPad','teamGap','scorePad','dividerMargin','countPad','bsoGap','bsoDot','baseSize','barLogo'],

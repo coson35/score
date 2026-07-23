@@ -219,41 +219,51 @@ function hexToRgba(hex,a){
   const r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
   return 'rgba('+r+','+g+','+b+','+a+')';
 }
-// 방송형 스코어보드 스타일 적용
-function styleBroadcast(skin,o){
+// 방송형 스코어보드 스타일 적용 (방송형 전용 설정값 사용, 색상은 공통 테마)
+function styleBroadcast(skin,c){
   const bc=document.getElementById('scoreboard-bc');
   if(!bc)return;
   const teams=bc.querySelector('.bc-teams'),right=bc.querySelector('.bc-right'),title=bc.querySelector('.bc-title');
-  bc.querySelectorAll('.bc-name').forEach(el=>{el.style.fontSize=o.barFont+'px';el.style.color=o.cTeam});
-  bc.querySelectorAll('.bc-score').forEach(el=>{el.style.fontSize=Math.round(o.scoreFont*0.7)+'px';el.style.color=o.cScore});
-  const innEl=bc.querySelector('.bc-inning');if(innEl){innEl.style.fontSize=Math.round(o.inningFont*0.82)+'px';innEl.style.color=o.cInning}
-  bc.querySelectorAll('.bc-logo').forEach(el=>{const s=Math.round(o.barLogo*0.72);el.style.width=s+'px';el.style.height=s+'px'});
-  bc.querySelectorAll('.bc-dot').forEach(el=>{const s=Math.round(o.bsoDot*0.72);el.style.width=s+'px';el.style.height=s+'px'});
-  if(title)title.style.fontSize=o.infoFont+'px';
-  bc.style.bottom=(24+(o.barBottom||0))+'px';
-  bc.style.borderRadius='10px';
+  const cBg=c.colorBg||'#1a1a2e',cCountBg=c.colorCountBg||'#0a1628',cInfoBg=c.colorInfoBg||'#0f3460';
+  const cTeam=c.colorTeam||'#ffffff',cScore=c.colorScore||'#ffd700',cInning=c.colorInning||'#e94560';
+  const nameFont=c.bcNameFont||15,scoreFont=c.bcScoreFont||17,inningFont=c.bcInningFont||16,titleFont=c.bcTitleFont||11;
+  const logoSize=c.bcLogoSize||22,dotSize=c.bcDotSize||9,teamW=c.bcTeamW||160;
+  const radius=c.bcRadius!=null?c.bcRadius:10,rowPad=c.bcRowPad!=null?c.bcRowPad:6;
+  const anchor=c.bcAnchor||'bl',x=c.bcX!=null?c.bcX:24,y=c.bcY!=null?c.bcY:24,scale=c.bcScale||100;
+  const titleShow=c.bcTitleShow!==false;
+  // 폰트/크기
+  bc.querySelectorAll('.bc-name').forEach(el=>{el.style.fontSize=nameFont+'px';el.style.color=cTeam});
+  bc.querySelectorAll('.bc-score').forEach(el=>{el.style.fontSize=scoreFont+'px';el.style.color=cScore});
+  const innEl=bc.querySelector('.bc-inning');if(innEl){innEl.style.fontSize=inningFont+'px';innEl.style.color=cInning}
+  bc.querySelectorAll('.bc-logo').forEach(el=>{el.style.width=logoSize+'px';el.style.height=logoSize+'px'});
+  bc.querySelectorAll('.bc-dot').forEach(el=>{el.style.width=dotSize+'px';el.style.height=dotSize+'px'});
+  bc.querySelectorAll('.bc-team-row').forEach(el=>{el.style.minWidth=teamW+'px';el.style.paddingTop=rowPad+'px';el.style.paddingBottom=rowPad+'px'});
+  if(title){title.style.fontSize=titleFont+'px';title.style.display=titleShow?'block':'none'}
+  // 위치(앵커) + 크기
+  bc.style.top=bc.style.bottom=bc.style.left=bc.style.right='auto';
+  if(anchor==='bl'){bc.style.left=x+'px';bc.style.bottom=y+'px';bc.style.transformOrigin='left bottom'}
+  else if(anchor==='br'){bc.style.right=x+'px';bc.style.bottom=y+'px';bc.style.transformOrigin='right bottom'}
+  else if(anchor==='tl'){bc.style.left=x+'px';bc.style.top=y+'px';bc.style.transformOrigin='left top'}
+  else if(anchor==='tr'){bc.style.right=x+'px';bc.style.top=y+'px';bc.style.transformOrigin='right top'}
+  bc.style.transform='scale('+(scale/100)+')';
+  // 외형(스킨별)
+  bc.style.borderRadius=radius+'px';
   bc.style.boxShadow='0 4px 20px rgba(0,0,0,0.5)';
-  if(skin==='rounded'){
-    bc.style.borderRadius='16px';
-    if(teams)teams.style.background=o.cBg;
-    if(right)right.style.background=o.cCountBg;
-    if(title)title.style.background=o.cInfoBg;
-  }else if(skin==='minimal'){
-    bc.style.borderRadius='8px';bc.style.boxShadow='0 2px 12px rgba(0,0,0,0.4)';
-    if(teams)teams.style.background=hexToRgba(o.cBg,0.72);
-    if(right)right.style.background=hexToRgba(o.cCountBg,0.72);
-    if(title)title.style.background=hexToRgba(o.cInfoBg,0.72);
+  if(skin==='minimal'){
+    bc.style.boxShadow='0 2px 12px rgba(0,0,0,0.4)';
+    if(teams)teams.style.background=hexToRgba(cBg,0.72);
+    if(right)right.style.background=hexToRgba(cCountBg,0.72);
+    if(title)title.style.background=hexToRgba(cInfoBg,0.72);
   }else if(skin==='gradient'){
-    bc.style.borderRadius='10px';
-    if(teams)teams.style.background='linear-gradient(180deg,'+adjustColor(o.cBg,30)+' 0%,'+adjustColor(o.cBg,-28)+' 100%)';
-    if(right)right.style.background='linear-gradient(180deg,'+adjustColor(o.cCountBg,26)+' 0%,'+adjustColor(o.cCountBg,-22)+' 100%)';
-    if(title)title.style.background=o.cInfoBg;
+    if(teams)teams.style.background='linear-gradient(180deg,'+adjustColor(cBg,30)+' 0%,'+adjustColor(cBg,-28)+' 100%)';
+    if(right)right.style.background='linear-gradient(180deg,'+adjustColor(cCountBg,26)+' 0%,'+adjustColor(cCountBg,-22)+' 100%)';
+    if(title)title.style.background=cInfoBg;
   }else{
-    if(teams)teams.style.background=o.cBg;
-    if(right)right.style.background=o.cCountBg;
-    if(title)title.style.background=o.cInfoBg;
+    if(teams)teams.style.background=cBg;
+    if(right)right.style.background=cCountBg;
+    if(title)title.style.background=cInfoBg;
   }
-  if(title)title.style.color=adjustColor(o.cTeam,-45);
+  if(title)title.style.color=adjustColor(cTeam,-45);
 }
 // 스킨에 따라 클래식/방송형 표시 전환
 function updateBoardVisibility(vis){
@@ -333,7 +343,7 @@ overlayRef.on('value',snap=>{
   document.body.setAttribute('data-skin',skin);
   // 클래식 하단바는 위에서 적용된 원본 스타일 그대로 유지
   // 방송형 스킨 스타일링 (색상/폰트는 기존 설정값 연동)
-  styleBroadcast(skin,{cBg,cCountBg,cInfoBg,cTeam,cScore,cInning,barFont,scoreFont,infoFont,inningFont,barLogo,bsoDot,barBottom});
+  styleBroadcast(skin,c);
   updateBoardVisibility(window._lastVisible);
 
   const biEl=document.getElementById('batterInfo');
