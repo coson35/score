@@ -237,6 +237,15 @@ function styleBroadcast(skin,c){
   const innEl=bc.querySelector('.bc-inning');if(innEl){innEl.style.fontSize=inningFont+'px';innEl.style.color=cInning}
   bc.querySelectorAll('.bc-logo').forEach(el=>{el.style.width=logoSize+'px';el.style.height=logoSize+'px'});
   bc.querySelectorAll('.bc-dot').forEach(el=>{el.style.width=dotSize+'px';el.style.height=dotSize+'px'});
+  const baseSize=c.bcBaseSize||32;
+  const basesEl=bc.querySelector('.bc-bases');
+  if(basesEl){basesEl.style.width=baseSize+'px';basesEl.style.height=baseSize+'px'}
+  const sq=Math.round(baseSize*0.375);
+  bc.querySelectorAll('.bc-base').forEach(el=>{el.style.width=sq+'px';el.style.height=sq+'px'});
+  const b2=bc.querySelector('.bc-base-2'),b3=bc.querySelector('.bc-base-3'),b1=bc.querySelector('.bc-base-1');
+  if(b2)b2.style.marginLeft=(-sq/2)+'px';
+  if(b3)b3.style.marginTop=(-sq/2)+'px';
+  if(b1)b1.style.marginTop=(-sq/2)+'px';
   bc.querySelectorAll('.bc-team-row').forEach(el=>{el.style.minWidth=teamW+'px';el.style.paddingTop=rowPad+'px';el.style.paddingBottom=rowPad+'px'});
   if(title){title.style.fontSize=titleFont+'px';title.style.display=titleShow?'block':'none'}
   // 위치(앵커) + 크기

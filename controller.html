@@ -316,6 +316,7 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>이닝 폰트</label><input id="ovBcInningFont" type="range" min="10" max="30" value="16" oninput="prevOvVal('ovBcInningFontV',this.value+'px');autoSaveOv()"><span id="ovBcInningFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">16px</span></div>
 <div class="form-row"><label>로고 크기</label><input id="ovBcLogoSize" type="range" min="14" max="46" value="22" oninput="prevOvVal('ovBcLogoSizeV',this.value+'px');autoSaveOv()"><span id="ovBcLogoSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">22px</span></div>
 <div class="form-row"><label>BSO 점 크기</label><input id="ovBcDotSize" type="range" min="5" max="18" value="9" oninput="prevOvVal('ovBcDotSizeV',this.value+'px');autoSaveOv()"><span id="ovBcDotSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">9px</span></div>
+<div class="form-row"><label>베이스 크기</label><input id="ovBcBaseSize" type="range" min="18" max="60" value="32" oninput="prevOvVal('ovBcBaseSizeV',this.value+'px');autoSaveOv()"><span id="ovBcBaseSizeV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">32px</span></div>
 <div class="form-row"><label>경기명 폰트</label><input id="ovBcTitleFont" type="range" min="8" max="22" value="11" oninput="prevOvVal('ovBcTitleFontV',this.value+'px');autoSaveOv()"><span id="ovBcTitleFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">11px</span></div>
 <button class="skin-btn active" id="bcTitleBtn" onclick="toggleBcTitle()" style="width:100%;margin-top:4px">경기명 바: 표시</button>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('broadcast')">이 섹션 초기화</button>
@@ -1036,7 +1037,7 @@ function resetPitch(){
 }
 
 // === 오버레이 화면 설정 ===
-const OV_DEFAULTS={skin:'classic',bcAnchor:'bl',bcX:24,bcY:24,bcScale:100,bcTeamW:160,bcRowPad:6,bcRadius:10,bcNameFont:15,bcScoreFont:17,bcInningFont:16,bcLogoSize:22,bcDotSize:9,bcTitleFont:11,bcTitleShow:true,barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,bsoDot:12,barLogo:30,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,linNameSize:12,linBatSize:14,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
+const OV_DEFAULTS={skin:'classic',bcAnchor:'bl',bcX:24,bcY:24,bcScale:100,bcTeamW:160,bcRowPad:6,bcRadius:10,bcNameFont:15,bcScoreFont:17,bcInningFont:16,bcLogoSize:22,bcDotSize:9,bcBaseSize:32,bcTitleFont:11,bcTitleShow:true,barH:44,barFont:14,scoreFont:24,infoFont:11,infoMaxW:200,barBottom:0,infoPad:10,teamGap:4,scorePad:6,dividerMargin:6,countPad:16,bsoGap:11,inningFont:19,baseSize:42,bsoDot:12,barLogo:30,infoY:0,teamY:0,scoreY:0,logoY:0,inningY:0,linScale:100,linTop:50,linLeft:50,linDefAlpha:100,linBatAlpha:85,linNameSize:12,linBatSize:14,logoSize:60,colorBg:'#1a1a2e',colorBorder:'#e94560',colorTeam:'#ffffff',colorScore:'#ffd700',colorInning:'#e94560',colorInfoBg:'#0f3460',colorCountBg:'#0a1628',posP:{t:56,l:50},posC:{t:82,l:50},pos1B:{t:68,l:66},pos2B:{t:50,l:60},pos3B:{t:68,l:34},posSS:{t:50,l:40},posLF:{t:28,l:22},posCF:{t:18,l:50},posRF:{t:28,l:78}};
 let ovCfg={...OV_DEFAULTS};
 const COLOR_FIELDS=['colorBg','colorBorder','colorTeam','colorScore','colorInning','colorInfoBg','colorCountBg'];
 function prevOvVal(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
@@ -1087,6 +1088,7 @@ function fillOverlayInputs(){
   if($('ovBcInningFont')){$('ovBcInningFont').value=ovCfg.bcInningFont;$('ovBcInningFontV').textContent=ovCfg.bcInningFont+'px'}
   if($('ovBcLogoSize')){$('ovBcLogoSize').value=ovCfg.bcLogoSize;$('ovBcLogoSizeV').textContent=ovCfg.bcLogoSize+'px'}
   if($('ovBcDotSize')){$('ovBcDotSize').value=ovCfg.bcDotSize;$('ovBcDotSizeV').textContent=ovCfg.bcDotSize+'px'}
+  if($('ovBcBaseSize')){$('ovBcBaseSize').value=ovCfg.bcBaseSize;$('ovBcBaseSizeV').textContent=ovCfg.bcBaseSize+'px'}
   if($('ovBcTitleFont')){$('ovBcTitleFont').value=ovCfg.bcTitleFont;$('ovBcTitleFontV').textContent=ovCfg.bcTitleFont+'px'}
   if($('ovBarH')){$('ovBarH').value=ovCfg.barH;$('ovBarHV').textContent=ovCfg.barH+'px'}
   if($('ovBarFont')){$('ovBarFont').value=ovCfg.barFont;$('ovBarFontV').textContent=ovCfg.barFont+'px'}
@@ -1143,6 +1145,7 @@ function gatherOvCfg(){
     bcInningFont:parseInt(document.getElementById('ovBcInningFont').value),
     bcLogoSize:parseInt(document.getElementById('ovBcLogoSize').value),
     bcDotSize:parseInt(document.getElementById('ovBcDotSize').value),
+    bcBaseSize:parseInt(document.getElementById('ovBcBaseSize').value),
     bcTitleFont:parseInt(document.getElementById('ovBcTitleFont').value),
     barH:parseInt(document.getElementById('ovBarH').value),
     barFont:parseInt(document.getElementById('ovBarFont').value),
@@ -1222,7 +1225,7 @@ function resetOverlayCfg(){
   configRef.child('overlay').set(OV_DEFAULTS);alert('기본값으로 초기화 완료');
 }
 const OV_SECTIONS={
-  broadcast:['bcAnchor','bcX','bcY','bcScale','bcTeamW','bcRowPad','bcRadius','bcNameFont','bcScoreFont','bcInningFont','bcLogoSize','bcDotSize','bcTitleFont','bcTitleShow'],
+  broadcast:['bcAnchor','bcX','bcY','bcScale','bcTeamW','bcRowPad','bcRadius','bcNameFont','bcScoreFont','bcInningFont','bcLogoSize','bcDotSize','bcBaseSize','bcTitleFont','bcTitleShow'],
   bar:['barH','barBottom'],
   font:['barFont','scoreFont','infoFont','inningFont'],
   spacing:['infoMaxW','infoPad','teamGap','scorePad','dividerMargin','countPad','bsoGap','bsoDot','baseSize','barLogo'],
