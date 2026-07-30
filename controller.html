@@ -400,6 +400,55 @@ document.getElementById('tabSetup').innerHTML=`
 <div style="display:flex;gap:6px;margin-bottom:8px"><input id="ovThemeName" placeholder="테마 이름 (예: 블루, 레드)" style="flex:1;padding:10px;font-size:14px"><button class="btn-save" onclick="saveTheme()" style="max-width:80px">저장</button></div>
 <div id="ovThemeList" style="max-height:200px;overflow-y:auto"></div>
 </div>
+</div>
+<div class="card"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="#c8192b" stroke-width="2"/><rect x="2" y="15" width="20" height="5" fill="#c8192b"/></svg>방송형 오버레이 (신규)</div>
+<div style="font-size:12px;color:#888;margin-bottom:6px">기존 오버레이와 완전히 별개입니다. CameraFi에 아래 주소를 추가해 사용하세요.</div>
+<div style="font-size:12px;color:#0f3460;font-weight:700;background:#eef3ff;padding:8px 10px;border-radius:8px;margin-bottom:10px;word-break:break-all">coson35.github.io/score/scoreboard2.html</div>
+
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 화면 맞춤 / 브랜딩</div>
+<div class="ov-acc-body" style="display:none">
+<div style="font-size:11px;color:#888;margin-bottom:6px">화면 맞춤 방식</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+<button class="skin-btn" id="o2fit-width" onclick="setOv2Fit('width')">폭 기준</button>
+<button class="skin-btn" id="o2fit-contain" onclick="setOv2Fit('contain')">전체 보이기</button>
+</div>
+<div class="form-row"><label>브랜딩 1줄</label><input id="o2brand1" maxlength="30" placeholder="예: 2026 신월중 야구부" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>브랜딩 2줄</label><input id="o2brand2" maxlength="30" placeholder="예: 신월중학교" oninput="autoSaveOv2()"></div>
+</div>
+
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 글자 크기</div>
+<div class="ov-acc-body" style="display:none">
+<div class="form-row"><label>경기명</label><input id="o2titleFont" type="range" min="10" max="60" value="26" oninput="prevOvVal('o2titleFontV',this.value+'px');autoSaveOv2()"><span id="o2titleFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">26px</span></div>
+<div class="form-row"><label>팀명</label><input id="o2nameFont" type="range" min="12" max="72" value="32" oninput="prevOvVal('o2nameFontV',this.value+'px');autoSaveOv2()"><span id="o2nameFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">32px</span></div>
+<div class="form-row"><label>점수</label><input id="o2scoreFont" type="range" min="14" max="96" value="44" oninput="prevOvVal('o2scoreFontV',this.value+'px');autoSaveOv2()"><span id="o2scoreFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">44px</span></div>
+<div class="form-row"><label>이닝</label><input id="o2innFont" type="range" min="10" max="64" value="26" oninput="prevOvVal('o2innFontV',this.value+'px');autoSaveOv2()"><span id="o2innFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">26px</span></div>
+<div class="form-row"><label>카운트</label><input id="o2bsFont" type="range" min="12" max="72" value="32" oninput="prevOvVal('o2bsFontV',this.value+'px');autoSaveOv2()"><span id="o2bsFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">32px</span></div>
+<div class="form-row"><label>브랜딩 1줄</label><input id="o2brandFont" type="range" min="8" max="56" value="22" oninput="prevOvVal('o2brandFontV',this.value+'px');autoSaveOv2()"><span id="o2brandFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">22px</span></div>
+<div class="form-row"><label>브랜딩 2줄</label><input id="o2brand2Font" type="range" min="8" max="48" value="16" oninput="prevOvVal('o2brand2FontV',this.value+'px');autoSaveOv2()"><span id="o2brand2FontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">16px</span></div>
+</div>
+
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 크기 / 간격</div>
+<div class="ov-acc-body" style="display:none">
+<div class="form-row"><label>바 높이</label><input id="o2barH" type="range" min="40" max="200" value="76" oninput="prevOvVal('o2barHV',this.value+'px');autoSaveOv2()"><span id="o2barHV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">76px</span></div>
+<div class="form-row"><label>하단 여백</label><input id="o2bottomGap" type="range" min="0" max="400" value="0" oninput="prevOvVal('o2bottomGapV',this.value+'px');autoSaveOv2()"><span id="o2bottomGapV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
+<div class="form-row"><label>로고 크기</label><input id="o2logoSize" type="range" min="16" max="140" value="52" oninput="prevOvVal('o2logoSizeV',this.value+'px');autoSaveOv2()"><span id="o2logoSizeV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">52px</span></div>
+<div class="form-row"><label>베이스 크기</label><input id="o2baseSize" type="range" min="20" max="140" value="58" oninput="prevOvVal('o2baseSizeV',this.value+'px');autoSaveOv2()"><span id="o2baseSizeV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">58px</span></div>
+<div class="form-row"><label>요소 간격</label><input id="o2gap" type="range" min="0" max="80" value="20" oninput="prevOvVal('o2gapV',this.value+'px');autoSaveOv2()"><span id="o2gapV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">20px</span></div>
+<div class="form-row"><label>사선 기울기</label><input id="o2skew" type="range" min="0" max="80" value="26" oninput="prevOvVal('o2skewV',this.value+'px');autoSaveOv2()"><span id="o2skewV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">26px</span></div>
+</div>
+
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 색상</div>
+<div class="ov-acc-body" style="display:none">
+<div class="form-row"><label>경기명 배경</label><input id="o2cTitleBg" type="color" value="#1657c8" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>중앙 배경</label><input id="o2cCenterBg" type="color" value="#3a3f47" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>카운트 배경</label><input id="o2cCountBg" type="color" value="#22262c" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>브랜딩 배경</label><input id="o2cBrandBg" type="color" value="#c8192b" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>팀명 색</label><input id="o2cName" type="color" value="#ffffff" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>원정 점수색</label><input id="o2cAwayScore" type="color" value="#31d6d6" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>홈 점수색</label><input id="o2cHomeScore" type="color" value="#ffd83d" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>이닝 색</label><input id="o2cInn" type="color" value="#ffffff" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+</div>
+<button style="width:100%;padding:12px;font-size:15px;background:#f0f0f0;border:none;border-radius:12px;margin-top:10px;font-weight:700" onclick="resetOv2()">방송형 설정 기본값 초기화</button>
 </div>`}
 </script>
 <script>
@@ -615,6 +664,7 @@ function initApp(){
   initLock();
   initBatterInfo();
   initOverlayCfg();
+  initOv2Cfg();
   if(isAdmin)initStats();
   else{statsRef.on('value',s=>{statsData=s.val()||{};renderUserStats()});statsAccessRef.on('value',s=>{statsAccess=!!s.val();const b=document.getElementById('tabStatsBtn');if(b)b.style.display=statsAccess?'flex':'none'})}
   configRef.child('activeGameKey').on('value',s=>{activeGameKey=s.val()||'';loadGames()});
@@ -1064,6 +1114,55 @@ function updBcTitleBtn(){
   b.textContent='경기명 바: '+(on?'표시':'숨김');
   b.className='skin-btn'+(on?' active':'');
   b.style.width='100%';b.style.marginTop='4px';
+}
+// ===== 방송형 오버레이(신규) 설정 =====
+const OV2_DEFAULTS={
+  barH:76, fit:'width', bottomGap:0,
+  titleFont:26, nameFont:32, scoreFont:44, innFont:26, bsFont:32, brandFont:22, brand2Font:16,
+  logoSize:52, baseSize:58, gap:20, skew:26,
+  cTitleBg:'#1657c8', cCenterBg:'#3a3f47', cCountBg:'#22262c', cBrandBg:'#c8192b',
+  cName:'#ffffff', cAwayScore:'#31d6d6', cHomeScore:'#ffd83d', cInn:'#ffffff',
+  brand1:'2026 신월중 야구부', brand2:'신월중학교'
+};
+let ov2Cfg={...OV2_DEFAULTS};
+const OV2_NUM=['barH','bottomGap','titleFont','nameFont','scoreFont','innFont','bsFont','brandFont','brand2Font','logoSize','baseSize','gap','skew'];
+const OV2_COLOR=['cTitleBg','cCenterBg','cCountBg','cBrandBg','cName','cAwayScore','cHomeScore','cInn'];
+let _ov2Timer=null;
+function setOv2Fit(m){window._o2fit=m;updOv2FitBtns();autoSaveOv2()}
+function updOv2FitBtns(){
+  const cur=window._o2fit||'width';
+  ['width','contain'].forEach(m=>{const b=document.getElementById('o2fit-'+m);if(b)b.className='skin-btn'+(m===cur?' active':'')});
+}
+function gatherOv2(){
+  const $=id=>document.getElementById(id);
+  const c={fit:window._o2fit||'width'};
+  OV2_NUM.forEach(k=>{if($('o2'+k))c[k]=parseInt($('o2'+k).value,10)});
+  OV2_COLOR.forEach(k=>{if($('o2'+k))c[k]=$('o2'+k).value});
+  if($('o2brand1'))c.brand1=$('o2brand1').value.slice(0,30);
+  if($('o2brand2'))c.brand2=$('o2brand2').value.slice(0,30);
+  return c;
+}
+function autoSaveOv2(){
+  if(_ov2Timer)clearTimeout(_ov2Timer);
+  _ov2Timer=setTimeout(()=>{configRef.child('overlay2').set(gatherOv2())},300);
+}
+function fillOv2Inputs(){
+  const $=id=>document.getElementById(id);
+  window._o2fit=ov2Cfg.fit==='contain'?'contain':'width';updOv2FitBtns();
+  OV2_NUM.forEach(k=>{const el=$('o2'+k);if(el){el.value=ov2Cfg[k];const v=$('o2'+k+'V');if(v)v.textContent=ov2Cfg[k]+'px'}});
+  OV2_COLOR.forEach(k=>{const el=$('o2'+k);if(el)el.value=ov2Cfg[k]});
+  if($('o2brand1'))$('o2brand1').value=ov2Cfg.brand1||'';
+  if($('o2brand2'))$('o2brand2').value=ov2Cfg.brand2||'';
+}
+function resetOv2(){
+  if(!confirm('방송형 오버레이 설정을 기본값으로 되돌릴까요?'))return;
+  configRef.child('overlay2').set({...OV2_DEFAULTS});
+}
+function initOv2Cfg(){
+  configRef.child('overlay2').on('value',s=>{
+    const d=s.val();ov2Cfg=d?{...OV2_DEFAULTS,...d}:{...OV2_DEFAULTS};
+    fillOv2Inputs();
+  });
 }
 function initOverlayCfg(){
   configRef.child('overlay').on('value',s=>{
