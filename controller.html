@@ -412,6 +412,7 @@ document.getElementById('tabSetup').innerHTML=`
 <button class="skin-btn" id="o2fit-width" onclick="setOv2Fit('width')">폭 기준</button>
 <button class="skin-btn" id="o2fit-contain" onclick="setOv2Fit('contain')">전체 보이기</button>
 </div>
+<div class="form-row"><label>반투명</label><input id="o2opacity" type="range" min="30" max="100" value="92" oninput="prevOvVal('o2opacityV',this.value+'%');autoSaveOv2()"><span id="o2opacityV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">92%</span></div>
 <div class="form-row"><label>브랜딩 1줄</label><input id="o2brand1" maxlength="30" placeholder="예: 2026 신월중 야구부" oninput="autoSaveOv2()"></div>
 <div class="form-row"><label>브랜딩 2줄</label><input id="o2brand2" maxlength="30" placeholder="예: 신월중학교" oninput="autoSaveOv2()"></div>
 </div>
@@ -439,9 +440,8 @@ document.getElementById('tabSetup').innerHTML=`
 
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 색상</div>
 <div class="ov-acc-body" style="display:none">
-<div class="form-row"><label>경기명 배경</label><input id="o2cTitleBg" type="color" value="#1657c8" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
-<div class="form-row"><label>중앙 배경</label><input id="o2cCenterBg" type="color" value="#3a3f47" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
-<div class="form-row"><label>카운트 배경</label><input id="o2cCountBg" type="color" value="#22262c" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>경기명 배경</label><input id="o2cTitleBg" type="color" value="#1454c4" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>중앙 배경</label><input id="o2cCenterBg" type="color" value="#1c1e24" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
 <div class="form-row"><label>브랜딩 배경</label><input id="o2cBrandBg" type="color" value="#c8192b" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
 <div class="form-row"><label>팀명 색</label><input id="o2cName" type="color" value="#ffffff" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
 <div class="form-row"><label>원정 점수색</label><input id="o2cAwayScore" type="color" value="#31d6d6" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
@@ -1117,16 +1117,16 @@ function updBcTitleBtn(){
 }
 // ===== 방송형 오버레이(신규) 설정 =====
 const OV2_DEFAULTS={
-  barH:76, fit:'width', bottomGap:0,
-  titleFont:26, nameFont:32, scoreFont:44, innFont:26, bsFont:32, brandFont:22, brand2Font:16,
-  logoSize:52, baseSize:58, gap:20, skew:26,
-  cTitleBg:'#1657c8', cCenterBg:'#3a3f47', cCountBg:'#22262c', cBrandBg:'#c8192b',
-  cName:'#ffffff', cAwayScore:'#31d6d6', cHomeScore:'#ffd83d', cInn:'#ffffff',
+  barH:72, fit:'width', bottomGap:0, opacity:92,
+  titleFont:28, nameFont:30, scoreFont:40, innFont:26, bsFont:30, brandFont:22, brand2Font:15,
+  logoSize:46, baseSize:52, gap:18, skew:28,
+  cTitleBg:'#1454c4', cCenterBg:'#1c1e24', cBrandBg:'#c8192b',
+  cName:'#ffffff', cAwayScore:'#2fe0e0', cHomeScore:'#ffd83d', cInn:'#ffffff',
   brand1:'2026 신월중 야구부', brand2:'신월중학교'
 };
 let ov2Cfg={...OV2_DEFAULTS};
-const OV2_NUM=['barH','bottomGap','titleFont','nameFont','scoreFont','innFont','bsFont','brandFont','brand2Font','logoSize','baseSize','gap','skew'];
-const OV2_COLOR=['cTitleBg','cCenterBg','cCountBg','cBrandBg','cName','cAwayScore','cHomeScore','cInn'];
+const OV2_NUM=['barH','bottomGap','opacity','titleFont','nameFont','scoreFont','innFont','bsFont','brandFont','brand2Font','logoSize','baseSize','gap','skew'];
+const OV2_COLOR=['cTitleBg','cCenterBg','cBrandBg','cName','cAwayScore','cHomeScore','cInn'];
 let _ov2Timer=null;
 function setOv2Fit(m){window._o2fit=m;updOv2FitBtns();autoSaveOv2()}
 function updOv2FitBtns(){
@@ -1149,7 +1149,7 @@ function autoSaveOv2(){
 function fillOv2Inputs(){
   const $=id=>document.getElementById(id);
   window._o2fit=ov2Cfg.fit==='contain'?'contain':'width';updOv2FitBtns();
-  OV2_NUM.forEach(k=>{const el=$('o2'+k);if(el){el.value=ov2Cfg[k];const v=$('o2'+k+'V');if(v)v.textContent=ov2Cfg[k]+'px'}});
+  OV2_NUM.forEach(k=>{const el=$('o2'+k);if(el){el.value=ov2Cfg[k];const v=$('o2'+k+'V');if(v)v.textContent=ov2Cfg[k]+(k==='opacity'?'%':'px')}});
   OV2_COLOR.forEach(k=>{const el=$('o2'+k);if(el)el.value=ov2Cfg[k]});
   if($('o2brand1'))$('o2brand1').value=ov2Cfg.brand1||'';
   if($('o2brand2'))$('o2brand2').value=ov2Cfg.brand2||'';
