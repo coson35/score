@@ -432,8 +432,8 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="ov-acc-body" style="display:none">
 <div class="form-row"><label>바 높이</label><input id="o2barH" type="range" min="40" max="200" value="76" oninput="prevOvVal('o2barHV',this.value+'px');autoSaveOv2()"><span id="o2barHV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">76px</span></div>
 <div class="form-row"><label>하단 여백</label><input id="o2bottomGap" type="range" min="0" max="400" value="0" oninput="prevOvVal('o2bottomGapV',this.value+'px');autoSaveOv2()"><span id="o2bottomGapV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
-<div class="form-row"><label>로고 크기</label><input id="o2logoSize" type="range" min="16" max="140" value="52" oninput="prevOvVal('o2logoSizeV',this.value+'px');autoSaveOv2()"><span id="o2logoSizeV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">52px</span></div>
-<div class="form-row"><label>베이스 크기</label><input id="o2baseSize" type="range" min="20" max="140" value="58" oninput="prevOvVal('o2baseSizeV',this.value+'px');autoSaveOv2()"><span id="o2baseSizeV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">58px</span></div>
+<div class="form-row"><label>로고 크기</label><input id="o2logoSize" type="range" min="16" max="140" value="46" oninput="prevOvVal('o2logoSizeV',this.value+'px');autoSaveOv2()"><span id="o2logoSizeV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">46px</span></div>
+<div class="form-row"><label>베이스 크기</label><input id="o2baseSize" type="range" min="20" max="140" value="46" oninput="prevOvVal('o2baseSizeV',this.value+'px');autoSaveOv2()"><span id="o2baseSizeV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">46px</span></div>
 <div class="form-row"><label>요소 간격</label><input id="o2gap" type="range" min="0" max="80" value="20" oninput="prevOvVal('o2gapV',this.value+'px');autoSaveOv2()"><span id="o2gapV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">20px</span></div>
 <div class="form-row"><label>사선 기울기</label><input id="o2skew" type="range" min="0" max="80" value="26" oninput="prevOvVal('o2skewV',this.value+'px');autoSaveOv2()"><span id="o2skewV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">26px</span></div>
 </div>
@@ -1119,7 +1119,7 @@ function updBcTitleBtn(){
 const OV2_DEFAULTS={
   barH:86, fit:'width', bottomGap:0, opacity:93,
   titleFont:33, nameFont:38, scoreFont:46, innFont:31, bsFont:34, brandFont:27, brand2Font:17,
-  logoSize:58, baseSize:54, gap:22, skew:34,
+  logoSize:46, baseSize:46, gap:22, skew:34,
   cTitleBg:'#1f5fd0', cCenterBg:'#20232a', cBrandBg:'#cf1a2b',
   cName:'#ffffff', cAwayScore:'#2fe0e0', cHomeScore:'#ffd83d', cInn:'#ffffff',
   brand1:'2026 신월중 야구부', brand2:'신월중학교'
