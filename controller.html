@@ -469,8 +469,8 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="card" id="fxCard"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="3" y="7" width="18" height="10" rx="3" fill="none" stroke="#2c6fbb" stroke-width="2"/><circle cx="8" cy="12" r="1.6" fill="#2c6fbb"/><circle cx="16" cy="12" r="1.6" fill="#2c6fbb"/></svg>새 방송 스킨 세부설정</div>
 <div style="font-size:12px;color:#888;margin-bottom:10px">위 "스코어보드 디자인"에서 <b>미니 스코어버그 / 글래스 바 / 세로 사이드 / LED 전광판</b> 중 하나를 선택하면 이 설정이 적용됩니다. 네 디자인이 공용 설정을 공유해요.</div>
 
-<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 위치 / 크기</div>
-<div class="ov-acc-body" style="display:none">
+<div class="ov-acc open" onclick="togAcc(this)"><span class="arrow">▶</span> 위치 / 크기</div>
+<div class="ov-acc-body">
 <div style="font-size:11px;color:#888;margin-bottom:6px">위치 기준</div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
 <button class="skin-btn" id="o3anc-tl" onclick="setFxAnchor('tl')">좌상</button>
@@ -1162,7 +1162,16 @@ const FX_SKINS=['scorebug','glass','sidepanel','led'];
 const SKIN_LIST=['classic','rounded','minimal','gradient','tvbar',...FX_SKINS];
 const CORNER_SKINS=['rounded','minimal','gradient'];
 function skinFamily(s){if(s==='tvbar')return 'tvbar';if(FX_SKINS.includes(s))return 'fx';if(CORNER_SKINS.includes(s))return 'corner';return 'classic'}
-function setSkin(name){window._ovSkin=name;updSkinBtns();configRef.child('overlay').child('skin').set(name)}
+function setSkin(name){
+  window._ovSkin=name;updSkinBtns();configRef.child('overlay').child('skin').set(name);
+  // 선택한 디자인의 세부설정 카드로 스크롤 (사용자가 바로 찾도록)
+  setTimeout(()=>{
+    let card=null;
+    if(FX_SKINS.includes(name))card=document.getElementById('fxCard');
+    else if(name==='tvbar')card=document.getElementById('tvbarCard');
+    if(card&&card.style.display!=='none')card.scrollIntoView({behavior:'smooth',block:'start'});
+  },80);
+}
 function setSkinCorner(){const cur=window._ovSkin;setSkin(CORNER_SKINS.includes(cur)?cur:'rounded')}
 function updSkinBtns(){
   const cur=window._ovSkin||'classic';
