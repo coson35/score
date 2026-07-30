@@ -296,6 +296,104 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
     </div>
   </div>
 </div>
+
+<!-- ===== 신규 방송 스킨(공용 DOM + 스킨별 CSS) : scorebug / glass / sidepanel / led ===== -->
+<style>
+#fxStage{position:fixed;top:0;left:0;width:1920px;height:1080px;transform-origin:top left;background:transparent;display:none;z-index:6}
+#fxBoard{
+  --fx-op:1;--fx-team-f:30px;--fx-score-f:46px;--fx-count-f:30px;--fx-inn-f:32px;
+  --fx-away:#00e5e5;--fx-home:#ffd83d;--fx-accent:#e8452f;--fx-text:#ffffff;--fx-bg:#12141c;
+  position:absolute;opacity:0;transition:opacity .35s;color:var(--fx-text);
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;white-space:nowrap;
+}
+#fxBoard.on{opacity:var(--fx-op)}
+.fx-logo{object-fit:contain;background:transparent;border-radius:50%}
+.fx-logo:not(.on){display:none}
+.fx-diamond{position:relative;width:46px;height:46px;flex-shrink:0}
+.fx-diamond i{position:absolute;width:14px;height:14px;transform:rotate(45deg);background:transparent;border:2px solid rgba(255,255,255,.5)}
+.fx-diamond i.on{background:var(--fx-accent);border-color:var(--fx-accent)}
+.fx-b2{left:16px;top:2px}.fx-b3{left:2px;top:16px}.fx-b1{left:30px;top:16px}
+.fx-outs{display:flex;gap:6px}
+.fx-outs i{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.45);background:transparent}
+.fx-outs i.on{background:var(--fx-accent);border-color:var(--fx-accent)}
+.fx-inning{display:flex;align-items:baseline;gap:2px;font-weight:800;font-size:var(--fx-inn-f);line-height:1;font-variant-numeric:tabular-nums}
+.fx-inning span:last-child{font-size:.6em}
+.fx-count{display:flex;align-items:center;gap:10px}
+.fx-count>span{font-size:var(--fx-count-f);font-weight:800;letter-spacing:1px;line-height:1;font-variant-numeric:tabular-nums}
+.fx-name{font-size:var(--fx-team-f);font-weight:700;letter-spacing:.5px}
+.fx-score{font-size:var(--fx-score-f);font-weight:800;font-variant-numeric:tabular-nums;line-height:1;text-align:center}
+
+/* ---------- 1) scorebug : 코너 알약형 ---------- */
+#fxBoard.scorebug{display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(30,34,46,.97),rgba(15,17,25,.97));border:1px solid rgba(255,255,255,.10);border-radius:16px;overflow:hidden;box-shadow:0 8px 26px rgba(0,0,0,.5)}
+.scorebug .fx-title,.scorebug .fx-brand{display:none}
+.scorebug .fx-away,.scorebug .fx-home{display:flex;align-items:center;gap:12px;padding:12px 20px}
+.scorebug .fx-away{border-left:6px solid var(--fx-away)}
+.scorebug .fx-home{border-left:6px solid var(--fx-home)}
+.scorebug .fx-away .fx-score{color:var(--fx-away)}
+.scorebug .fx-home .fx-score{color:var(--fx-home)}
+.scorebug .fx-logo.on{width:34px;height:34px}
+.scorebug .fx-mid{display:flex;align-items:center;gap:16px;padding:0 22px;background:rgba(255,255,255,.055)}
+
+/* ---------- 2) glass : 글래스모피즘 하단바 ---------- */
+#fxBoard.glass{width:1920px;height:104px;display:flex;align-items:center;justify-content:center;gap:46px;background:rgba(18,20,28,.40);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);border-top:3px solid var(--fx-accent);box-shadow:0 -6px 24px rgba(0,0,0,.35)}
+.glass .fx-title{position:absolute;left:46px;top:50%;transform:translateY(-50%);font-size:calc(var(--fx-team-f) * .8);font-weight:600;opacity:.85;max-width:360px;overflow:hidden;text-overflow:ellipsis}
+.glass .fx-away,.glass .fx-home{display:flex;align-items:center;gap:14px}
+.glass .fx-away .fx-score{color:var(--fx-away)}
+.glass .fx-home .fx-score{color:var(--fx-home)}
+.glass .fx-logo.on{width:52px;height:52px}
+.glass .fx-mid{display:flex;align-items:center;gap:20px;padding:0 10px}
+.glass .fx-brand{position:absolute;right:46px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;text-align:right;font-weight:700;opacity:.9}
+.glass .fx-brand span:last-child{font-size:calc(var(--fx-team-f) * .55);opacity:.8;font-weight:500}
+.glass .fx-brand span:first-child{font-size:calc(var(--fx-team-f) * .8)}
+
+/* ---------- 3) sidepanel : 세로 사이드 패널 ---------- */
+#fxBoard.sidepanel{width:250px;display:flex;flex-direction:column;background:linear-gradient(160deg,rgba(28,32,46,.97),rgba(13,15,23,.97));border:1px solid rgba(255,255,255,.10);border-radius:14px;overflow:hidden;box-shadow:0 8px 26px rgba(0,0,0,.5)}
+.sidepanel .fx-title{order:0;padding:10px 16px;font-size:calc(var(--fx-team-f) * .72);font-weight:700;text-align:center;background:rgba(0,0,0,.28);overflow:hidden;text-overflow:ellipsis}
+.sidepanel .fx-away{order:1;border-left:6px solid var(--fx-away)}
+.sidepanel .fx-home{order:2;border-left:6px solid var(--fx-home)}
+.sidepanel .fx-away,.sidepanel .fx-home{display:flex;align-items:center;gap:10px;padding:14px 16px}
+.sidepanel .fx-name{flex:1;overflow:hidden;text-overflow:ellipsis}
+.sidepanel .fx-away .fx-score{color:var(--fx-away)}
+.sidepanel .fx-home .fx-score{color:var(--fx-home)}
+.sidepanel .fx-logo.on{width:32px;height:32px}
+.sidepanel .fx-mid{order:3;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(255,255,255,.05);gap:12px}
+.sidepanel .fx-brand{order:4;padding:9px 16px;text-align:center;font-size:calc(var(--fx-team-f) * .55);font-weight:600;opacity:.8;background:rgba(0,0,0,.28)}
+.sidepanel .fx-brand span:last-child{display:none}
+
+/* ---------- 4) led : 전광판형 ---------- */
+#fxBoard.led{display:flex;align-items:center;gap:28px;padding:16px 26px;background:#05070a;border:3px solid #1b2028;border-radius:8px;box-shadow:inset 0 0 34px rgba(0,0,0,.85),0 8px 22px rgba(0,0,0,.55);font-family:'Consolas','Courier New',monospace}
+.led .fx-title,.led .fx-brand{display:none}
+.led .fx-away,.led .fx-home{display:flex;align-items:center;gap:14px}
+.led .fx-name{font-family:'Consolas','Courier New',monospace;font-weight:700;color:#cfe8ff;text-shadow:0 0 6px rgba(120,200,255,.5)}
+.led .fx-score{font-family:'Consolas','Courier New',monospace}
+.led .fx-away .fx-score{color:#39e05a;text-shadow:0 0 10px rgba(57,224,90,.85)}
+.led .fx-home .fx-score{color:#ffcf3a;text-shadow:0 0 10px rgba(255,207,58,.85)}
+.led .fx-logo.on{width:34px;height:34px;filter:drop-shadow(0 0 4px rgba(255,255,255,.4))}
+.led .fx-mid{display:flex;align-items:center;gap:18px;padding-left:14px;border-left:2px solid #1b2028}
+.led .fx-inning{color:#ff5a3a;text-shadow:0 0 8px rgba(255,90,58,.7)}
+.led .fx-count>span{color:#ffcf3a;text-shadow:0 0 8px rgba(255,207,58,.7)}
+</style>
+<div id="fxStage">
+  <div id="fxBoard" class="fx">
+    <div class="fx-title" id="fxTitle"></div>
+    <div class="fx-away">
+      <img class="fx-logo" id="fxAwayLogo" src="" alt="">
+      <span class="fx-name" id="fxAwayName">AWAY</span>
+      <span class="fx-score" id="fxAwayScore">0</span>
+    </div>
+    <div class="fx-mid">
+      <div class="fx-inning"><span id="fxInum">1</span><span id="fxHalf">▲</span></div>
+      <div class="fx-diamond"><i class="fx-b2" id="fxB2"></i><i class="fx-b1" id="fxB1"></i><i class="fx-b3" id="fxB3"></i></div>
+      <div class="fx-count"><span id="fxBs">0-0</span><div class="fx-outs"><i id="fxO1"></i><i id="fxO2"></i></div></div>
+    </div>
+    <div class="fx-home">
+      <span class="fx-score" id="fxHomeScore">0</span>
+      <span class="fx-name" id="fxHomeName">HOME</span>
+      <img class="fx-logo" id="fxHomeLogo" src="" alt="">
+    </div>
+    <div class="fx-brand" id="fxBrandBlk"><span id="fxBrand1">2026 신월중 야구부</span><span id="fxBrand2">신월중학교</span></div>
+  </div>
+</div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
@@ -377,14 +475,19 @@ function styleBroadcast(skin,c){
 function updateBoardVisibility(vis){
   window._lastVisible=vis;
   const skin=window._skin||'classic';
-  const cl=document.getElementById('scoreboard'),bc=document.getElementById('scoreboard-bc'),tv=document.getElementById('tvStage'),tvb=document.getElementById('tvbar');
+  const cl=document.getElementById('scoreboard'),bc=document.getElementById('scoreboard-bc'),tv=document.getElementById('tvStage'),tvb=document.getElementById('tvbar'),fx=document.getElementById('fxStage'),fb=document.getElementById('fxBoard');
+  const FXS=['scorebug','glass','sidepanel','led'];
   // 우선 모두 숨김
   if(cl){cl.style.display='none';cl.classList.remove('visible')}
   if(bc){bc.style.display='none';bc.classList.remove('visible')}
   if(tv){tv.style.display='none'}
+  if(fx){fx.style.display='none'}
   if(skin==='tvbar'){
     if(tv){tv.style.display='block';applyTvScale()}
     if(tvb){tvb.classList.toggle('on',!!vis)}
+  }else if(FXS.includes(skin)){
+    if(fx){fx.style.display='block';applyFxScale()}
+    if(fb){fb.className='fx '+skin;fb.classList.toggle('on',!!vis)}
   }else if(skin==='classic'){
     if(cl){cl.style.display='flex';cl.classList.toggle('visible',!!vis)}
   }else{
@@ -461,6 +564,56 @@ db.ref('config/overlay2').on('value',s=>{
   $('tvBrand2').style.display=b2?'block':'none';
   $('tvBrandBlk').style.display=(b1||b2)?'flex':'none';
   if((window._skin||'classic')==='tvbar')applyTvScale();
+});
+
+// ===== 신규 방송 스킨 공용 설정 (config/overlay3) =====
+const FX_SKINS=['scorebug','glass','sidepanel','led'];
+const FX_D={fit:'width',anchor:'bc',posX:40,posY:40,scale:100,opacity:96,teamFont:30,scoreFont:46,countFont:30,innFont:32,cAway:'#00e5e5',cHome:'#ffd83d',cAccent:'#e8452f',cText:'#ffffff',cBg:'#12141c',brand1:'2026 신월중 야구부',brand2:'신월중학교'};
+let fxFit='width';
+function applyFxScale(){
+  const vw=window.innerWidth||document.documentElement.clientWidth;
+  const vh=window.innerHeight||document.documentElement.clientHeight;
+  const st=document.getElementById('fxStage');if(!st||!vw||!vh)return;
+  let s=(fxFit==='contain')?Math.min(vw/1920,vh/1080):vw/1920;
+  s=Math.max(0.05,Math.min(4,s));
+  let tx=0,ty=0;
+  if(fxFit==='contain'){tx=(vw-1920*s)/2;ty=(vh-1080*s)/2}else{tx=0;ty=vh-1080*s}
+  st.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')';
+}
+window.addEventListener('resize',applyFxScale);
+window.addEventListener('orientationchange',()=>setTimeout(applyFxScale,120));
+db.ref('config/overlay3').on('value',s=>{
+  const c=s.val()||{};
+  const fb=document.getElementById('fxBoard');if(!fb)return;
+  const cl=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  const g=k=>{const v=c[k];return(v===undefined||v===null||v==='')?FX_D[k]:v};
+  const gn=k=>{const n=parseInt(c[k],10);return isNaN(n)?FX_D[k]:n};
+  fxFit=(g('fit')==='contain')?'contain':'width';
+  fb.style.setProperty('--fx-op',cl(gn('opacity'),0,100)/100);
+  fb.style.setProperty('--fx-team-f',cl(gn('teamFont'),10,80)+'px');
+  fb.style.setProperty('--fx-score-f',cl(gn('scoreFont'),14,120)+'px');
+  fb.style.setProperty('--fx-count-f',cl(gn('countFont'),10,80)+'px');
+  fb.style.setProperty('--fx-inn-f',cl(gn('innFont'),10,80)+'px');
+  fb.style.setProperty('--fx-away',g('cAway'));
+  fb.style.setProperty('--fx-home',g('cHome'));
+  fb.style.setProperty('--fx-accent',g('cAccent'));
+  fb.style.setProperty('--fx-text',g('cText'));
+  fb.style.setProperty('--fx-bg',g('cBg'));
+  const anchor=g('anchor'),px=cl(gn('posX'),0,1700),py=cl(gn('posY'),0,960),sc=cl(gn('scale'),40,260)/100;
+  fb.style.top=fb.style.bottom=fb.style.left=fb.style.right='auto';
+  let base='',ox='left',oy='top';
+  if(anchor==='tl'){fb.style.top=py+'px';fb.style.left=px+'px';ox='left';oy='top'}
+  else if(anchor==='tr'){fb.style.top=py+'px';fb.style.right=px+'px';ox='right';oy='top'}
+  else if(anchor==='bl'){fb.style.bottom=py+'px';fb.style.left=px+'px';ox='left';oy='bottom'}
+  else if(anchor==='br'){fb.style.bottom=py+'px';fb.style.right=px+'px';ox='right';oy='bottom'}
+  else{fb.style.bottom=py+'px';fb.style.left='50%';base='translateX(-50%) ';ox='center';oy='bottom'}
+  fb.style.transformOrigin=ox+' '+oy;
+  fb.style.transform=base+'scale('+sc+')';
+  const b1=String(g('brand1')||'').trim(),b2=String(g('brand2')||'').trim();
+  document.getElementById('fxBrand1').textContent=b1;
+  document.getElementById('fxBrand2').textContent=b2;
+  document.getElementById('fxBrandBlk').style.display=(b1||b2)?'':'none';
+  if(FX_SKINS.includes(window._skin||''))applyFxScale();
 });
 
 // 오버레이 설정 적용
@@ -628,6 +781,27 @@ gameRef.on('value',snap=>{
     document.getElementById('tvBs').textContent=clampv(numv(d.balls,0),0,3)+'-'+clampv(numv(d.strikes,0),0,2);
     document.getElementById('tvO1').classList.toggle('on',clampv(numv(d.outs,0),0,2)>=1);
     document.getElementById('tvO2').classList.toggle('on',clampv(numv(d.outs,0),0,2)>=2);
+  }
+
+  // 신규 방송 스킨(공용 DOM) 데이터 반영
+  if(document.getElementById('fxBoard')){
+    document.getElementById('fxTitle').textContent=d.gameTitle||'';
+    document.getElementById('fxAwayName').textContent=d.awayName||'AWAY';
+    document.getElementById('fxHomeName').textContent=d.homeName||'HOME';
+    document.getElementById('fxAwayScore').textContent=clampv(numv(d.awayScore,0),0,99);
+    document.getElementById('fxHomeScore').textContent=clampv(numv(d.homeScore,0),0,99);
+    const faL=document.getElementById('fxAwayLogo'),fhL=document.getElementById('fxHomeLogo');
+    if(d.awayLogo){faL.src=d.awayLogo;faL.classList.add('on')}else{faL.classList.remove('on')}
+    if(d.homeLogo){fhL.src=d.homeLogo;fhL.classList.add('on')}else{fhL.classList.remove('on')}
+    faL.onerror=()=>faL.classList.remove('on');fhL.onerror=()=>fhL.classList.remove('on');
+    document.getElementById('fxInum').textContent=clampv(numv(d.inning,1),1,99);
+    document.getElementById('fxHalf').textContent=(d.inningHalf==='bottom'?'▼':'▲');
+    document.getElementById('fxB1').classList.toggle('on',!!d.base1);
+    document.getElementById('fxB2').classList.toggle('on',!!d.base2);
+    document.getElementById('fxB3').classList.toggle('on',!!d.base3);
+    document.getElementById('fxBs').textContent=clampv(numv(d.balls,0),0,3)+'-'+clampv(numv(d.strikes,0),0,2);
+    document.getElementById('fxO1').classList.toggle('on',clampv(numv(d.outs,0),0,2)>=1);
+    document.getElementById('fxO2').classList.toggle('on',clampv(numv(d.outs,0),0,2)>=2);
   }
 });
 

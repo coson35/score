@@ -292,6 +292,10 @@ document.getElementById('tabSetup').innerHTML=`
 <button class="skin-btn" id="skin-classic" onclick="setSkin('classic')">클래식</button>
 <button class="skin-btn" id="skin-corner" onclick="setSkinCorner()">코너 박스</button>
 <button class="skin-btn" id="skin-tvbar" onclick="setSkin('tvbar')" style="grid-column:1/3">방송형 하단바 (신규·추천)</button>
+<button class="skin-btn" id="skin-scorebug" onclick="setSkin('scorebug')">미니 스코어버그</button>
+<button class="skin-btn" id="skin-glass" onclick="setSkin('glass')">글래스 바</button>
+<button class="skin-btn" id="skin-sidepanel" onclick="setSkin('sidepanel')">세로 사이드</button>
+<button class="skin-btn" id="skin-led" onclick="setSkin('led')">LED 전광판</button>
 </div>
 <div style="font-size:11px;color:#888;margin-top:8px">선택한 디자인의 세부설정만 아래에 표시됩니다. 라인업·로고·수비 포지션은 디자인과 무관하게 항상 조절할 수 있습니다.</div>
 </div>
@@ -460,6 +464,52 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>이닝 색</label><input id="o2cInn" type="color" value="#ffffff" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
 </div>
 <button style="width:100%;padding:12px;font-size:15px;background:#f0f0f0;border:none;border-radius:12px;margin-top:10px;font-weight:700" onclick="resetOv2()">방송형 설정 기본값 초기화</button>
+</div>
+
+<div class="card" id="fxCard"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="3" y="7" width="18" height="10" rx="3" fill="none" stroke="#2c6fbb" stroke-width="2"/><circle cx="8" cy="12" r="1.6" fill="#2c6fbb"/><circle cx="16" cy="12" r="1.6" fill="#2c6fbb"/></svg>새 방송 스킨 세부설정</div>
+<div style="font-size:12px;color:#888;margin-bottom:10px">위 "스코어보드 디자인"에서 <b>미니 스코어버그 / 글래스 바 / 세로 사이드 / LED 전광판</b> 중 하나를 선택하면 이 설정이 적용됩니다. 네 디자인이 공용 설정을 공유해요.</div>
+
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 위치 / 크기</div>
+<div class="ov-acc-body" style="display:none">
+<div style="font-size:11px;color:#888;margin-bottom:6px">위치 기준</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
+<button class="skin-btn" id="o3anc-tl" onclick="setFxAnchor('tl')">좌상</button>
+<button class="skin-btn" id="o3anc-bc" onclick="setFxAnchor('bc')">하단중앙</button>
+<button class="skin-btn" id="o3anc-tr" onclick="setFxAnchor('tr')">우상</button>
+<button class="skin-btn" id="o3anc-bl" onclick="setFxAnchor('bl')">좌하</button>
+<button class="skin-btn" id="o3anc-br" onclick="setFxAnchor('br')" style="grid-column:3/4">우하</button>
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:8px">글래스 바·LED는 하단중앙, 세로 사이드는 좌상/우상을 추천합니다</div>
+<div style="font-size:11px;color:#888;margin-bottom:6px">화면 맞춤 방식</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+<button class="skin-btn" id="o3fit-width" onclick="setFxFit('width')">폭 기준</button>
+<button class="skin-btn" id="o3fit-contain" onclick="setFxFit('contain')">전체 보이기</button>
+</div>
+<div class="form-row"><label>전체 크기</label><input id="o3scale" type="range" min="40" max="260" value="100" oninput="prevOvVal('o3scaleV',this.value+'%');autoSaveOv3()"><span id="o3scaleV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">100%</span></div>
+<div class="form-row"><label>가로 위치</label><input id="o3posX" type="range" min="0" max="1700" value="40" oninput="prevOvVal('o3posXV',this.value+'px');autoSaveOv3()"><span id="o3posXV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">40px</span></div>
+<div class="form-row"><label>상하 위치</label><input id="o3posY" type="range" min="0" max="960" value="40" oninput="prevOvVal('o3posYV',this.value+'px');autoSaveOv3()"><span id="o3posYV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">40px</span></div>
+<div class="form-row"><label>반투명</label><input id="o3opacity" type="range" min="30" max="100" value="96" oninput="prevOvVal('o3opacityV',this.value+'%');autoSaveOv3()"><span id="o3opacityV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">96%</span></div>
+</div>
+
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 글자 크기</div>
+<div class="ov-acc-body" style="display:none">
+<div class="form-row"><label>팀명</label><input id="o3teamFont" type="range" min="10" max="80" value="30" oninput="prevOvVal('o3teamFontV',this.value+'px');autoSaveOv3()"><span id="o3teamFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">30px</span></div>
+<div class="form-row"><label>점수</label><input id="o3scoreFont" type="range" min="14" max="120" value="46" oninput="prevOvVal('o3scoreFontV',this.value+'px');autoSaveOv3()"><span id="o3scoreFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">46px</span></div>
+<div class="form-row"><label>이닝</label><input id="o3innFont" type="range" min="10" max="80" value="32" oninput="prevOvVal('o3innFontV',this.value+'px');autoSaveOv3()"><span id="o3innFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">32px</span></div>
+<div class="form-row"><label>카운트</label><input id="o3countFont" type="range" min="10" max="80" value="30" oninput="prevOvVal('o3countFontV',this.value+'px');autoSaveOv3()"><span id="o3countFontV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">30px</span></div>
+</div>
+
+<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 색상 / 브랜딩</div>
+<div class="ov-acc-body" style="display:none">
+<div class="form-row"><label>원정 점수색</label><input id="o3cAway" type="color" value="#00e5e5" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv3()"></div>
+<div class="form-row"><label>홈 점수색</label><input id="o3cHome" type="color" value="#ffd83d" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv3()"></div>
+<div class="form-row"><label>강조 색</label><input id="o3cAccent" type="color" value="#e8452f" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv3()"></div>
+<div class="form-row"><label>글자 색</label><input id="o3cText" type="color" value="#ffffff" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv3()"></div>
+<div class="form-row"><label>배경 색</label><input id="o3cBg" type="color" value="#12141c" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv3()"></div>
+<div class="form-row"><label>브랜딩 1줄</label><input id="o3brand1" maxlength="30" placeholder="예: 2026 신월중 야구부" oninput="autoSaveOv3()"></div>
+<div class="form-row"><label>브랜딩 2줄</label><input id="o3brand2" maxlength="30" placeholder="예: 신월중학교" oninput="autoSaveOv3()"></div>
+</div>
+<button style="width:100%;padding:12px;font-size:15px;background:#f0f0f0;border:none;border-radius:12px;margin-top:10px;font-weight:700" onclick="resetOv3()">새 방송 스킨 기본값 초기화</button>
 </div>`}
 </script>
 <script>
@@ -676,6 +726,7 @@ function initApp(){
   initBatterInfo();
   initOverlayCfg();
   initOv2Cfg();
+  initOv3Cfg();
   if(isAdmin)initStats();
   else{statsRef.on('value',s=>{statsData=s.val()||{};renderUserStats()});statsAccessRef.on('value',s=>{statsAccess=!!s.val();const b=document.getElementById('tabStatsBtn');if(b)b.style.display=statsAccess?'flex':'none'})}
   configRef.child('activeGameKey').on('value',s=>{activeGameKey=s.val()||'';loadGames()});
@@ -1107,9 +1158,10 @@ function autoSaveOv(){
   if(_ovSaveTimer)clearTimeout(_ovSaveTimer);
   _ovSaveTimer=setTimeout(()=>{configRef.child('overlay').set(gatherOvCfg())},300);
 }
-const SKIN_LIST=['classic','rounded','minimal','gradient','tvbar'];
+const FX_SKINS=['scorebug','glass','sidepanel','led'];
+const SKIN_LIST=['classic','rounded','minimal','gradient','tvbar',...FX_SKINS];
 const CORNER_SKINS=['rounded','minimal','gradient'];
-function skinFamily(s){if(s==='tvbar')return 'tvbar';if(CORNER_SKINS.includes(s))return 'corner';return 'classic'}
+function skinFamily(s){if(s==='tvbar')return 'tvbar';if(FX_SKINS.includes(s))return 'fx';if(CORNER_SKINS.includes(s))return 'corner';return 'classic'}
 function setSkin(name){window._ovSkin=name;updSkinBtns();configRef.child('overlay').child('skin').set(name)}
 function setSkinCorner(){const cur=window._ovSkin;setSkin(CORNER_SKINS.includes(cur)?cur:'rounded')}
 function updSkinBtns(){
@@ -1129,6 +1181,7 @@ function updSkinSections(skin){
     if(body&&body.classList.contains('ov-acc-body'))body.style.display=show?(h.classList.contains('open')?'block':'none'):'none';
   });
   const tc=document.getElementById('tvbarCard');if(tc)tc.style.display=(skin==='tvbar')?'':'none';
+  const fc=document.getElementById('fxCard');if(fc)fc.style.display=(FX_SKINS.includes(skin))?'':'none';
 }
 function setBcAnchor(a){window._bcAnchor=a;updBcAnchorBtns();autoSaveOv()}
 function updBcAnchorBtns(){
@@ -1190,6 +1243,42 @@ function initOv2Cfg(){
   configRef.child('overlay2').on('value',s=>{
     const d=s.val();ov2Cfg=d?{...OV2_DEFAULTS,...d}:{...OV2_DEFAULTS};
     fillOv2Inputs();
+  });
+}
+// ===== 새 방송 스킨(공용) 설정 : config/overlay3 =====
+const OV3_DEFAULTS={fit:'width',anchor:'bc',posX:40,posY:40,scale:100,opacity:96,teamFont:30,scoreFont:46,countFont:30,innFont:32,cAway:'#00e5e5',cHome:'#ffd83d',cAccent:'#e8452f',cText:'#ffffff',cBg:'#12141c',brand1:'2026 신월중 야구부',brand2:'신월중학교'};
+let ov3Cfg={...OV3_DEFAULTS};
+const OV3_NUM=['posX','posY','scale','opacity','teamFont','scoreFont','countFont','innFont'];
+const OV3_COLOR=['cAway','cHome','cAccent','cText','cBg'];
+let _ov3Timer=null;
+function setFxFit(m){window._o3fit=m;updFxFitBtns();autoSaveOv3()}
+function updFxFitBtns(){const cur=window._o3fit||'width';['width','contain'].forEach(m=>{const b=document.getElementById('o3fit-'+m);if(b)b.className='skin-btn'+(m===cur?' active':'')})}
+function setFxAnchor(a){window._o3anchor=a;updFxAnchorBtns();autoSaveOv3()}
+function updFxAnchorBtns(){const cur=window._o3anchor||'bc';['tl','tr','bc','bl','br'].forEach(a=>{const b=document.getElementById('o3anc-'+a);if(b)b.className='skin-btn'+(a===cur?' active':'')})}
+function gatherOv3(){
+  const $=id=>document.getElementById(id);
+  const c={fit:window._o3fit||'width',anchor:window._o3anchor||'bc'};
+  OV3_NUM.forEach(k=>{if($('o3'+k))c[k]=parseInt($('o3'+k).value,10)});
+  OV3_COLOR.forEach(k=>{if($('o3'+k))c[k]=$('o3'+k).value});
+  if($('o3brand1'))c.brand1=$('o3brand1').value.slice(0,30);
+  if($('o3brand2'))c.brand2=$('o3brand2').value.slice(0,30);
+  return c;
+}
+function autoSaveOv3(){if(_ov3Timer)clearTimeout(_ov3Timer);_ov3Timer=setTimeout(()=>{configRef.child('overlay3').set(gatherOv3())},300)}
+function fillOv3Inputs(){
+  const $=id=>document.getElementById(id);
+  window._o3fit=ov3Cfg.fit==='contain'?'contain':'width';updFxFitBtns();
+  window._o3anchor=ov3Cfg.anchor||'bc';updFxAnchorBtns();
+  OV3_NUM.forEach(k=>{const el=$('o3'+k);if(el){el.value=ov3Cfg[k];const v=$('o3'+k+'V');if(v)v.textContent=ov3Cfg[k]+((k==='opacity'||k==='scale')?'%':'px')}});
+  OV3_COLOR.forEach(k=>{const el=$('o3'+k);if(el)el.value=ov3Cfg[k]});
+  if($('o3brand1'))$('o3brand1').value=ov3Cfg.brand1||'';
+  if($('o3brand2'))$('o3brand2').value=ov3Cfg.brand2||'';
+}
+function resetOv3(){if(!confirm('새 방송 스킨 설정을 기본값으로 되돌릴까요?'))return;configRef.child('overlay3').set({...OV3_DEFAULTS})}
+function initOv3Cfg(){
+  configRef.child('overlay3').on('value',s=>{
+    const d=s.val();ov3Cfg=d?{...OV3_DEFAULTS,...d}:{...OV3_DEFAULTS};
+    fillOv3Inputs();
   });
 }
 function initOverlayCfg(){
@@ -1373,7 +1462,8 @@ const themesRef=db.ref('overlayThemes');
 // 새 스킨/설정 경로가 생기면 여기에 한 줄만 추가하면 테마 저장·적용·초기화에 자동 포함됨
 const OVERLAY_SECTIONS=[
   {path:'overlay',  gather:()=>gatherOvCfg(), defaults:()=>({...OV_DEFAULTS})},
-  {path:'overlay2', gather:()=>gatherOv2(),   defaults:()=>({...OV2_DEFAULTS})}
+  {path:'overlay2', gather:()=>gatherOv2(),   defaults:()=>({...OV2_DEFAULTS})},
+  {path:'overlay3', gather:()=>gatherOv3(),   defaults:()=>({...OV3_DEFAULTS})}
 ];
 function saveTheme(){
   const name=document.getElementById('ovThemeName').value.trim();
