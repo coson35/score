@@ -405,6 +405,7 @@ document.getElementById('tabSetup').innerHTML=`
 <button style="width:100%;padding:12px;font-size:15px;background:#f0f0f0;border:none;border-radius:12px;margin-top:6px;font-weight:700" onclick="resetOverlayCfg()">전체 기본값 초기화</button>
 <div class="ov-acc" onclick="togAcc(this)" style="margin-top:10px"><span class="arrow">▶</span> 테마 저장 / 불러오기</div>
 <div class="ov-acc-body" style="display:none">
+<div style="font-size:11px;color:#888;margin-bottom:8px">모든 디자인(클래식·코너박스·방송형 하단바) 설정을 하나의 테마로 저장하고, 적용 시 선택한 디자인까지 함께 복원됩니다.</div>
 <div style="display:flex;gap:6px;margin-bottom:8px"><input id="ovThemeName" placeholder="테마 이름 (예: 블루, 레드)" style="flex:1;padding:10px;font-size:14px"><button class="btn-save" onclick="saveTheme()" style="max-width:80px">저장</button></div>
 <div id="ovThemeList" style="max-height:200px;overflow-y:auto"></div>
 </div>
@@ -1347,8 +1348,9 @@ function saveOverlayCfg(){
   configRef.child('overlay').set(gatherOvCfg());alert('오버레이 설정 저장 완료');
 }
 function resetOverlayCfg(){
-  if(!confirm('기본값으로 초기화할까요?'))return;
-  configRef.child('overlay').set(OV_DEFAULTS);alert('기본값으로 초기화 완료');
+  if(!confirm('모든 디자인 설정을 기본값으로 초기화할까요? (클래식·코너박스·방송형 하단바 전부)'))return;
+  OVERLAY_SECTIONS.forEach(s=>configRef.child(s.path).set(s.defaults()));
+  alert('모든 디자인 설정을 기본값으로 초기화했습니다');
 }
 const OV_SECTIONS={
   broadcast:['bcAnchor','bcX','bcY','bcScale','bcTeamW','bcRowPad','bcRadius','bcNameFont','bcScoreFont','bcInningFont','bcLogoSize','bcDotSize','bcBaseSize','bcTitleFont','bcTitleShow'],
@@ -1367,13 +1369,21 @@ function resetOvSection(sec){
 }
 // 테마 저장/불러오기
 const themesRef=db.ref('overlayThemes');
+// ===== 오버레이 설정 섹션 레지스트리 =====
+// 새 스킨/설정 경로가 생기면 여기에 한 줄만 추가하면 테마 저장·적용·초기화에 자동 포함됨
+const OVERLAY_SECTIONS=[
+  {path:'overlay',  gather:()=>gatherOvCfg(), defaults:()=>({...OV_DEFAULTS})},
+  {path:'overlay2', gather:()=>gatherOv2(),   defaults:()=>({...OV2_DEFAULTS})}
+];
 function saveTheme(){
   const name=document.getElementById('ovThemeName').value.trim();
   if(!name){alert('테마 이름을 입력하세요');return}
-  const cfg=gatherOvCfg();
-  themesRef.push({name,cfg,createdAt:Date.now()});
+  const sections={};
+  OVERLAY_SECTIONS.forEach(s=>{sections[s.path]=s.gather()});
+  // cfg는 하위호환(목록 색상 미리보기)용으로 overlay 섹션을 그대로 유지
+  themesRef.push({name,cfg:sections.overlay,sections,createdAt:Date.now()});
   document.getElementById('ovThemeName').value='';
-  alert('테마 "'+name+'" 저장 완료');
+  alert('테마 "'+name+'" 저장 완료 (모든 디자인 설정 포함)');
 }
 function loadThemes(){
   themesRef.on('value',s=>{
@@ -1390,8 +1400,15 @@ function loadThemes(){
 }
 function applyTheme(k){
   themesRef.child(k).once('value',s=>{
-    const t=s.val();if(!t||!t.cfg)return;
-    configRef.child('overlay').set(t.cfg);alert('테마 "'+t.name+'" 적용 완료');
+    const t=s.val();if(!t)return;
+    if(t.sections){
+      // 신규 형식: 등록된 모든 섹션 복원 (향후 추가 스킨도 자동 포함)
+      OVERLAY_SECTIONS.forEach(sec=>{if(t.sections[sec.path])configRef.child(sec.path).set(t.sections[sec.path])});
+    }else if(t.cfg){
+      // 구형 테마 하위호환: overlay 섹션만 저장돼 있던 경우
+      configRef.child('overlay').set(t.cfg);
+    }
+    alert('테마 "'+(t.name||'')+'" 적용 완료');
   });
 }
 function delTheme(k){if(confirm('이 테마를 삭제할까요?'))themesRef.child(k).remove()}
