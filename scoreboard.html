@@ -197,6 +197,60 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
   </div>
   <div class="bc-title" id="bcTitle"></div>
 </div>
+
+<!-- 방송형 하단바 (스킨: tvbar) 1920x1080 무대에서 스케일 -->
+<style>
+#tvStage{position:fixed;top:0;left:0;width:1920px;height:1080px;transform-origin:top left;background:transparent;display:none;z-index:5}
+#tvbar{position:absolute;left:0;bottom:0;width:1920px;height:72px;display:flex;align-items:stretch;color:#fff;opacity:0;transition:opacity .4s}
+#tvbar.on{opacity:1}
+.tvb-title{background:rgba(20,84,196,0.92);display:flex;align-items:center;padding:0 54px 0 40px;min-width:320px;clip-path:polygon(0 0,100% 0,calc(100% - 28px) 100%,0 100%);flex-shrink:0}
+.tvb-title-txt{font-size:28px;font-weight:800;letter-spacing:.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:480px}
+.tvb-center{background:rgba(28,30,36,0.82);flex:1;display:flex;align-items:center;padding:0 28px;min-width:0}
+.tvb-sgroup{display:flex;align-items:center;gap:18px;flex-shrink:0}
+.tvb-cgroup{margin-left:auto;display:flex;align-items:center;gap:16px;flex-shrink:0;padding-left:24px}
+.tvb-inn{border:2px solid rgba(255,255,255,.55);border-radius:6px;padding:4px 12px;font-size:26px;font-weight:900;color:#fff;min-width:60px;text-align:center;letter-spacing:1px;background:rgba(0,0,0,.25)}
+.tvb-tm{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.tvb-logo{width:46px;height:46px;border-radius:50%;object-fit:cover;background:#fff;flex-shrink:0;display:none}
+.tvb-logo.on{display:block}
+.tvb-name{font-size:30px;font-weight:800;color:#fff;white-space:nowrap;letter-spacing:.5px}
+.tvb-sc{font-size:40px;font-weight:900;min-width:52px;text-align:center;flex-shrink:0;font-variant-numeric:tabular-nums}
+.tvb-sc.away{color:#2fe0e0}
+.tvb-sc.home{color:#ffd83d}
+.tvb-bases{position:relative;width:52px;height:52px;flex-shrink:0}
+.tvb-bs{position:absolute;width:19px;height:19px;transform:rotate(45deg);background:transparent;border:2px solid #aab0ba}
+.tvb-bs.on{background:#ffd83d;border-color:#ffd83d}
+.tvb-bs-2{left:16px;top:0}.tvb-bs-3{left:0;top:16px}.tvb-bs-1{left:32px;top:16px}
+.tvb-bsbox{border:2px solid rgba(255,255,255,.5);border-radius:8px;padding:3px 16px;font-size:30px;font-weight:900;color:#fff;letter-spacing:2px;font-variant-numeric:tabular-nums}
+.tvb-outs{display:flex;gap:9px}
+.tvb-od{width:15px;height:15px;border-radius:50%;border:2px solid #7e858f;background:transparent}
+.tvb-od.on{background:#e8452f;border-color:#e8452f}
+.tvb-brand{background:rgba(200,25,43,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 38px 0 52px;min-width:300px;clip-path:polygon(28px 0,100% 0,100% 100%,0 100%);flex-shrink:0}
+.tvb-brand1{font-size:22px;font-weight:800;color:#fff;white-space:nowrap;letter-spacing:.5px}
+.tvb-brand2{font-size:15px;font-weight:600;color:rgba(255,255,255,.9);white-space:nowrap;margin-top:1px}
+</style>
+<div id="tvStage">
+  <div id="tvbar">
+    <div class="tvb-title" id="tvTitleBlk"><span class="tvb-title-txt" id="tvTitle"></span></div>
+    <div class="tvb-center">
+      <div class="tvb-sgroup" id="tvSgroup">
+        <div class="tvb-inn" id="tvInn">1▲</div>
+        <div class="tvb-tm"><img class="tvb-logo" id="tvAwayLogo" src="" alt=""><span class="tvb-name" id="tvAwayName">AWAY</span></div>
+        <span class="tvb-sc away" id="tvAwayScore">0</span>
+        <div class="tvb-bases"><div class="tvb-bs tvb-bs-2" id="tvB2"></div><div class="tvb-bs tvb-bs-3" id="tvB3"></div><div class="tvb-bs tvb-bs-1" id="tvB1"></div></div>
+        <span class="tvb-sc home" id="tvHomeScore">0</span>
+        <div class="tvb-tm"><span class="tvb-name" id="tvHomeName">HOME</span><img class="tvb-logo" id="tvHomeLogo" src="" alt=""></div>
+      </div>
+      <div class="tvb-cgroup">
+        <span class="tvb-bsbox" id="tvBs">0-0</span>
+        <div class="tvb-outs"><div class="tvb-od" id="tvO1"></div><div class="tvb-od" id="tvO2"></div></div>
+      </div>
+    </div>
+    <div class="tvb-brand" id="tvBrandBlk">
+      <div class="tvb-brand1" id="tvBrand1">2026 신월중 야구부</div>
+      <div class="tvb-brand2" id="tvBrand2">신월중학교</div>
+    </div>
+  </div>
+</div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
@@ -274,19 +328,89 @@ function styleBroadcast(skin,c){
   }
   if(title)title.style.color=adjustColor(cTeam,-45);
 }
-// 스킨에 따라 클래식/방송형 표시 전환
+// 스킨에 따라 클래식/방송형 코너/방송형 하단바 표시 전환
 function updateBoardVisibility(vis){
   window._lastVisible=vis;
   const skin=window._skin||'classic';
-  const cl=document.getElementById('scoreboard'),bc=document.getElementById('scoreboard-bc');
-  if(skin==='classic'){
-    if(bc){bc.style.display='none';bc.classList.remove('visible')}
+  const cl=document.getElementById('scoreboard'),bc=document.getElementById('scoreboard-bc'),tv=document.getElementById('tvStage'),tvb=document.getElementById('tvbar');
+  // 우선 모두 숨김
+  if(cl){cl.style.display='none';cl.classList.remove('visible')}
+  if(bc){bc.style.display='none';bc.classList.remove('visible')}
+  if(tv){tv.style.display='none'}
+  if(skin==='tvbar'){
+    if(tv){tv.style.display='block';applyTvScale()}
+    if(tvb){tvb.classList.toggle('on',!!vis)}
+  }else if(skin==='classic'){
     if(cl){cl.style.display='flex';cl.classList.toggle('visible',!!vis)}
   }else{
-    if(cl){cl.style.display='none';cl.classList.remove('visible')}
     if(bc){bc.style.display='block';bc.classList.toggle('visible',!!vis)}
   }
 }
+// tvbar 무대 스케일 (해상도 독립)
+let tvFit='width';
+function applyTvScale(){
+  const vw=window.innerWidth||document.documentElement.clientWidth;
+  const vh=window.innerHeight||document.documentElement.clientHeight;
+  const st=document.getElementById('tvStage');
+  if(!st||!vw||!vh)return;
+  let s=(tvFit==='contain')?Math.min(vw/1920,vh/1080):vw/1920;
+  s=Math.max(0.05,Math.min(4,s));
+  let tx=0,ty=0;
+  if(tvFit==='contain'){tx=(vw-1920*s)/2;ty=(vh-1080*s)/2}
+  else{tx=0;ty=vh-1080*s}
+  st.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')';
+}
+window.addEventListener('resize',applyTvScale);
+window.addEventListener('orientationchange',()=>setTimeout(applyTvScale,120));
+// tvbar hex+alpha
+function tvRgba(hex,a){hex=String(hex||'#000000').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);return 'rgba('+r+','+g+','+b+','+(a/100)+')'}
+// tvbar 전용 설정 (config/overlay2)
+const TV_D={barH:72,fit:'width',bottomGap:0,opacity:92,titleFont:28,nameFont:30,scoreFont:40,innFont:26,bsFont:30,brandFont:22,brand2Font:15,logoSize:46,baseSize:52,gap:18,skew:28,cTitleBg:'#1454c4',cCenterBg:'#1c1e24',cBrandBg:'#c8192b',cName:'#ffffff',cAwayScore:'#2fe0e0',cHomeScore:'#ffd83d',cInn:'#ffffff',brand1:'2026 신월중 야구부',brand2:'신월중학교'};
+db.ref('config/overlay2').on('value',s=>{
+  const c=s.val()||{};
+  const $=id=>document.getElementById(id);
+  const cl=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  const g=(k)=>{const v=c[k];return(v===undefined||v===null||v==='')?TV_D[k]:v};
+  const gn=(k)=>{const n=parseInt(c[k],10);return isNaN(n)?TV_D[k]:n};
+  tvFit=(g('fit')==='contain')?'contain':'width';
+  const alpha=cl(gn('opacity'),0,100);
+  const bar=$('tvbar');if(!bar)return;
+  bar.style.height=cl(gn('barH'),40,200)+'px';
+  bar.style.bottom=cl(gn('bottomGap'),0,400)+'px';
+  const skew=cl(gn('skew'),0,80);
+  $('tvTitleBlk').style.clipPath='polygon(0 0,100% 0,calc(100% - '+skew+'px) 100%,0 100%)';
+  $('tvBrandBlk').style.clipPath='polygon('+skew+'px 0,100% 0,100% 100%,0 100%)';
+  $('tvTitle').style.fontSize=cl(gn('titleFont'),10,60)+'px';
+  document.querySelectorAll('.tvb-name').forEach(el=>{el.style.fontSize=cl(gn('nameFont'),12,72)+'px';el.style.color=g('cName')});
+  document.querySelectorAll('.tvb-sc').forEach(el=>el.style.fontSize=cl(gn('scoreFont'),14,96)+'px');
+  $('tvAwayScore').style.color=g('cAwayScore');
+  $('tvHomeScore').style.color=g('cHomeScore');
+  $('tvInn').style.fontSize=cl(gn('innFont'),10,64)+'px';$('tvInn').style.color=g('cInn');
+  $('tvBs').style.fontSize=cl(gn('bsFont'),12,72)+'px';
+  $('tvBrand1').style.fontSize=cl(gn('brandFont'),8,56)+'px';
+  $('tvBrand2').style.fontSize=cl(gn('brand2Font'),8,48)+'px';
+  const ls=cl(gn('logoSize'),16,140);
+  document.querySelectorAll('.tvb-logo').forEach(el=>{el.style.width=ls+'px';el.style.height=ls+'px'});
+  const bsz=cl(gn('baseSize'),20,140),bsq=Math.round(bsz*0.37);
+  const bases=document.querySelector('.tvb-bases');
+  if(bases){bases.style.width=bsz+'px';bases.style.height=bsz+'px'}
+  document.querySelectorAll('.tvb-bs').forEach(el=>{el.style.width=bsq+'px';el.style.height=bsq+'px'});
+  const mid=(bsz-bsq)/2,far=bsz-bsq;
+  const p2=document.querySelector('.tvb-bs-2'),p3=document.querySelector('.tvb-bs-3'),p1=document.querySelector('.tvb-bs-1');
+  if(p2){p2.style.left=mid+'px';p2.style.top='0'}
+  if(p3){p3.style.left='0';p3.style.top=mid+'px'}
+  if(p1){p1.style.left=far+'px';p1.style.top=mid+'px'}
+  const sg=document.querySelector('.tvb-sgroup');if(sg)sg.style.gap=cl(gn('gap'),0,80)+'px';
+  document.querySelector('.tvb-title').style.background=tvRgba(g('cTitleBg'),alpha);
+  document.querySelector('.tvb-center').style.background=tvRgba(g('cCenterBg'),alpha-4);
+  document.querySelector('.tvb-brand').style.background=tvRgba(g('cBrandBg'),alpha);
+  const b1=String(g('brand1')||'').trim(),b2=String(g('brand2')||'').trim();
+  $('tvBrand1').textContent=b1;$('tvBrand2').textContent=b2;
+  $('tvBrand1').style.display=b1?'block':'none';
+  $('tvBrand2').style.display=b2?'block':'none';
+  $('tvBrandBlk').style.display=(b1||b2)?'flex':'none';
+  if((window._skin||'classic')==='tvbar')applyTvScale();
+});
 
 // 오버레이 설정 적용
 overlayRef.on('value',snap=>{
@@ -430,6 +554,29 @@ gameRef.on('value',snap=>{
   for(let i=1;i<=2;i++)document.getElementById('bco'+i).classList.toggle('active',i<=o);
   const bcTitle=document.getElementById('bcTitle');
   if(bcTitle){bcTitle.textContent=d.gameTitle||'';bcTitle.style.display=d.gameTitle?'block':'none'}
+
+  // 방송형 하단바(tvbar) 데이터 반영
+  const clampv=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  const numv=(v,dv)=>{const n=parseInt(v,10);return isNaN(n)?dv:n};
+  if(document.getElementById('tvbar')){
+    document.getElementById('tvTitle').textContent=d.gameTitle||'';
+    document.getElementById('tvAwayName').textContent=d.awayName||'AWAY';
+    document.getElementById('tvHomeName').textContent=d.homeName||'HOME';
+    document.getElementById('tvAwayScore').textContent=clampv(numv(d.awayScore,0),0,99);
+    document.getElementById('tvHomeScore').textContent=clampv(numv(d.homeScore,0),0,99);
+    const taL=document.getElementById('tvAwayLogo'),thL=document.getElementById('tvHomeLogo');
+    if(d.awayLogo){taL.src=d.awayLogo;taL.classList.add('on')}else{taL.classList.remove('on')}
+    if(d.homeLogo){thL.src=d.homeLogo;thL.classList.add('on')}else{thL.classList.remove('on')}
+    taL.onerror=()=>taL.classList.remove('on');
+    thL.onerror=()=>thL.classList.remove('on');
+    document.getElementById('tvInn').textContent=clampv(numv(d.inning,1),1,99)+(d.inningHalf==='bottom'?'▼':'▲');
+    document.getElementById('tvB1').classList.toggle('on',!!d.base1);
+    document.getElementById('tvB2').classList.toggle('on',!!d.base2);
+    document.getElementById('tvB3').classList.toggle('on',!!d.base3);
+    document.getElementById('tvBs').textContent=clampv(numv(d.balls,0),0,3)+'-'+clampv(numv(d.strikes,0),0,2);
+    document.getElementById('tvO1').classList.toggle('on',clampv(numv(d.outs,0),0,2)>=1);
+    document.getElementById('tvO2').classList.toggle('on',clampv(numv(d.outs,0),0,2)>=2);
+  }
 });
 
 // 라인업

@@ -287,12 +287,13 @@ document.getElementById('tabSetup').innerHTML=`
 <div style="font-size:12px;color:#888;margin-bottom:10px">스마트폰 화면에 맞게 오버레이 크기와 위치를 조절합니다</div>
 <div class="ov-acc open" onclick="togAcc(this)"><span class="arrow">▶</span> 오버레이 디자인</div>
 <div class="ov-acc-body">
-<div style="font-size:11px;color:#888;margin-bottom:8px">오버레이 디자인을 선택합니다 (오버레이 주소 변경 불필요, 실시간 반영)<br>클래식=하단 전체바 / 나머지=방송형 코너 박스(좌측 하단)</div>
+<div style="font-size:11px;color:#888;margin-bottom:8px">오버레이 디자인을 선택합니다 (기존 주소 그대로, 실시간 전환)<br>클래식=하단 전체바 / 방송형=코너 박스 / 방송형 하단바=참고 스타일 전체폭 바</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <button class="skin-btn" id="skin-classic" onclick="setSkin('classic')">클래식</button>
 <button class="skin-btn" id="skin-rounded" onclick="setSkin('rounded')">방송형</button>
 <button class="skin-btn" id="skin-minimal" onclick="setSkin('minimal')">방송형 투명</button>
 <button class="skin-btn" id="skin-gradient" onclick="setSkin('gradient')">방송형 그라데이션</button>
+<button class="skin-btn" id="skin-tvbar" onclick="setSkin('tvbar')" style="grid-column:1/3">방송형 하단바 (신규·추천)</button>
 </div>
 </div>
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 방송형 세부설정</div>
@@ -402,8 +403,7 @@ document.getElementById('tabSetup').innerHTML=`
 </div>
 </div>
 <div class="card"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="#c8192b" stroke-width="2"/><rect x="2" y="15" width="20" height="5" fill="#c8192b"/></svg>방송형 오버레이 (신규)</div>
-<div style="font-size:12px;color:#888;margin-bottom:6px">기존 오버레이와 완전히 별개입니다. CameraFi에 아래 주소를 추가해 사용하세요.</div>
-<div style="font-size:12px;color:#0f3460;font-weight:700;background:#eef3ff;padding:8px 10px;border-radius:8px;margin-bottom:10px;word-break:break-all">coson35.github.io/score/scoreboard2.html</div>
+<div style="font-size:12px;color:#888;margin-bottom:10px">위 "오버레이 디자인"에서 <b>방송형 하단바</b>를 선택하면 기존 주소에 이 디자인이 나옵니다. 아래에서 세부 조절하세요. (CameraFi 주소 변경 불필요)</div>
 
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 화면 맞춤 / 브랜딩</div>
 <div class="ov-acc-body" style="display:none">
@@ -1096,7 +1096,7 @@ function autoSaveOv(){
   if(_ovSaveTimer)clearTimeout(_ovSaveTimer);
   _ovSaveTimer=setTimeout(()=>{configRef.child('overlay').set(gatherOvCfg())},300);
 }
-const SKIN_LIST=['classic','rounded','minimal','gradient'];
+const SKIN_LIST=['classic','rounded','minimal','gradient','tvbar'];
 function setSkin(name){window._ovSkin=name;updSkinBtns();configRef.child('overlay').child('skin').set(name)}
 function updSkinBtns(){
   const cur=window._ovSkin||'classic';
