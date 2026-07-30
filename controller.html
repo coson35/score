@@ -440,8 +440,8 @@ document.getElementById('tabSetup').innerHTML=`
 
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 색상</div>
 <div class="ov-acc-body" style="display:none">
-<div class="form-row"><label>경기명 배경</label><input id="o2cTitleBg" type="color" value="#1454c4" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
-<div class="form-row"><label>중앙 배경</label><input id="o2cCenterBg" type="color" value="#1c1e24" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>경기명 배경</label><input id="o2cTitleBg" type="color" value="#1f5fd0" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
+<div class="form-row"><label>중앙 배경</label><input id="o2cCenterBg" type="color" value="#20232a" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
 <div class="form-row"><label>브랜딩 배경</label><input id="o2cBrandBg" type="color" value="#c8192b" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
 <div class="form-row"><label>팀명 색</label><input id="o2cName" type="color" value="#ffffff" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
 <div class="form-row"><label>원정 점수색</label><input id="o2cAwayScore" type="color" value="#31d6d6" style="flex:1;height:36px;padding:2px;border-radius:8px" oninput="autoSaveOv2()"></div>
@@ -1117,10 +1117,10 @@ function updBcTitleBtn(){
 }
 // ===== 방송형 오버레이(신규) 설정 =====
 const OV2_DEFAULTS={
-  barH:72, fit:'width', bottomGap:0, opacity:92,
-  titleFont:28, nameFont:30, scoreFont:40, innFont:26, bsFont:30, brandFont:22, brand2Font:15,
-  logoSize:46, baseSize:52, gap:18, skew:28,
-  cTitleBg:'#1454c4', cCenterBg:'#1c1e24', cBrandBg:'#c8192b',
+  barH:72, fit:'width', bottomGap:0, opacity:93,
+  titleFont:27, nameFont:29, scoreFont:37, innFont:24, bsFont:27, brandFont:21, brand2Font:14,
+  logoSize:44, baseSize:44, gap:19, skew:30,
+  cTitleBg:'#1f5fd0', cCenterBg:'#20232a', cBrandBg:'#cf1a2b',
   cName:'#ffffff', cAwayScore:'#2fe0e0', cHomeScore:'#ffd83d', cInn:'#ffffff',
   brand1:'2026 신월중 야구부', brand2:'신월중학교'
 };

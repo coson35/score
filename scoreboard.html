@@ -200,33 +200,64 @@ body{background:transparent;font-family:'Noto Sans KR','Malgun Gothic',sans-seri
 
 <!-- 방송형 하단바 (스킨: tvbar) 1920x1080 무대에서 스케일 -->
 <style>
+/* ===== 방송형 하단바(tvbar) - 스포츠 중계 그래픽 스타일 ===== */
 #tvStage{position:fixed;top:0;left:0;width:1920px;height:1080px;transform-origin:top left;background:transparent;display:none;z-index:5}
-#tvbar{position:absolute;left:0;bottom:0;width:1920px;height:72px;display:flex;align-items:stretch;color:#fff;opacity:0;transition:opacity .4s}
+#tvbar{
+  /* CSS 변수: 색/그림자/테두리/간격 (JS 설정이 배경색·크기는 덮어씀) */
+  --tvb-line:rgba(255,255,255,.16);
+  --tvb-border:rgba(255,255,255,.5);
+  --tvb-txt-sh:0 1px 2px rgba(0,0,0,.45);
+  --tvb-group-gap:36px;
+  --tvb-sgap:19px;
+  position:absolute;left:0;bottom:0;width:1920px;height:72px;
+  display:flex;align-items:stretch;color:#fff;opacity:0;transition:opacity .35s;
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+}
 #tvbar.on{opacity:1}
-.tvb-title{background:rgba(20,84,196,0.92);display:flex;align-items:center;padding:0 54px 0 40px;min-width:320px;clip-path:polygon(0 0,100% 0,calc(100% - 28px) 100%,0 100%);flex-shrink:0}
-.tvb-title-txt{font-size:28px;font-weight:800;letter-spacing:.5px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:480px}
-.tvb-center{background:rgba(28,30,36,0.82);flex:1;display:flex;align-items:center;padding:0 28px;min-width:0}
-.tvb-sgroup{display:flex;align-items:center;gap:18px;flex-shrink:0}
-.tvb-cgroup{margin-left:auto;display:flex;align-items:center;gap:16px;flex-shrink:0;padding-left:24px}
-.tvb-inn{border:2px solid rgba(255,255,255,.55);border-radius:6px;padding:4px 12px;font-size:26px;font-weight:900;color:#fff;min-width:60px;text-align:center;letter-spacing:1px;background:rgba(0,0,0,.25)}
-.tvb-tm{display:flex;align-items:center;gap:14px;flex-shrink:0}
-.tvb-logo{width:46px;height:46px;border-radius:50%;object-fit:cover;background:#fff;flex-shrink:0;display:none}
+
+/* 좌측 경기명 (우측 사선) */
+.tvb-title{
+  display:flex;align-items:center;justify-content:center;
+  padding:0 58px 0 42px;min-width:290px;
+  clip-path:polygon(0 0,100% 0,calc(100% - var(--tvb-skew,30px)) 100%,0 100%);
+  flex-shrink:0;
+}
+.tvb-title-txt{font-size:27px;font-weight:700;letter-spacing:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:460px;text-shadow:var(--tvb-txt-sh)}
+
+/* 중앙 정보 영역 */
+.tvb-center{flex:1;display:flex;align-items:center;justify-content:center;gap:var(--tvb-group-gap);padding:0 30px;min-width:0}
+.tvb-sgroup{display:flex;align-items:center;gap:var(--tvb-sgap)}
+.tvb-cgroup{display:flex;align-items:center;gap:16px;padding-left:34px;border-left:1px solid var(--tvb-line)}
+
+.tvb-inn{
+  border:1.5px solid var(--tvb-border);border-radius:3px;
+  padding:3px 11px;font-size:24px;font-weight:800;color:#fff;
+  min-width:54px;text-align:center;letter-spacing:1px;line-height:1;
+}
+.tvb-tm{display:flex;align-items:center;gap:13px}
+.tvb-logo{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#fff;flex-shrink:0;display:none}
 .tvb-logo.on{display:block}
-.tvb-name{font-size:30px;font-weight:800;color:#fff;white-space:nowrap;letter-spacing:.5px}
-.tvb-sc{font-size:40px;font-weight:900;min-width:52px;text-align:center;flex-shrink:0;font-variant-numeric:tabular-nums}
+.tvb-name{font-size:29px;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:.5px;text-shadow:var(--tvb-txt-sh)}
+.tvb-sc{font-size:37px;font-weight:800;min-width:44px;text-align:center;font-variant-numeric:tabular-nums;line-height:1;text-shadow:var(--tvb-txt-sh)}
 .tvb-sc.away{color:#2fe0e0}
 .tvb-sc.home{color:#ffd83d}
-.tvb-bases{position:relative;width:52px;height:52px;flex-shrink:0}
-.tvb-bs{position:absolute;width:19px;height:19px;transform:rotate(45deg);background:transparent;border:2px solid #aab0ba}
+
+/* 베이스 다이아몬드 (작고 정교하게) */
+.tvb-bases{position:relative;width:44px;height:44px;flex-shrink:0}
+.tvb-bs{position:absolute;width:15px;height:15px;transform:rotate(45deg);background:transparent;border:1.5px solid #969ba6}
 .tvb-bs.on{background:#ffd83d;border-color:#ffd83d}
-.tvb-bs-2{left:16px;top:0}.tvb-bs-3{left:0;top:16px}.tvb-bs-1{left:32px;top:16px}
-.tvb-bsbox{border:2px solid rgba(255,255,255,.5);border-radius:8px;padding:3px 16px;font-size:30px;font-weight:900;color:#fff;letter-spacing:2px;font-variant-numeric:tabular-nums}
-.tvb-outs{display:flex;gap:9px}
-.tvb-od{width:15px;height:15px;border-radius:50%;border:2px solid #7e858f;background:transparent}
+.tvb-bs-2{left:14px;top:1px}.tvb-bs-3{left:1px;top:14px}.tvb-bs-1{left:27px;top:14px}
+
+/* 카운트 (얇은 방송 그래픽) */
+.tvb-bsbox{border:1.5px solid var(--tvb-border);border-radius:3px;padding:2px 13px;font-size:27px;font-weight:800;color:#fff;letter-spacing:2px;font-variant-numeric:tabular-nums;line-height:1}
+.tvb-outs{display:flex;gap:8px}
+.tvb-od{width:13px;height:13px;border-radius:50%;border:1.5px solid #7e858f;background:transparent}
 .tvb-od.on{background:#e8452f;border-color:#e8452f}
-.tvb-brand{background:rgba(200,25,43,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 38px 0 52px;min-width:300px;clip-path:polygon(28px 0,100% 0,100% 100%,0 100%);flex-shrink:0}
-.tvb-brand1{font-size:22px;font-weight:800;color:#fff;white-space:nowrap;letter-spacing:.5px}
-.tvb-brand2{font-size:15px;font-weight:600;color:rgba(255,255,255,.9);white-space:nowrap;margin-top:1px}
+
+/* 우측 브랜딩 (좌측 사선) */
+.tvb-brand{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px 0 56px;min-width:270px;clip-path:polygon(var(--tvb-skew,30px) 0,100% 0,100% 100%,0 100%);flex-shrink:0}
+.tvb-brand1{font-size:21px;font-weight:800;color:#fff;white-space:nowrap;letter-spacing:.5px;text-shadow:var(--tvb-txt-sh)}
+.tvb-brand2{font-size:14px;font-weight:500;color:rgba(255,255,255,.82);white-space:nowrap;margin-top:2px}
 </style>
 <div id="tvStage">
   <div id="tvbar">
@@ -365,7 +396,7 @@ window.addEventListener('orientationchange',()=>setTimeout(applyTvScale,120));
 // tvbar hex+alpha
 function tvRgba(hex,a){hex=String(hex||'#000000').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);return 'rgba('+r+','+g+','+b+','+(a/100)+')'}
 // tvbar 전용 설정 (config/overlay2)
-const TV_D={barH:72,fit:'width',bottomGap:0,opacity:92,titleFont:28,nameFont:30,scoreFont:40,innFont:26,bsFont:30,brandFont:22,brand2Font:15,logoSize:46,baseSize:52,gap:18,skew:28,cTitleBg:'#1454c4',cCenterBg:'#1c1e24',cBrandBg:'#c8192b',cName:'#ffffff',cAwayScore:'#2fe0e0',cHomeScore:'#ffd83d',cInn:'#ffffff',brand1:'2026 신월중 야구부',brand2:'신월중학교'};
+const TV_D={barH:72,fit:'width',bottomGap:0,opacity:93,titleFont:27,nameFont:29,scoreFont:37,innFont:24,bsFont:27,brandFont:21,brand2Font:14,logoSize:44,baseSize:44,gap:19,skew:30,cTitleBg:'#1f5fd0',cCenterBg:'#20232a',cBrandBg:'#cf1a2b',cName:'#ffffff',cAwayScore:'#2fe0e0',cHomeScore:'#ffd83d',cInn:'#ffffff',brand1:'2026 신월중 야구부',brand2:'신월중학교'};
 db.ref('config/overlay2').on('value',s=>{
   const c=s.val()||{};
   const $=id=>document.getElementById(id);
@@ -378,8 +409,7 @@ db.ref('config/overlay2').on('value',s=>{
   bar.style.height=cl(gn('barH'),40,200)+'px';
   bar.style.bottom=cl(gn('bottomGap'),0,400)+'px';
   const skew=cl(gn('skew'),0,80);
-  $('tvTitleBlk').style.clipPath='polygon(0 0,100% 0,calc(100% - '+skew+'px) 100%,0 100%)';
-  $('tvBrandBlk').style.clipPath='polygon('+skew+'px 0,100% 0,100% 100%,0 100%)';
+  bar.style.setProperty('--tvb-skew',skew+'px');
   $('tvTitle').style.fontSize=cl(gn('titleFont'),10,60)+'px';
   document.querySelectorAll('.tvb-name').forEach(el=>{el.style.fontSize=cl(gn('nameFont'),12,72)+'px';el.style.color=g('cName')});
   document.querySelectorAll('.tvb-sc').forEach(el=>el.style.fontSize=cl(gn('scoreFont'),14,96)+'px');
@@ -401,9 +431,10 @@ db.ref('config/overlay2').on('value',s=>{
   if(p3){p3.style.left='0';p3.style.top=mid+'px'}
   if(p1){p1.style.left=far+'px';p1.style.top=mid+'px'}
   const sg=document.querySelector('.tvb-sgroup');if(sg)sg.style.gap=cl(gn('gap'),0,80)+'px';
-  document.querySelector('.tvb-title').style.background=tvRgba(g('cTitleBg'),alpha);
-  document.querySelector('.tvb-center').style.background=tvRgba(g('cCenterBg'),alpha-4);
-  document.querySelector('.tvb-brand').style.background=tvRgba(g('cBrandBg'),alpha);
+  const tvGrad=(hex,a)=>'linear-gradient(180deg,'+tvRgba(adjustColor(hex,26),a)+' 0%,'+tvRgba(hex,a)+' 52%,'+tvRgba(adjustColor(hex,-30),a)+' 100%)';
+  document.querySelector('.tvb-title').style.background=tvGrad(g('cTitleBg'),alpha);
+  document.querySelector('.tvb-center').style.background='linear-gradient(180deg,'+tvRgba(adjustColor(g('cCenterBg'),15),alpha-3)+' 0%,'+tvRgba(adjustColor(g('cCenterBg'),-13),alpha-3)+' 100%)';
+  document.querySelector('.tvb-brand').style.background=tvGrad(g('cBrandBg'),alpha);
   const b1=String(g('brand1')||'').trim(),b2=String(g('brand2')||'').trim();
   $('tvBrand1').textContent=b1;$('tvBrand2').textContent=b2;
   $('tvBrand1').style.display=b1?'block':'none';
