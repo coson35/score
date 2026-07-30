@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스코어보드 (방송형)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:transparent;overflow:hidden}
+body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif}
+
+/* 1920x1080 기준 무대. 실제 화면 크기에 맞춰 통째로 scale */
+#stage{
+  position:fixed;
+  width:1920px;height:1080px;
+  top:0;left:0;
+  transform-origin:top left;
+  background:transparent;
+  visibility:hidden;
+}
+#stage.ready{visibility:visible}
+
+/* ===== 방송형 하단바 ===== */
+#bar{
+  position:absolute;
+  left:0;bottom:0;
+  width:1920px;height:76px;
+  display:flex;align-items:stretch;
+  color:#fff;
+  opacity:0;transition:opacity .4s;
+  font-size:0;
+}
+#bar.on{opacity:1}
+
+/* 좌측 경기명 블록 (우측 사선) */
+.title-blk{
+  background:#1657c8;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 46px 0 34px;
+  min-width:300px;
+  clip-path:polygon(0 0,100% 0,calc(100% - 26px) 100%,0 100%);
+}
+.title-txt{
+  font-size:26px;font-weight:800;letter-spacing:.5px;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px;
+}
+
+/* 중앙 스코어 영역 */
+.center-blk{
+  background:#3a3f47;
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  gap:20px;
+  padding:0 24px;
+}
+.inn-box{
+  background:#22262c;
+  border-radius:6px;
+  padding:6px 12px;
+  font-size:26px;font-weight:900;
+  color:#fff;
+  min-width:62px;text-align:center;
+  letter-spacing:1px;
+  flex-shrink:0;
+}
+.tm{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.tm-logo{
+  width:52px;height:52px;border-radius:50%;object-fit:cover;
+  background:#fff;flex-shrink:0;display:none;
+}
+.tm-logo.on{display:block}
+.tm-name{
+  font-size:32px;font-weight:800;color:#fff;
+  white-space:nowrap;letter-spacing:.5px;
+  max-width:260px;overflow:hidden;text-overflow:ellipsis;
+}
+.sc{
+  font-size:44px;font-weight:900;
+  min-width:64px;text-align:center;
+  flex-shrink:0;
+  font-variant-numeric:tabular-nums;
+}
+.sc.away{color:#31d6d6}
+.sc.home{color:#ffd83d}
+
+/* 베이스 다이아몬드 */
+.bases{position:relative;width:58px;height:58px;flex-shrink:0}
+.bs{
+  position:absolute;width:22px;height:22px;
+  transform:rotate(45deg);
+  background:transparent;
+  border:2px solid #9aa1ab;
+}
+.bs.on{background:#ffd83d;border-color:#ffd83d}
+.bs-2{left:18px;top:0}
+.bs-3{left:0;top:18px}
+.bs-1{left:36px;top:18px}
+
+/* 카운트 박스 */
+.count-blk{
+  background:#22262c;
+  display:flex;align-items:center;justify-content:center;
+  gap:16px;
+  padding:0 26px;
+  flex-shrink:0;
+}
+.bs-txt{
+  font-size:32px;font-weight:900;color:#fff;
+  letter-spacing:2px;
+  font-variant-numeric:tabular-nums;
+}
+.outs{display:flex;gap:8px}
+.od{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid #7e858f;background:transparent;
+}
+.od.on{background:#e8452f;border-color:#e8452f}
+
+/* 우측 브랜딩 블록 (좌측 사선) */
+.brand-blk{
+  background:#c8192b;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 34px 0 48px;
+  min-width:280px;
+  clip-path:polygon(26px 0,100% 0,100% 100%,0 100%);
+  flex-shrink:0;
+}
+.brand-1{font-size:22px;font-weight:800;color:#fff;white-space:nowrap;letter-spacing:.5px}
+.brand-2{font-size:16px;font-weight:600;color:rgba(255,255,255,.85);white-space:nowrap;margin-top:2px}
+</style>
+</head>
+<body>
+<script>!function(){var h=location.hostname;if(h&&h!=='coson35.github.io'&&h!=='localhost'&&h!=='127.0.0.1'){document.documentElement.innerHTML=''}}()</script>
+
+<div id="stage">
+  <div id="bar">
+    <div class="title-blk" id="titleBlk"><span class="title-txt" id="gameTitle"></span></div>
+    <div class="center-blk">
+      <div class="inn-box" id="innBox">1▲</div>
+      <div class="tm">
+        <img class="tm-logo" id="awayLogo" src="" alt="">
+        <span class="tm-name" id="awayName">AWAY</span>
+      </div>
+      <span class="sc away" id="awayScore">0</span>
+      <div class="bases">
+        <div class="bs bs-2" id="b2"></div>
+        <div class="bs bs-3" id="b3"></div>
+        <div class="bs bs-1" id="b1"></div>
+      </div>
+      <span class="sc home" id="homeScore">0</span>
+      <div class="tm">
+        <span class="tm-name" id="homeName">HOME</span>
+        <img class="tm-logo" id="homeLogo" src="" alt="">
+      </div>
+    </div>
+    <div class="count-blk">
+      <span class="bs-txt" id="bsTxt">0-0</span>
+      <div class="outs">
+        <div class="od" id="o1"></div>
+        <div class="od" id="o2"></div>
+      </div>
+    </div>
+    <div class="brand-blk" id="brandBlk">
+      <div class="brand-1" id="brand1">2026 신월중 야구부</div>
+      <div class="brand-2" id="brand2">신월중학교</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ===== 해상도 독립 스케일 엔진 =====
+// 1920x1080 무대를 실제 뷰포트 크기에 맞춰 단일 배율로 확대/축소한다.
+// 이 덕분에 PC / 스마트폰 / 캠코더 어디서 열어도 화면 대비 같은 위치·크기로 보인다.
+const STAGE_W=1920, STAGE_H=1080;
+let fitMode='width'; // 'width' = 폭 기준(하단바용 권장), 'contain' = 전체 보이기
+function applyScale(){
+  const vw=window.innerWidth||document.documentElement.clientWidth;
+  const vh=window.innerHeight||document.documentElement.clientHeight;
+  const st=document.getElementById('stage');
+  if(!st)return;
+  if(!vw||!vh)return; // 뷰포트 값이 이상하면 직전 배율 유지
+  let s;
+  if(fitMode==='contain'){s=Math.min(vw/STAGE_W,vh/STAGE_H)}
+  else{s=vw/STAGE_W}
+  s=Math.max(0.05,Math.min(4,s));
+  let tx=0,ty=0;
+  if(fitMode==='contain'){
+    tx=(vw-STAGE_W*s)/2;
+    ty=(vh-STAGE_H*s)/2;
+  }else{
+    // 폭 기준: 좌측 정렬 + 무대 하단을 화면 하단에 맞춤
+    tx=0;
+    ty=vh-STAGE_H*s;
+  }
+  st.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')';
+  st.classList.add('ready');
+}
+applyScale();
+window.addEventListener('resize',applyScale);
+window.addEventListener('orientationchange',()=>setTimeout(applyScale,120));
+
+// ===== Firebase =====
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const gameRef=db.ref('game');
+const cfgRef=db.ref('config/overlay2');
+
+const $=id=>document.getElementById(id);
+const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+const num=(v,d)=>{const n=parseInt(v,10);return isNaN(n)?d:n};
+
+// 경기 상태 (읽기 전용)
+gameRef.on('value',s=>{
+  const d=s.val();if(!d)return;
+  const bar=$('bar');
+  if(d.visible){bar.classList.add('on')}else{bar.classList.remove('on');return}
+
+  const title=d.gameTitle||'';
+  $('gameTitle').textContent=title;
+
+  $('awayName').textContent=d.awayName||'AWAY';
+  $('homeName').textContent=d.homeName||'HOME';
+  $('awayScore').textContent=clamp(num(d.awayScore,0),0,99);
+  $('homeScore').textContent=clamp(num(d.homeScore,0),0,99);
+
+  const aL=$('awayLogo'),hL=$('homeLogo');
+  if(d.awayLogo){aL.src=d.awayLogo;aL.classList.add('on')}else{aL.classList.remove('on')}
+  if(d.homeLogo){hL.src=d.homeLogo;hL.classList.add('on')}else{hL.classList.remove('on')}
+  aL.onerror=()=>aL.classList.remove('on');
+  hL.onerror=()=>hL.classList.remove('on');
+
+  const inn=clamp(num(d.inning,1),1,99);
+  $('innBox').textContent=inn+(d.inningHalf==='bottom'?'▼':'▲');
+
+  $('b1').classList.toggle('on',!!d.base1);
+  $('b2').classList.toggle('on',!!d.base2);
+  $('b3').classList.toggle('on',!!d.base3);
+
+  const b=clamp(num(d.balls,0),0,3), st=clamp(num(d.strikes,0),0,2), o=clamp(num(d.outs,0),0,2);
+  $('bsTxt').textContent=b+'-'+st;
+  $('o1').classList.toggle('on',o>=1);
+  $('o2').classList.toggle('on',o>=2);
+});
+
+// 새 오버레이 전용 설정 (config/overlay2)
+const D={
+  barH:76, fit:'width', bottomGap:0,
+  titleFont:26, nameFont:32, scoreFont:44, innFont:26, bsFont:32, brandFont:22, brand2Font:16,
+  logoSize:52, baseSize:58, gap:20, skew:26,
+  cTitleBg:'#1657c8', cCenterBg:'#3a3f47', cCountBg:'#22262c', cBrandBg:'#c8192b',
+  cName:'#ffffff', cAwayScore:'#31d6d6', cHomeScore:'#ffd83d', cInn:'#ffffff',
+  brand1:'2026 신월중 야구부', brand2:'신월중학교'
+};
+cfgRef.on('value',s=>{
+  const c=s.val()||{};
+  const g=(k)=>{const v=c[k];return (v===undefined||v===null||v==='')?D[k]:v};
+  const gn=(k)=>{const n=parseInt(c[k],10);return isNaN(n)?D[k]:n};
+
+  fitMode=(g('fit')==='contain')?'contain':'width';
+
+  const barH=clamp(gn('barH'),40,200);
+  const bar=$('bar');
+  bar.style.height=barH+'px';
+  bar.style.bottom=clamp(gn('bottomGap'),0,400)+'px';
+
+  const skew=clamp(gn('skew'),0,80);
+  $('titleBlk').style.clipPath='polygon(0 0,100% 0,calc(100% - '+skew+'px) 100%,0 100%)';
+  $('brandBlk').style.clipPath='polygon('+skew+'px 0,100% 0,100% 100%,0 100%)';
+
+  $('gameTitle').style.fontSize=clamp(gn('titleFont'),10,60)+'px';
+  document.querySelectorAll('.tm-name').forEach(el=>{
+    el.style.fontSize=clamp(gn('nameFont'),12,72)+'px';
+    el.style.color=g('cName');
+  });
+  document.querySelectorAll('.sc').forEach(el=>el.style.fontSize=clamp(gn('scoreFont'),14,96)+'px');
+  $('awayScore').style.color=g('cAwayScore');
+  $('homeScore').style.color=g('cHomeScore');
+  $('innBox').style.fontSize=clamp(gn('innFont'),10,64)+'px';
+  $('innBox').style.color=g('cInn');
+  $('bsTxt').style.fontSize=clamp(gn('bsFont'),12,72)+'px';
+  $('brand1').style.fontSize=clamp(gn('brandFont'),8,56)+'px';
+  $('brand2').style.fontSize=clamp(gn('brand2Font'),8,48)+'px';
+
+  const ls=clamp(gn('logoSize'),16,140);
+  document.querySelectorAll('.tm-logo').forEach(el=>{el.style.width=ls+'px';el.style.height=ls+'px'});
+
+  const bsz=clamp(gn('baseSize'),20,140);
+  const bsq=Math.round(bsz*0.38);
+  const bases=document.querySelector('.bases');
+  bases.style.width=bsz+'px';bases.style.height=bsz+'px';
+  document.querySelectorAll('.bs').forEach(el=>{el.style.width=bsq+'px';el.style.height=bsq+'px'});
+  const mid=(bsz-bsq)/2, far=bsz-bsq;
+  const p2=document.querySelector('.bs-2'),p3=document.querySelector('.bs-3'),p1=document.querySelector('.bs-1');
+  if(p2){p2.style.left=mid+'px';p2.style.top='0'}
+  if(p3){p3.style.left='0';p3.style.top=mid+'px'}
+  if(p1){p1.style.left=far+'px';p1.style.top=mid+'px'}
+
+  document.querySelector('.center-blk').style.gap=clamp(gn('gap'),0,80)+'px';
+  document.querySelector('.title-blk').style.background=g('cTitleBg');
+  document.querySelector('.center-blk').style.background=g('cCenterBg');
+  document.querySelector('.count-blk').style.background=g('cCountBg');
+  document.querySelector('.brand-blk').style.background=g('cBrandBg');
+
+  const b1=String(g('brand1')||'').trim(), b2=String(g('brand2')||'').trim();
+  $('brand1').textContent=b1;
+  $('brand2').textContent=b2;
+  $('brand1').style.display=b1?'block':'none';
+  $('brand2').style.display=b2?'block':'none';
+  $('brandBlk').style.display=(b1||b2)?'flex':'none';
+
+  applyScale();
+});
+</script>
+</body>
+</html>
