@@ -283,22 +283,27 @@ document.getElementById('tabSetup').innerHTML=`
 <button class="btn-save" onclick="saveG()">경기 저장</button>
 <button class="btn-apply" onclick="applyG()">바로 적용</button></div>
 <div class="card"><div class="card-title">저장된 경기</div><div class="game-list" id="gList"></div></div>
-<div class="card"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="#2c6fbb" stroke-width="2"/><line x1="8" y1="21" x2="16" y2="21" stroke="#2c6fbb" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="21" stroke="#2c6fbb" stroke-width="2"/></svg>오버레이 화면 설정</div>
-<div style="font-size:12px;color:#888;margin-bottom:10px">스마트폰 화면에 맞게 오버레이 크기와 위치를 조절합니다</div>
-<div class="ov-acc open" onclick="togAcc(this)"><span class="arrow">▶</span> 오버레이 디자인</div>
+<div class="card"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="#2c6fbb" stroke-width="2"/><line x1="8" y1="21" x2="16" y2="21" stroke="#2c6fbb" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="21" stroke="#2c6fbb" stroke-width="2"/></svg>스코어보드 화면 설정</div>
+<div style="font-size:12px;color:#888;margin-bottom:10px">스마트폰 화면에 맞게 스코어보드 크기와 위치를 조절합니다</div>
+<div class="ov-acc open" onclick="togAcc(this)"><span class="arrow">▶</span> 스코어보드 디자인</div>
 <div class="ov-acc-body">
-<div style="font-size:11px;color:#888;margin-bottom:8px">오버레이 디자인을 선택합니다 (기존 주소 그대로, 실시간 전환)<br>클래식=하단 전체바 / 방송형=코너 박스 / 방송형 하단바=참고 스타일 전체폭 바</div>
+<div style="font-size:11px;color:#888;margin-bottom:8px">스코어보드 디자인을 선택합니다 (기존 주소 그대로, 실시간 전환)<br>클래식=하단 전체바 / 코너 박스=모서리 박스 / 방송형 하단바=전체폭 방송 그래픽</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <button class="skin-btn" id="skin-classic" onclick="setSkin('classic')">클래식</button>
-<button class="skin-btn" id="skin-rounded" onclick="setSkin('rounded')">방송형</button>
-<button class="skin-btn" id="skin-minimal" onclick="setSkin('minimal')">방송형 투명</button>
-<button class="skin-btn" id="skin-gradient" onclick="setSkin('gradient')">방송형 그라데이션</button>
+<button class="skin-btn" id="skin-corner" onclick="setSkinCorner()">코너 박스</button>
 <button class="skin-btn" id="skin-tvbar" onclick="setSkin('tvbar')" style="grid-column:1/3">방송형 하단바 (신규·추천)</button>
 </div>
+<div style="font-size:11px;color:#888;margin-top:8px">선택한 디자인의 세부설정만 아래에 표시됩니다. 라인업·로고·수비 포지션은 디자인과 무관하게 항상 조절할 수 있습니다.</div>
 </div>
-<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 방송형 세부설정</div>
+<div class="ov-acc" data-skins="corner" onclick="togAcc(this)"><span class="arrow">▶</span> 코너 박스 세부설정</div>
 <div class="ov-acc-body" style="display:none">
-<div style="font-size:11px;color:#888;margin-bottom:8px">방송형 스킨(클래식 제외)에만 적용됩니다. 색상은 아래 "색상 테마"를 공유합니다.</div>
+<div style="font-size:12px;font-weight:700;margin:2px 0 6px">변형 선택</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+<button class="skin-btn" id="skin-rounded" onclick="setSkin('rounded')">기본</button>
+<button class="skin-btn" id="skin-minimal" onclick="setSkin('minimal')">투명</button>
+<button class="skin-btn" id="skin-gradient" onclick="setSkin('gradient')">그라데이션</button>
+</div>
+<div style="font-size:11px;color:#888;margin-bottom:8px">색상은 아래 "색상 테마"를 공유합니다.</div>
 <div style="font-size:12px;font-weight:700;margin:4px 0 6px">위치 기준(코너)</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
 <button class="skin-btn" id="bcanc-tl" onclick="setBcAnchor('tl')">좌상단</button>
@@ -322,14 +327,14 @@ document.getElementById('tabSetup').innerHTML=`
 <button class="skin-btn active" id="bcTitleBtn" onclick="toggleBcTitle()" style="width:100%;margin-top:4px">경기명 바: 표시</button>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('broadcast')">이 섹션 초기화</button>
 </div>
-<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 스코어보드 하단바</div>
+<div class="ov-acc" data-skins="classic" onclick="togAcc(this)"><span class="arrow">▶</span> 스코어보드 하단바</div>
 <div class="ov-acc-body" style="display:none">
 <div style="font-size:11px;color:#888;margin-bottom:8px">하단바 전체 크기와 위치를 설정합니다</div>
 <div class="form-row"><label>바 높이</label><input id="ovBarH" type="range" min="30" max="70" value="44" oninput="prevOvVal('ovBarHV',this.value+'px');autoSaveOv()"><span id="ovBarHV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">44px</span></div>
 <div class="form-row"><label>하단여백</label><input id="ovBarBottom" type="range" min="0" max="50" value="0" oninput="prevOvVal('ovBarBottomV',this.value+'px');autoSaveOv()"><span id="ovBarBottomV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('bar')">이 섹션 초기화</button>
 </div>
-<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 글자 크기</div>
+<div class="ov-acc" data-skins="classic" onclick="togAcc(this)"><span class="arrow">▶</span> 글자 크기</div>
 <div class="ov-acc-body" style="display:none">
 <div style="font-size:11px;color:#888;margin-bottom:8px">각 글자의 폰트 크기를 개별 조정합니다</div>
 <div class="form-row"><label>팀명 폰트</label><input id="ovBarFont" type="range" min="10" max="22" value="14" oninput="prevOvVal('ovBarFontV',this.value+'px');autoSaveOv()"><span id="ovBarFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">14px</span></div>
@@ -338,7 +343,7 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>이닝 폰트</label><input id="ovInningFont" type="range" min="10" max="30" value="19" oninput="prevOvVal('ovInningFontV',this.value+'px');autoSaveOv()"><span id="ovInningFontV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">19px</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('font')">이 섹션 초기화</button>
 </div>
-<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 항목 간격 / 크기</div>
+<div class="ov-acc" data-skins="classic" onclick="togAcc(this)"><span class="arrow">▶</span> 항목 간격 / 크기</div>
 <div class="ov-acc-body" style="display:none">
 <div style="font-size:11px;color:#888;margin-bottom:8px">각 항목의 간격과 크기를 개별 조정합니다</div>
 <div class="form-row"><label>경기명 너비</label><input id="ovInfoMaxW" type="range" min="100" max="400" value="200" oninput="prevOvVal('ovInfoMaxWV',this.value+'px');autoSaveOv()"><span id="ovInfoMaxWV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">200px</span></div>
@@ -353,7 +358,7 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>팀 로고 크기</label><input id="ovBarLogo" type="range" min="20" max="60" value="30" oninput="prevOvVal('ovBarLogoV',this.value+'px');autoSaveOv()"><span id="ovBarLogoV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">30px</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('spacing')">이 섹션 초기화</button>
 </div>
-<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 항목 상하 위치</div>
+<div class="ov-acc" data-skins="classic" onclick="togAcc(this)"><span class="arrow">▶</span> 항목 상하 위치</div>
 <div class="ov-acc-body" style="display:none">
 <div style="font-size:11px;color:#888;margin-bottom:8px">각 항목의 수직 위치를 미세 조정합니다 (- 위로, + 아래로)</div>
 <div class="form-row"><label>경기명 상하</label><input id="ovInfoY" type="range" min="-10" max="10" value="0" oninput="prevOvVal('ovInfoYV',this.value+'px');autoSaveOv()"><span id="ovInfoYV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
@@ -363,7 +368,7 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>이닝 상하</label><input id="ovInningY" type="range" min="-10" max="10" value="0" oninput="prevOvVal('ovInningYV',this.value+'px');autoSaveOv()"><span id="ovInningYV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('ypos')">이 섹션 초기화</button>
 </div>
-<div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 색상 테마</div>
+<div class="ov-acc" data-skins="classic,corner" onclick="togAcc(this)"><span class="arrow">▶</span> 색상 테마</div>
 <div class="ov-acc-body" style="display:none">
 <div class="form-row"><label>바 배경</label><input id="ovColorBg" type="color" value="#1a1a2e" style="flex:1;height:36px;padding:2px;border-radius:8px"><span id="ovColorBgV" style="min-width:62px;text-align:right;font-size:12px;color:#888">#1a1a2e</span></div>
 <div class="form-row"><label>상단선</label><input id="ovColorBorder" type="color" value="#e94560" style="flex:1;height:36px;padding:2px;border-radius:8px"><span id="ovColorBorderV" style="min-width:62px;text-align:right;font-size:12px;color:#888">#e94560</span></div>
@@ -374,6 +379,8 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>카운트 배경</label><input id="ovColorCountBg" type="color" value="#0a1628" style="flex:1;height:36px;padding:2px;border-radius:8px"><span id="ovColorCountBgV" style="min-width:62px;text-align:right;font-size:12px;color:#888">#0a1628</span></div>
 <button style="width:100%;padding:8px;font-size:12px;background:#f8f8f8;border:1px solid #ddd;border-radius:8px;margin-top:6px;color:#e94560;font-weight:600" onclick="resetOvSection('color')">이 섹션 초기화</button>
 </div>
+<div style="margin:14px 0 6px;padding-top:10px;border-top:2px solid #eee;font-size:12px;font-weight:800;color:#0f3460">공통 요소 (디자인과 별도로 표시)</div>
+<div style="font-size:11px;color:#888;margin-bottom:6px">라인업·로고·수비 포지션은 스코어보드 디자인과 상관없이 항상 조절됩니다</div>
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 라인업 위치 / 크기</div>
 <div class="ov-acc-body" style="display:none">
 <div class="form-row"><label>크기(%)</label><input id="ovLinScale" type="range" min="50" max="150" value="100" oninput="prevOvVal('ovLinScaleV',this.value+'%');autoSaveOv()"><span id="ovLinScaleV" style="min-width:40px;text-align:center;font-size:13px;font-weight:700">100%</span></div>
@@ -402,8 +409,8 @@ document.getElementById('tabSetup').innerHTML=`
 <div id="ovThemeList" style="max-height:200px;overflow-y:auto"></div>
 </div>
 </div>
-<div class="card"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="#c8192b" stroke-width="2"/><rect x="2" y="15" width="20" height="5" fill="#c8192b"/></svg>방송형 오버레이 (신규)</div>
-<div style="font-size:12px;color:#888;margin-bottom:10px">위 "오버레이 디자인"에서 <b>방송형 하단바</b>를 선택하면 기존 주소에 이 디자인이 나옵니다. 아래에서 세부 조절하세요. (CameraFi 주소 변경 불필요)</div>
+<div class="card" id="tvbarCard"><div class="card-title"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle;margin-right:6px"><rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="#c8192b" stroke-width="2"/><rect x="2" y="15" width="20" height="5" fill="#c8192b"/></svg>방송형 하단바 세부설정</div>
+<div style="font-size:12px;color:#888;margin-bottom:10px">위 "스코어보드 디자인"에서 <b>방송형 하단바</b>를 선택하면 기존 주소에 이 디자인이 나옵니다. 아래에서 세부 조절하세요. (CameraFi 주소 변경 불필요)</div>
 
 <div class="ov-acc" onclick="togAcc(this)"><span class="arrow">▶</span> 화면 맞춤 / 브랜딩</div>
 <div class="ov-acc-body" style="display:none">
@@ -1100,10 +1107,27 @@ function autoSaveOv(){
   _ovSaveTimer=setTimeout(()=>{configRef.child('overlay').set(gatherOvCfg())},300);
 }
 const SKIN_LIST=['classic','rounded','minimal','gradient','tvbar'];
+const CORNER_SKINS=['rounded','minimal','gradient'];
+function skinFamily(s){if(s==='tvbar')return 'tvbar';if(CORNER_SKINS.includes(s))return 'corner';return 'classic'}
 function setSkin(name){window._ovSkin=name;updSkinBtns();configRef.child('overlay').child('skin').set(name)}
+function setSkinCorner(){const cur=window._ovSkin;setSkin(CORNER_SKINS.includes(cur)?cur:'rounded')}
 function updSkinBtns(){
   const cur=window._ovSkin||'classic';
+  // 개별 스킨(변형) 버튼 활성표시
   SKIN_LIST.forEach(s=>{const b=document.getElementById('skin-'+s);if(b)b.className='skin-btn'+(s===cur?' active':'')});
+  // 대표 버튼: 코너 박스(계열)
+  const cb=document.getElementById('skin-corner');if(cb)cb.className='skin-btn'+(CORNER_SKINS.includes(cur)?' active':'');
+  updSkinSections(cur);
+}
+function updSkinSections(skin){
+  const fam=skinFamily(skin);
+  document.querySelectorAll('.ov-acc[data-skins]').forEach(h=>{
+    const show=(h.getAttribute('data-skins')||'').split(',').includes(fam);
+    h.style.display=show?'':'none';
+    const body=h.nextElementSibling;
+    if(body&&body.classList.contains('ov-acc-body'))body.style.display=show?(h.classList.contains('open')?'block':'none'):'none';
+  });
+  const tc=document.getElementById('tvbarCard');if(tc)tc.style.display=(skin==='tvbar')?'':'none';
 }
 function setBcAnchor(a){window._bcAnchor=a;updBcAnchorBtns();autoSaveOv()}
 function updBcAnchorBtns(){
