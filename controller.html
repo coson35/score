@@ -434,6 +434,8 @@ document.getElementById('tabSetup').innerHTML=`
 <div class="form-row"><label>하단 여백</label><input id="o2bottomGap" type="range" min="0" max="400" value="0" oninput="prevOvVal('o2bottomGapV',this.value+'px');autoSaveOv2()"><span id="o2bottomGapV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">0px</span></div>
 <div class="form-row"><label>로고 크기</label><input id="o2logoSize" type="range" min="16" max="140" value="46" oninput="prevOvVal('o2logoSizeV',this.value+'px');autoSaveOv2()"><span id="o2logoSizeV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">46px</span></div>
 <div class="form-row"><label>베이스 크기</label><input id="o2baseSize" type="range" min="20" max="140" value="46" oninput="prevOvVal('o2baseSizeV',this.value+'px');autoSaveOv2()"><span id="o2baseSizeV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">46px</span></div>
+<div class="form-row"><label>아웃 점 크기</label><input id="o2outDot" type="range" min="8" max="40" value="13" oninput="prevOvVal('o2outDotV',this.value+'px');autoSaveOv2()"><span id="o2outDotV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">13px</span></div>
+<div class="form-row"><label>아웃 점 간격</label><input id="o2outGap" type="range" min="0" max="30" value="7" oninput="prevOvVal('o2outGapV',this.value+'px');autoSaveOv2()"><span id="o2outGapV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">7px</span></div>
 <div class="form-row"><label>요소 간격</label><input id="o2gap" type="range" min="0" max="80" value="20" oninput="prevOvVal('o2gapV',this.value+'px');autoSaveOv2()"><span id="o2gapV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">20px</span></div>
 <div class="form-row"><label>사선 기울기</label><input id="o2skew" type="range" min="0" max="80" value="26" oninput="prevOvVal('o2skewV',this.value+'px');autoSaveOv2()"><span id="o2skewV" style="min-width:44px;text-align:center;font-size:13px;font-weight:700">26px</span></div>
 </div>
@@ -1119,13 +1121,13 @@ function updBcTitleBtn(){
 const OV2_DEFAULTS={
   barH:86, fit:'width', bottomGap:0, opacity:93,
   titleFont:33, nameFont:38, scoreFont:46, innFont:31, bsFont:34, brandFont:27, brand2Font:17,
-  logoSize:46, baseSize:46, gap:22, skew:34,
+  logoSize:46, baseSize:46, outDot:13, outGap:7, gap:22, skew:34,
   cTitleBg:'#1f5fd0', cCenterBg:'#20232a', cBrandBg:'#cf1a2b',
   cName:'#ffffff', cAwayScore:'#2fe0e0', cHomeScore:'#ffd83d', cInn:'#ffffff',
   brand1:'2026 신월중 야구부', brand2:'신월중학교'
 };
 let ov2Cfg={...OV2_DEFAULTS};
-const OV2_NUM=['barH','bottomGap','opacity','titleFont','nameFont','scoreFont','innFont','bsFont','brandFont','brand2Font','logoSize','baseSize','gap','skew'];
+const OV2_NUM=['barH','bottomGap','opacity','titleFont','nameFont','scoreFont','innFont','bsFont','brandFont','brand2Font','logoSize','baseSize','outDot','outGap','gap','skew'];
 const OV2_COLOR=['cTitleBg','cCenterBg','cBrandBg','cName','cAwayScore','cHomeScore','cInn'];
 let _ov2Timer=null;
 function setOv2Fit(m){window._o2fit=m;updOv2FitBtns();autoSaveOv2()}
